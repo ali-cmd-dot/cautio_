@@ -1,75 +1,726 @@
-<!DOCTYPE html><html lang="en" data-scrapbook-source="https://beta.cautio.in/en/auth/login?m_logout=false&amp;redirect=fleet?m_logout=false" data-scrapbook-create="20250904045553117"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="539405a3fe1adf51.css" data-precedence="next"><link rel="stylesheet" href="1437dd1eff1d9e54.css" data-precedence="next"><title>Cautio</title><link rel="icon" href="favicon.ico"><meta name="next-size-adjust"><style type="text/css">:where(html[dir="ltr"]),:where([data-sonner-toaster][dir="ltr"]){--toast-icon-margin-start: -3px;--toast-icon-margin-end: 4px;--toast-svg-margin-start: -1px;--toast-svg-margin-end: 0px;--toast-button-margin-start: auto;--toast-button-margin-end: 0;--toast-close-button-start: 0;--toast-close-button-end: unset;--toast-close-button-transform: translate(-35%, -35%)}:where(html[dir="rtl"]),:where([data-sonner-toaster][dir="rtl"]){--toast-icon-margin-start: 4px;--toast-icon-margin-end: -3px;--toast-svg-margin-start: 0px;--toast-svg-margin-end: -1px;--toast-button-margin-start: 0;--toast-button-margin-end: auto;--toast-close-button-start: unset;--toast-close-button-end: 0;--toast-close-button-transform: translate(35%, -35%)}:where([data-sonner-toaster]){position:fixed;width:var(--width);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;--gray1: hsl(0, 0%, 99%);--gray2: hsl(0, 0%, 97.3%);--gray3: hsl(0, 0%, 95.1%);--gray4: hsl(0, 0%, 93%);--gray5: hsl(0, 0%, 90.9%);--gray6: hsl(0, 0%, 88.7%);--gray7: hsl(0, 0%, 85.8%);--gray8: hsl(0, 0%, 78%);--gray9: hsl(0, 0%, 56.1%);--gray10: hsl(0, 0%, 52.3%);--gray11: hsl(0, 0%, 43.5%);--gray12: hsl(0, 0%, 9%);--border-radius: 8px;box-sizing:border-box;padding:0;margin:0;list-style:none;outline:none;z-index:999999999}:where([data-sonner-toaster][data-x-position="right"]){right:max(var(--offset),env(safe-area-inset-right))}:where([data-sonner-toaster][data-x-position="left"]){left:max(var(--offset),env(safe-area-inset-left))}:where([data-sonner-toaster][data-x-position="center"]){left:50%;transform:translate(-50%)}:where([data-sonner-toaster][data-y-position="top"]){top:max(var(--offset),env(safe-area-inset-top))}:where([data-sonner-toaster][data-y-position="bottom"]){bottom:max(var(--offset),env(safe-area-inset-bottom))}:where([data-sonner-toast]){--y: translateY(100%);--lift-amount: calc(var(--lift) * var(--gap));z-index:var(--z-index);position:absolute;opacity:0;transform:var(--y);filter:blur(0);touch-action:none;transition:transform .4s,opacity .4s,height .4s,box-shadow .2s;box-sizing:border-box;outline:none;overflow-wrap:anywhere}:where([data-sonner-toast][data-styled="true"]){padding:16px;background:var(--normal-bg);border:1px solid var(--normal-border);color:var(--normal-text);border-radius:var(--border-radius);box-shadow:0 4px 12px #0000001a;width:var(--width);font-size:13px;display:flex;align-items:center;gap:6px}:where([data-sonner-toast]:focus-visible){box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast][data-y-position="top"]){top:0;--y: translateY(-100%);--lift: 1;--lift-amount: calc(1 * var(--gap))}:where([data-sonner-toast][data-y-position="bottom"]){bottom:0;--y: translateY(100%);--lift: -1;--lift-amount: calc(var(--lift) * var(--gap))}:where([data-sonner-toast]) :where([data-description]){font-weight:400;line-height:1.4;color:inherit}:where([data-sonner-toast]) :where([data-title]){font-weight:500;line-height:1.5;color:inherit}:where([data-sonner-toast]) :where([data-icon]){display:flex;height:16px;width:16px;position:relative;justify-content:flex-start;align-items:center;flex-shrink:0;margin-left:var(--toast-icon-margin-start);margin-right:var(--toast-icon-margin-end)}:where([data-sonner-toast][data-promise="true"]) :where([data-icon])>svg{opacity:0;transform:scale(.8);transform-origin:center;animation:sonner-fade-in .3s ease forwards}:where([data-sonner-toast]) :where([data-icon])>*{flex-shrink:0}:where([data-sonner-toast]) :where([data-icon]) svg{margin-left:var(--toast-svg-margin-start);margin-right:var(--toast-svg-margin-end)}:where([data-sonner-toast]) :where([data-content]){display:flex;flex-direction:column;gap:2px}[data-sonner-toast][data-styled=true] [data-button]{border-radius:4px;padding-left:8px;padding-right:8px;height:24px;font-size:12px;color:var(--normal-bg);background:var(--normal-text);margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end);border:none;cursor:pointer;outline:none;display:flex;align-items:center;flex-shrink:0;transition:opacity .4s,box-shadow .2s}:where([data-sonner-toast]) :where([data-button]):focus-visible{box-shadow:0 0 0 2px #0006}:where([data-sonner-toast]) :where([data-button]):first-of-type{margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end)}:where([data-sonner-toast]) :where([data-cancel]){color:var(--normal-text);background:rgba(0,0,0,.08)}:where([data-sonner-toast][data-theme="dark"]) :where([data-cancel]){background:rgba(255,255,255,.3)}:where([data-sonner-toast]) :where([data-close-button]){position:absolute;left:var(--toast-close-button-start);right:var(--toast-close-button-end);top:0;height:20px;width:20px;display:flex;justify-content:center;align-items:center;padding:0;background:var(--gray1);color:var(--gray12);border:1px solid var(--gray4);transform:var(--toast-close-button-transform);border-radius:50%;cursor:pointer;z-index:1;transition:opacity .1s,background .2s,border-color .2s}:where([data-sonner-toast]) :where([data-close-button]):focus-visible{box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast]) :where([data-disabled="true"]){cursor:not-allowed}:where([data-sonner-toast]):hover :where([data-close-button]):hover{background:var(--gray2);border-color:var(--gray5)}:where([data-sonner-toast][data-swiping="true"]):before{content:"";position:absolute;left:0;right:0;height:100%;z-index:-1}:where([data-sonner-toast][data-y-position="top"][data-swiping="true"]):before{bottom:50%;transform:scaleY(3) translateY(50%)}:where([data-sonner-toast][data-y-position="bottom"][data-swiping="true"]):before{top:50%;transform:scaleY(3) translateY(-50%)}:where([data-sonner-toast][data-swiping="false"][data-removed="true"]):before{content:"";position:absolute;inset:0;transform:scaleY(2)}:where([data-sonner-toast]):after{content:"";position:absolute;left:0;height:calc(var(--gap) + 1px);bottom:100%;width:100%}:where([data-sonner-toast][data-mounted="true"]){--y: translateY(0);opacity:1}:where([data-sonner-toast][data-expanded="false"][data-front="false"]){--scale: var(--toasts-before) * .05 + 1;--y: translateY(calc(var(--lift-amount) * var(--toasts-before))) scale(calc(-1 * var(--scale)));height:var(--front-toast-height)}:where([data-sonner-toast])>*{transition:opacity .4s}:where([data-sonner-toast][data-expanded="false"][data-front="false"][data-styled="true"])>*{opacity:0}:where([data-sonner-toast][data-visible="false"]){opacity:0;pointer-events:none}:where([data-sonner-toast][data-mounted="true"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset)));height:var(--initial-height)}:where([data-sonner-toast][data-removed="true"][data-front="true"][data-swipe-out="false"]){--y: translateY(calc(var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset) + var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="false"]){--y: translateY(40%);opacity:0;transition:transform .5s,opacity .2s}:where([data-sonner-toast][data-removed="true"][data-front="false"]):before{height:calc(var(--initial-height) + 20%)}[data-sonner-toast][data-swiping=true]{transform:var(--y) translateY(var(--swipe-amount, 0px));transition:none}[data-sonner-toast][data-swipe-out=true][data-y-position=bottom],[data-sonner-toast][data-swipe-out=true][data-y-position=top]{animation:swipe-out .2s ease-out forwards}@keyframes swipe-out{0%{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount)));opacity:1}to{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount) + var(--lift) * -100%));opacity:0}}@media (max-width: 600px){[data-sonner-toaster]{position:fixed;--mobile-offset: 16px;right:var(--mobile-offset);left:var(--mobile-offset);width:100%}[data-sonner-toaster] [data-sonner-toast]{left:0;right:0;width:calc(100% - var(--mobile-offset) * 2)}[data-sonner-toaster][data-x-position=left]{left:var(--mobile-offset)}[data-sonner-toaster][data-y-position=bottom]{bottom:20px}[data-sonner-toaster][data-y-position=top]{top:20px}[data-sonner-toaster][data-x-position=center]{left:var(--mobile-offset);right:var(--mobile-offset);transform:none}}[data-sonner-toaster][data-theme=light]{--normal-bg: #fff;--normal-border: var(--gray4);--normal-text: var(--gray12);--success-bg: hsl(143, 85%, 96%);--success-border: hsl(145, 92%, 91%);--success-text: hsl(140, 100%, 27%);--info-bg: hsl(208, 100%, 97%);--info-border: hsl(221, 91%, 91%);--info-text: hsl(210, 92%, 45%);--warning-bg: hsl(49, 100%, 97%);--warning-border: hsl(49, 91%, 91%);--warning-text: hsl(31, 92%, 45%);--error-bg: hsl(359, 100%, 97%);--error-border: hsl(359, 100%, 94%);--error-text: hsl(360, 100%, 45%)}[data-sonner-toaster][data-theme=light] [data-sonner-toast][data-invert=true]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1)}[data-sonner-toaster][data-theme=dark] [data-sonner-toast][data-invert=true]{--normal-bg: #fff;--normal-border: var(--gray3);--normal-text: var(--gray12)}[data-sonner-toaster][data-theme=dark]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1);--success-bg: hsl(150, 100%, 6%);--success-border: hsl(147, 100%, 12%);--success-text: hsl(150, 86%, 65%);--info-bg: hsl(215, 100%, 6%);--info-border: hsl(223, 100%, 12%);--info-text: hsl(216, 87%, 65%);--warning-bg: hsl(64, 100%, 6%);--warning-border: hsl(60, 100%, 12%);--warning-text: hsl(46, 87%, 65%);--error-bg: hsl(358, 76%, 10%);--error-border: hsl(357, 89%, 16%);--error-text: hsl(358, 100%, 81%)}[data-rich-colors=true][data-sonner-toast][data-type=success],[data-rich-colors=true][data-sonner-toast][data-type=success] [data-close-button]{background:var(--success-bg);border-color:var(--success-border);color:var(--success-text)}[data-rich-colors=true][data-sonner-toast][data-type=info],[data-rich-colors=true][data-sonner-toast][data-type=info] [data-close-button]{background:var(--info-bg);border-color:var(--info-border);color:var(--info-text)}[data-rich-colors=true][data-sonner-toast][data-type=warning],[data-rich-colors=true][data-sonner-toast][data-type=warning] [data-close-button]{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}[data-rich-colors=true][data-sonner-toast][data-type=error],[data-rich-colors=true][data-sonner-toast][data-type=error] [data-close-button]{background:var(--error-bg);border-color:var(--error-border);color:var(--error-text)}.sonner-loading-wrapper{--size: 16px;height:var(--size);width:var(--size);position:absolute;inset:0;z-index:10}.sonner-loading-wrapper[data-visible=false]{transform-origin:center;animation:sonner-fade-out .2s ease forwards}.sonner-spinner{position:relative;top:50%;left:50%;height:var(--size);width:var(--size)}.sonner-loading-bar{animation:sonner-spin 1.2s linear infinite;background:var(--gray11);border-radius:6px;height:8%;left:-10%;position:absolute;top:-3.9%;width:24%}.sonner-loading-bar:nth-child(1){animation-delay:-1.2s;transform:rotate(.0001deg) translate(146%)}.sonner-loading-bar:nth-child(2){animation-delay:-1.1s;transform:rotate(30deg) translate(146%)}.sonner-loading-bar:nth-child(3){animation-delay:-1s;transform:rotate(60deg) translate(146%)}.sonner-loading-bar:nth-child(4){animation-delay:-.9s;transform:rotate(90deg) translate(146%)}.sonner-loading-bar:nth-child(5){animation-delay:-.8s;transform:rotate(120deg) translate(146%)}.sonner-loading-bar:nth-child(6){animation-delay:-.7s;transform:rotate(150deg) translate(146%)}.sonner-loading-bar:nth-child(7){animation-delay:-.6s;transform:rotate(180deg) translate(146%)}.sonner-loading-bar:nth-child(8){animation-delay:-.5s;transform:rotate(210deg) translate(146%)}.sonner-loading-bar:nth-child(9){animation-delay:-.4s;transform:rotate(240deg) translate(146%)}.sonner-loading-bar:nth-child(10){animation-delay:-.3s;transform:rotate(270deg) translate(146%)}.sonner-loading-bar:nth-child(11){animation-delay:-.2s;transform:rotate(300deg) translate(146%)}.sonner-loading-bar:nth-child(12){animation-delay:-.1s;transform:rotate(330deg) translate(146%)}@keyframes sonner-fade-in{0%{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}@keyframes sonner-fade-out{0%{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.8)}}@keyframes sonner-spin{0%{opacity:1}to{opacity:.15}}@media (prefers-reduced-motion){[data-sonner-toast],[data-sonner-toast]>*,.sonner-loading-bar{transition:none!important;animation:none!important}}.sonner-loader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transform-origin:center;transition:opacity .2s,transform .2s}.sonner-loader[data-visible=false]{opacity:0;transform:scale(.8) translate(-50%,-50%)}
-</style><script data-scrapbook-elem="custom-elements-loader">(function (names) { if (!customElements) { return; } for (const name of names) { customElements.define(name, class CustomElement extends HTMLElement {}); } })(["next-route-announcer"])</script></head><body class="__variable_3c557b dark font-sans  dark:bg-dark-fill-base-400 locale-en" style="--primary-font:'__Inter_e8ce0c', '__Inter_Fallback_e8ce0c'"><div><div class="ml-5 min-h-screen flex-1 pr-6" style="padding-left:4.68rem;padding-top:0"><!--$--><style>
-          #nprogress {
+<!DOCTYPE html>
+<html lang="en" data-scrapbook-source="https://beta.cautio.in/en/auth/login?m_logout=false&amp;redirect=fleet?m_logout=false" data-scrapbook-create="20250904045553117">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="539405a3fe1adf51.css" data-precedence="next">
+    <link rel="stylesheet" href="1437dd1eff1d9e54.css" data-precedence="next">
+    <title>Cautio</title>
+    <link rel="icon" href="favicon.ico">
+    <meta name="next-size-adjust">
+    <style type="text/css">
+        :where(html[dir="ltr"]),:where([data-sonner-toaster][dir="ltr"]){--toast-icon-margin-start: -3px;--toast-icon-margin-end: 4px;--toast-svg-margin-start: -1px;--toast-svg-margin-end: 0px;--toast-button-margin-start: auto;--toast-button-margin-end: 0;--toast-close-button-start: 0;--toast-close-button-end: unset;--toast-close-button-transform: translate(-35%, -35%)}:where(html[dir="rtl"]),:where([data-sonner-toaster][dir="rtl"]){--toast-icon-margin-start: 4px;--toast-icon-margin-end: -3px;--toast-svg-margin-start: 0px;--toast-svg-margin-end: -1px;--toast-button-margin-start: 0;--toast-button-margin-end: auto;--toast-close-button-start: unset;--toast-close-button-end: 0;--toast-close-button-transform: translate(35%, -35%)}:where([data-sonner-toaster]){position:fixed;width:var(--width);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;--gray1: hsl(0, 0%, 99%);--gray2: hsl(0, 0%, 97.3%);--gray3: hsl(0, 0%, 95.1%);--gray4: hsl(0, 0%, 93%);--gray5: hsl(0, 0%, 90.9%);--gray6: hsl(0, 0%, 88.7%);--gray7: hsl(0, 0%, 85.8%);--gray8: hsl(0, 0%, 78%);--gray9: hsl(0, 0%, 56.1%);--gray10: hsl(0, 0%, 52.3%);--gray11: hsl(0, 0%, 43.5%);--gray12: hsl(0, 0%, 9%);--border-radius: 8px;box-sizing:border-box;padding:0;margin:0;list-style:none;outline:none;z-index:999999999}:where([data-sonner-toaster][data-x-position="right"]){right:max(var(--offset),env(safe-area-inset-right))}:where([data-sonner-toaster][data-x-position="left"]){left:max(var(--offset),env(safe-area-inset-left))}:where([data-sonner-toaster][data-x-position="center"]){left:50%;transform:translate(-50%)}:where([data-sonner-toaster][data-y-position="top"]){top:max(var(--offset),env(safe-area-inset-top))}:where([data-sonner-toaster][data-y-position="bottom"]){bottom:max(var(--offset),env(safe-area-inset-bottom))}:where([data-sonner-toast]){--y: translateY(100%);--lift-amount: calc(var(--lift) * var(--gap));z-index:var(--z-index);position:absolute;opacity:0;transform:var(--y);filter:blur(0);touch-action:none;transition:transform .4s,opacity .4s,height .4s,box-shadow .2s;box-sizing:border-box;outline:none;overflow-wrap:anywhere}:where([data-sonner-toast][data-styled="true"]){padding:16px;background:var(--normal-bg);border:1px solid var(--normal-border);color:var(--normal-text);border-radius:var(--border-radius);box-shadow:0 4px 12px #0000001a;width:var(--width);font-size:13px;display:flex;align-items:center;gap:6px}:where([data-sonner-toast]:focus-visible){box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast][data-y-position="top"]){top:0;--y: translateY(-100%);--lift: 1;--lift-amount: calc(1 * var(--gap))}:where([data-sonner-toast][data-y-position="bottom"]){bottom:0;--y: translateY(100%);--lift: -1;--lift-amount: calc(var(--lift) * var(--gap))}:where([data-sonner-toast]) :where([data-description]){font-weight:400;line-height:1.4;color:inherit}:where([data-sonner-toast]) :where([data-title]){font-weight:500;line-height:1.5;color:inherit}:where([data-sonner-toast]) :where([data-icon]){display:flex;height:16px;width:16px;position:relative;justify-content:flex-start;align-items:center;flex-shrink:0;margin-left:var(--toast-icon-margin-start);margin-right:var(--toast-icon-margin-end)}:where([data-sonner-toast][data-promise="true"]) :where([data-icon])>svg{opacity:0;transform:scale(.8);transform-origin:center;animation:sonner-fade-in .3s ease forwards}:where([data-sonner-toast]) :where([data-icon])>*{flex-shrink:0}:where([data-sonner-toast]) :where([data-icon]) svg{margin-left:var(--toast-svg-margin-start);margin-right:var(--toast-svg-margin-end)}:where([data-sonner-toast]) :where([data-content]){display:flex;flex-direction:column;gap:2px}[data-sonner-toast][data-styled=true] [data-button]{border-radius:4px;padding-left:8px;padding-right:8px;height:24px;font-size:12px;color:var(--normal-bg);background:var(--normal-text);margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end);border:none;cursor:pointer;outline:none;display:flex;align-items:center;flex-shrink:0;transition:opacity .4s,box-shadow .2s}:where([data-sonner-toast]) :where([data-button]):focus-visible{box-shadow:0 0 0 2px #0006}:where([data-sonner-toast]) :where([data-button]):first-of-type{margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end)}:where([data-sonner-toast]) :where([data-cancel]){color:var(--normal-text);background:rgba(0,0,0,.08)}:where([data-sonner-toast][data-theme="dark"]) :where([data-cancel]){background:rgba(255,255,255,.3)}:where([data-sonner-toast]) :where([data-close-button]){position:absolute;left:var(--toast-close-button-start);right:var(--toast-close-button-end);top:0;height:20px;width:20px;display:flex;justify-content:center;align-items:center;padding:0;background:var(--gray1);color:var(--gray12);border:1px solid var(--gray4);transform:var(--toast-close-button-transform);border-radius:50%;cursor:pointer;z-index:1;transition:opacity .1s,background .2s,border-color .2s}:where([data-sonner-toast]) :where([data-close-button]):focus-visible{box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast]) :where([data-disabled="true"]){cursor:not-allowed}:where([data-sonner-toast]):hover :where([data-close-button]):hover{background:var(--gray2);border-color:var(--gray5)}:where([data-sonner-toast][data-swiping="true"]):before{content:"";position:absolute;left:0;right:0;height:100%;z-index:-1}:where([data-sonner-toast][data-y-position="top"][data-swiping="true"]):before{bottom:50%;transform:scaleY(3) translateY(50%)}:where([data-sonner-toast][data-y-position="bottom"][data-swiping="true"]):before{top:50%;transform:scaleY(3) translateY(-50%)}:where([data-sonner-toast][data-swiping="false"][data-removed="true"]):before{content:"";position:absolute;inset:0;transform:scaleY(2)}:where([data-sonner-toast]):after{content:"";position:absolute;left:0;height:calc(var(--gap) + 1px);bottom:100%;width:100%}:where([data-sonner-toast][data-mounted="true"]){--y: translateY(0);opacity:1}:where([data-sonner-toast][data-expanded="false"][data-front="false"]){--scale: var(--toasts-before) * .05 + 1;--y: translateY(calc(var(--lift-amount) * var(--toasts-before))) scale(calc(-1 * var(--scale)));height:var(--front-toast-height)}:where([data-sonner-toast])>*{transition:opacity .4s}:where([data-sonner-toast][data-expanded="false"][data-front="false"][data-styled="true"])>*{opacity:0}:where([data-sonner-toast][data-visible="false"]){opacity:0;pointer-events:none}:where([data-sonner-toast][data-mounted="true"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset)));height:var(--initial-height)}:where([data-sonner-toast][data-removed="true"][data-front="true"][data-swipe-out="false"]){--y: translateY(calc(var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset) + var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="false"]){--y: translateY(40%);opacity:0;transition:transform .5s,opacity .2s}:where([data-sonner-toast][data-removed="true"][data-front="false"]):before{height:calc(var(--initial-height) + 20%)}[data-sonner-toast][data-swiping=true]{transform:var(--y) translateY(var(--swipe-amount, 0px));transition:none}[data-sonner-toast][data-swipe-out=true][data-y-position=bottom],[data-sonner-toast][data-swipe-out=true][data-y-position=top]{animation:swipe-out .2s ease-out forwards}@keyframes swipe-out{0%{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount)));opacity:1}to{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount) + var(--lift) * -100%));opacity:0}}@media (max-width: 600px){[data-sonner-toaster]{position:fixed;--mobile-offset: 16px;right:var(--mobile-offset);left:var(--mobile-offset);width:100%}[data-sonner-toaster] [data-sonner-toast]{left:0;right:0;width:calc(100% - var(--mobile-offset) * 2)}[data-sonner-toaster][data-x-position=left]{left:var(--mobile-offset)}[data-sonner-toaster][data-y-position=bottom]{bottom:20px}[data-sonner-toaster][data-y-position=top]{top:20px}[data-sonner-toaster][data-x-position=center]{left:var(--mobile-offset);right:var(--mobile-offset);transform:none}}[data-sonner-toaster][data-theme=light]{--normal-bg: #fff;--normal-border: var(--gray4);--normal-text: var(--gray12);--success-bg: hsl(143, 85%, 96%);--success-border: hsl(145, 92%, 91%);--success-text: hsl(140, 100%, 27%);--info-bg: hsl(208, 100%, 97%);--info-border: hsl(221, 91%, 91%);--info-text: hsl(210, 92%, 45%);--warning-bg: hsl(49, 100%, 97%);--warning-border: hsl(49, 91%, 91%);--warning-text: hsl(31, 92%, 45%);--error-bg: hsl(359, 100%, 97%);--error-border: hsl(359, 100%, 94%);--error-text: hsl(360, 100%, 45%)}[data-sonner-toaster][data-theme=light] [data-sonner-toast][data-invert=true]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1)}[data-sonner-toaster][data-theme=dark] [data-sonner-toast][data-invert=true]{--normal-bg: #fff;--normal-border: var(--gray3);--normal-text: var(--gray12)}[data-sonner-toaster][data-theme=dark]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1);--success-bg: hsl(150, 100%, 6%);--success-border: hsl(147, 100%, 12%);--success-text: hsl(150, 86%, 65%);--info-bg: hsl(215, 100%, 6%);--info-border: hsl(223, 100%, 12%);--info-text: hsl(216, 87%, 65%);--warning-bg: hsl(64, 100%, 6%);--warning-border: hsl(60, 100%, 12%);--warning-text: hsl(46, 87%, 65%);--error-bg: hsl(358, 76%, 10%);--error-border: hsl(357, 89%, 16%);--error-text: hsl(358, 100%, 81%)}[data-rich-colors=true][data-sonner-toast][data-type=success],[data-rich-colors=true][data-sonner-toast][data-type=success] [data-close-button]{background:var(--success-bg);border-color:var(--success-border);color:var(--success-text)}[data-rich-colors=true][data-sonner-toast][data-type=info],[data-rich-colors=true][data-sonner-toast][data-type=info] [data-close-button]{background:var(--info-bg);border-color:var(--info-border);color:var(--info-text)}[data-rich-colors=true][data-sonner-toast][data-type=warning],[data-rich-colors=true][data-sonner-toast][data-type=warning] [data-close-button]{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}[data-rich-colors=true][data-sonner-toast][data-type=error],[data-rich-colors=true][data-sonner-toast][data-type=error] [data-close-button]{background:var(--error-bg);border-color:var(--error-border);color:var(--error-text)}.sonner-loading-wrapper{--size: 16px;height:var(--size);width:var(--size);position:absolute;inset:0;z-index:10}.sonner-loading-wrapper[data-visible=false]{transform-origin:center;animation:sonner-fade-out .2s ease forwards}.sonner-spinner{position:relative;top:50%;left:50%;height:var(--size);width:var(--size)}.sonner-loading-bar{animation:sonner-spin 1.2s linear infinite;background:var(--gray11);border-radius:6px;height:8%;left:-10%;position:absolute;top:-3.9%;width:24%}.sonner-loading-bar:nth-child(1){animation-delay:-1.2s;transform:rotate(.0001deg) translate(146%)}.sonner-loading-bar:nth-child(2){animation-delay:-1.1s;transform:rotate(30deg) translate(146%)}.sonner-loading-bar:nth-child(3){animation-delay:-1s;transform:rotate(60deg) translate(146%)}.sonner-loading-bar:nth-child(4){animation-delay:-.9s;transform:rotate(90deg) translate(146%)}.sonner-loading-bar:nth-child(5){animation-delay:-.8s;transform:rotate(120deg) translate(146%)}.sonner-loading-bar:nth-child(6){animation-delay:-.7s;transform:rotate(150deg) translate(146%)}.sonner-loading-bar:nth-child(7){animation-delay:-.6s;transform:rotate(180deg) translate(146%)}.sonner-loading-bar:nth-child(8){animation-delay:-.5s;transform:rotate(210deg) translate(146%)}.sonner-loading-bar:nth-child(9){animation-delay:-.4s;transform:rotate(240deg) translate(146%)}.sonner-loading-bar:nth-child(10){animation-delay:-.3s;transform:rotate(270deg) translate(146%)}.sonner-loading-bar:nth-child(11){animation-delay:-.2s;transform:rotate(300deg) translate(146%)}.sonner-loading-bar:nth-child(12){animation-delay:-.1s;transform:rotate(330deg) translate(146%)}@keyframes sonner-fade-in{0%{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}@keyframes sonner-fade-out{0%{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.8)}}@keyframes sonner-spin{0%{opacity:1}to{opacity:.15}}@media (prefers-reduced-motion){[data-sonner-toast],[data-sonner-toast]>*,.sonner-loading-bar{transition:none!important;animation:none!important}}.sonner-loader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transform-origin:center;transition:opacity .2s,transform .2s}.sonner-loader[data-visible=false]{opacity:0;transform:scale(.8) translate(-50%,-50%)}
+
+        /* Custom styles for sidebar */
+        .sidebar {
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 4rem;
+        }
+        .sidebar.expanded {
+            width: 16rem;
+        }
+        .menu-text {
+            transition: opacity 0.3s ease;
+        }
+        .collapsed .menu-text {
+            opacity: 0;
             pointer-events: none;
-          }
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.sidebar-collapsed {
+            margin-left: 4rem;
+        }
+        .main-content.sidebar-expanded {
+            margin-left: 16rem;
+        }
+    </style>
+    <script data-scrapbook-elem="custom-elements-loader">(function (names) { if (!customElements) { return; } for (const name of names) { customElements.define(name, class CustomElement extends HTMLElement {}); } })(["next-route-announcer"])</script>
+</head>
+<body class="__variable_3c557b dark font-sans dark:bg-dark-fill-base-400 locale-en" style="--primary-font:'__Inter_e8ce0c', '__Inter_Fallback_e8ce0c'">
+    
+    <!-- Login Page -->
+    <div id="loginPage" class="ml-5 min-h-screen flex-1 pr-6" style="padding-left:4.68rem;padding-top:0">
+        <style>
+            #nprogress {
+                pointer-events: none;
+            }
 
-          #nprogress .bar {
-            background: #0045ff;
+            #nprogress .bar {
+                background: #0045ff;
+                position: fixed;
+                z-index: 99999;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+            }
 
-            position: fixed;
-            z-index: 99999;
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 5px;
-          }
-
-          /* Fancy blur effect */
-          #nprogress .peg {
-            display: block;
-            position: absolute;
-            right: 0px;
-            width: 100px;
-            height: 100%;
-            box-shadow: 0 0 10px #0045ff, 0 0 5px #0045ff;
-            opacity: 1.0;
-
-            -webkit-transform: rotate(3deg) translate(0px, -4px);
+            #nprogress .peg {
+                display: block;
+                position: absolute;
+                right: 0px;
+                width: 100px;
+                height: 100%;
+                box-shadow: 0 0 10px #0045ff, 0 0 5px #0045ff;
+                opacity: 1.0;
+                -webkit-transform: rotate(3deg) translate(0px, -4px);
                 -ms-transform: rotate(3deg) translate(0px, -4px);
-                    transform: rotate(3deg) translate(0px, -4px);
-          }
+                transform: rotate(3deg) translate(0px, -4px);
+            }
 
-          /* Remove these to get rid of the spinner */
-          #nprogress .spinner {
-            display: block;
-            position: fixed;
-            z-index: 1031;
-            top: 15px;
-            right: 15px;
-          }
+            #nprogress .spinner {
+                display: block;
+                position: fixed;
+                z-index: 1031;
+                top: 15px;
+                right: 15px;
+            }
 
-          #nprogress .spinner-icon {
-            width: 18px;
-            height: 18px;
-            box-sizing: border-box;
+            #nprogress .spinner-icon {
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: solid 2px transparent;
+                border-top-color: #0045ff;
+                border-left-color: #0045ff;
+                border-radius: 50%;
+                -webkit-animation: nprogress-spinner 400ms linear infinite;
+                animation: nprogress-spinner 400ms linear infinite;
+            }
 
-            border: solid 2px transparent;
-            border-top-color: #0045ff;
-            border-left-color: #0045ff;
-            border-radius: 50%;
+            .nprogress-custom-parent {
+                overflow: hidden;
+                position: relative;
+            }
 
-            -webkit-animation: nprogress-spinner 400ms linear infinite;
-                    animation: nprogress-spinner 400ms linear infinite;
-          }
+            .nprogress-custom-parent #nprogress .spinner,
+            .nprogress-custom-parent #nprogress .bar {
+                position: absolute;
+            }
 
-          .nprogress-custom-parent {
-            overflow: hidden;
-            position: relative;
-          }
+            @-webkit-keyframes nprogress-spinner {
+                0%   { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+            }
+            @keyframes nprogress-spinner {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+        
+        <div>
+            <div class="grid grid-cols-2">
+                <div class="relative flex items-center justify-center sm:mt-0">
+                    <div class="absolute inset-0 h-full px-[3.5rem]">
+                        <div class="lines hidden sm:flex sm:h-full sm:w-full sm:justify-between">
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                    <div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen">
+                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png">
+                    </div>
+                </div>
+                <div class="flex justify-center self-center">
+                    <div class="flex w-[27.18rem] flex-col p-4">
+                        <div class="flex justify-center">
+                            <svg class="h-[3.8rem] w-[3.8rem] rounded-2xl" width="60" height="60" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="1080" height="1080" fill="#0026A3"></rect>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
+                            </svg>
+                        </div>
+                        <div class="my-8 flex flex-col items-center gap-2">
+                            <span class="text-heading-6 text-dark-base-600">Sign in</span>
+                        </div>
+                        <form id="loginForm" class="gap-4" novalidate="">
+                            <div class="mb-5">
+                                <div class="flex flex-col items-start">
+                                    <label for="email" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email</label>
+                                    <div class="relative flex w-full items-center">
+                                        <input id="email" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="example@gmail.com" name="email" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 mt-5">
+                                <div class="flex flex-col items-start">
+                                    <label for="password" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Password</label>
+                                    <div class="relative flex w-full items-center">
+                                        <input id="password" style="padding-right: 44px;" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="password" placeholder="Password" name="password" value="">
+                                        <div class="absolute right-2 top-1/2 flex -translate-y-1/2 items-center space-x-2">
+                                            <span class="cursor-pointer" onclick="togglePasswordVisibility()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-6 w-6 text-dark-stroke-base-600">
+                                                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="flex cursor-pointer justify-start text-body-m-medium dark:text-brand-blue-600" href="https://beta.cautio.in/en/auth/email-verify">Forgot Password?</a>
+                            <div>
+                                <button class="flex items-center justify-center gap-x-2 rounded-full px-5 py-3 text-body-s-semibold disabled:cursor-not-allowed disabled:opacity-50 dark:text-utility-white dark:bg-brand-blue-600 dark:shadow-[0px_0.5px_1px_0px_rgba(255,255,255,0.50)inset] dark:hover:bg-brand-blue-500 disabled:dark:hover:bg-brand-blue-600 mt-4 w-full" type="submit">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-          .nprogress-custom-parent #nprogress .spinner,
-          .nprogress-custom-parent #nprogress .bar {
-            position: absolute;
-          }
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="hidden min-h-screen dark:bg-dark-fill-base-400">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar collapsed fixed left-0 top-0 h-full dark:bg-dark-fill-base-300 dark:border-r dark:border-dark-stroke-contrast-400 z-50">
+            <!-- Hamburger Menu Button -->
+            <div class="flex items-center justify-between p-4 dark:border-b dark:border-dark-stroke-contrast-400">
+                <div class="flex items-center">
+                    <svg class="h-8 w-8 rounded-lg" width="32" height="32" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="1080" height="1080" fill="#0026A3"></rect>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
+                    </svg>
+                    <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600">Cautio</span>
+                </div>
+                <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <line x1="3" x2="21" y1="6" y2="6"/>
+                        <line x1="3" x2="21" y1="12" y2="12"/>
+                        <line x1="3" x2="21" y1="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
 
-          @-webkit-keyframes nprogress-spinner {
-            0%   { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
-          }
-          @keyframes nprogress-spinner {
-            0%   { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        </style><!--/$--><div><div class="grid grid-cols-2"><div class="relative flex items-center justify-center sm:mt-0"><div class="absolute inset-0 h-full px-[3.5rem]"><div class="lines hidden sm:flex sm:h-full sm:w-full sm:justify-between"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div></div><div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen"><img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png"></div></div><div class="flex justify-center self-center"><div class="flex w-[27.18rem] flex-col p-4"><div class="flex justify-center"><svg class="h-[3.8rem] w-[3.8rem] rounded-2xl" width="60" height="60" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1080" height="1080" fill="#0026A3"></rect><path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path></svg></div><div class="my-8 flex flex-col items-center gap-2"><span class="text-heading-6 text-dark-base-600">Sign in</span></div><form class="gap-4" novalidate=""><div class="mb-5"><div class="flex flex-col items-start"><label for=":Rujttvejsq:" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email</label><div class="relative flex w-full items-center"><input id=":Rujttvejsq:" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="example@gmail.com" name="email" value=""></div></div></div><div class="mb-3 mt-5"><div class="flex flex-col items-start"><label for=":R1ejttvejsq:" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Password</label><div class="relative flex w-full items-center"><input id=":R1ejttvejsq:" style="padding-right: 44px;" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="password" placeholder="Password" name="password" value=""><div class="absolute right-2 top-1/2 flex -translate-y-1/2 items-center space-x-2"><span class="cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-6 w-6 text-dark-stroke-base-600"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></span></div></div></div></div><a class="flex cursor-pointer justify-start text-body-m-medium dark:text-brand-blue-600" href="https://beta.cautio.in/en/auth/email-verify">Forgot Password?</a><div><button class="flex items-center justify-center gap-x-2 rounded-full px-5 py-3 text-body-s-semibold disabled:cursor-not-allowed disabled:opacity-50 dark:text-utility-white dark:bg-brand-blue-600 dark:shadow-[0px_0.5px_1px_0px_rgba(255,255,255,0.50)inset] dark:hover:bg-brand-blue-500 disabled:dark:hover:bg-brand-blue-600 mt-4 w-full" type="submit">Login</button></div></form></div></div></div></div></div></div><next-route-announcer style="position: absolute;" data-scrapbook-shadowdom="&lt;div aria-live=&quot;assertive&quot; id=&quot;__next-route-announcer__&quot; role=&quot;alert&quot; style=&quot;position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;&quot;&gt;&lt;/div&gt;"></next-route-announcer><script data-scrapbook-elem="basic-loader">(function () { var k1 = "data-scrapbook-shadowdom", k2 = "data-scrapbook-canvas", k3 = "data-scrapbook-input-indeterminate", k4 = "data-scrapbook-input-checked", k5 = "data-scrapbook-option-selected", k6 = "data-scrapbook-input-value", k7 = "data-scrapbook-textarea-value", k8 = "data-scrapbook-adoptedstylesheets", k9 = /^data-scrapbook-adoptedstylesheet-(\d+)$/, k10 = "data-scrapbook-shadowdom-mode", k11 = "data-scrapbook-shadowdom-clonable", k12 = "data-scrapbook-shadowdom-delegates-focus", k13 = "data-scrapbook-shadowdom-serializable", k14 = "data-scrapbook-shadowdom-slot-assignment", k15 = "data-scrapbook-slot-assigned", k16 = "data-scrapbook-slot-index", k17 = /^scrapbook-slot-index=(\d+)$/, k18 = '/scrapbook-slot-index', d = document, r = d.documentElement, $s = !!r.attachShadow, $as = !!d.adoptedStyleSheets, $c = !!window.HTMLCanvasElement, $sa = !!d.createElement('slot').assign, sle = [], sls = [], slt = function (r) { if ($sa) { var E = r.childNodes, i, e, s, m; for (i = 0; i < E.length; i++) { e = E[i]; if (e.nodeType === 8) { s = e.nodeValue; if (m = s.match(k17)) { s = e.nextSibling; if (s.nodeType === 3) { sls[m[1]] = s; } r.removeChild(e); i--; } else if (s === k18) { r.removeChild(e); i--; } } } } }, sl = function () { var i = sle.length, j, d, e; while (i--) { d = sle[i]; e = d.elem; d = d.value.split(','); j = d.length; while (j--) { d[j] = sls[parseInt(d[j], 10)]; } try { try { e.assign.apply(e, d); } catch (ex) { if (ex.message.includes('must have a callable @@iterator')) { e.assign(d); } else { throw ex; } } } catch (ex) { console.error(ex); } } }, asl = (function (r) { var l = [], E, i, e, m, c, j; if ($as) { E = r.attributes; i = E.length; while (i--) { e = E[i]; if (!(m = e.nodeName.match(k9))) { continue; } c = l[m[1]] = new CSSStyleSheet(); r.removeAttribute(m[0]); m = e.nodeValue.split('\n\n'); j = m.length; while (j--) { try { m[j] && c.insertRule(m[j]); } catch (ex) { console.error(ex); } } } } return l; })(r), as = function (d, e) { var l, i, I; if ($as && (l = e.getAttribute(k8)) !== null) { l = l.split(',').map(i => asl[i]); d.adoptedStyleSheets = d.adoptedStyleSheets.concat(l); e.removeAttribute(k8); } }, fn = function (r) { var E = r.querySelectorAll ? r.querySelectorAll("*") : r.getElementsByTagName("*"), i = E.length, e, d, s, m; while (i--) { e = E[i]; s = e.shadowRoot; if ($s && (d = e.getAttribute(k1))) { if (!s) { try { s = e.attachShadow({ mode: (m = e.getAttribute(k10)) !== null ? m : 'open', clonable: e.hasAttribute(k11), delegatesFocus: e.hasAttribute(k12), serializable: e.hasAttribute(k13), slotAssignment: (m = e.getAttribute(k14)) !== null ? m : void 0, }); s.innerHTML = d; } catch (ex) { console.error(ex); } } e.removeAttribute(k1); e.removeAttribute(k10); e.removeAttribute(k11); e.removeAttribute(k12); e.removeAttribute(k13); e.removeAttribute(k14); } if ($c && (d = e.getAttribute(k2)) !== null) { (function () { var c = e, g = new Image(); g.onload = function () { c.getContext('2d').drawImage(g, 0, 0); }; g.src = d; })(); e.removeAttribute(k2); } if ((d = e.getAttribute(k3)) !== null) { e.indeterminate = true; e.removeAttribute(k3); } if ((d = e.getAttribute(k4)) !== null) { e.checked = d === 'true'; e.removeAttribute(k4); } if ((d = e.getAttribute(k5)) !== null) { e.selected = d === 'true'; e.removeAttribute(k5); } if ((d = e.getAttribute(k6)) !== null) { e.value = d; e.removeAttribute(k6); } if ((d = e.getAttribute(k7)) !== null) { e.value = d; e.removeAttribute(k7); } if ($sa && (d = e.getAttribute(k15)) !== null) { sle.push({elem: e, value: d}); e.removeAttribute(k15); } if ($sa && (d = e.getAttribute(k16)) !== null) { sls[d] = e; e.removeAttribute(k16); } if (s) { slt(e); as(s, e); fn(s); } } }; as(d, r); fn(d); sl(); })()</script></body></html>
+            <!-- Menu Items -->
+            <nav class="mt-4">
+                <div class="px-4 space-y-2">
+                    <a href="#" onclick="showCustomersOverview()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="m22 21-3-3"/>
+                        </svg>
+                        <span class="menu-text ml-3">Customers Overview</span>
+                    </a>
+                    <a href="#" onclick="showFinance()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                        </svg>
+                        <span class="menu-text ml-3">Finance</span>
+                    </a>
+                    <a href="#" onclick="showGroundOperations()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                            <path d="M15 18H9"/>
+                            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+                            <circle cx="17" cy="18" r="2"/>
+                            <circle cx="7" cy="18" r="2"/>
+                        </svg>
+                        <span class="menu-text ml-3">Ground Operations</span>
+                    </a>
+                    <a href="#" onclick="showInventoryManagement()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                            <path d="M12 3v6"/>
+                        </svg>
+                        <span class="menu-text ml-3">Inventory Management</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="main-content sidebar-collapsed">
+            <!-- Header -->
+            <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
+                    <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" x2="9" y1="12" y2="12"/>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="contentArea" class="p-6">
+                <!-- Customers Overview Content -->
+                <div id="customersOverviewContent">
+                    <!-- Total Customers Count -->
+                    <div class="text-center mb-8">
+                        <div class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers</h2>
+                            <p class="text-display-3 dark:text-brand-blue-600">1,247</p>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Tabs -->
+                    <div class="mb-6">
+                        <div class="border-b dark:border-dark-stroke-contrast-400">
+                            <nav class="-mb-px flex space-x-8">
+                                <button onclick="showAddTab()" class="dashboard-tab py-2 px-1 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600 active" id="addTab">
+                                    Add
+                                </button>
+                                <button onclick="showPOCTab()" class="dashboard-tab py-2 px-1 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="pocTab">
+                                    POC
+                                </button>
+                                <button onclick="showOnboardedTab()" class="dashboard-tab py-2 px-1 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="onboardedTab">
+                                    Onboarded Customers
+                                </button>
+                                <button onclick="showClosedLeadsTab()" class="dashboard-tab py-2 px-1 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="closedLeadsTab">
+                                    Closed Leads
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="tabContent">
+                        <!-- Add Tab Content -->
+                        <div id="addTabContent">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600" onclick="showAddLeadForm()">
+                                    <div class="flex items-center justify-center mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="9" cy="7" r="4"/>
+                                            <path d="m22 21-3-3"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-heading-7 dark:text-dark-base-600 text-center mb-2">Add New Lead</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500 text-center">Create a new potential customer lead</p>
+                                </div>
+
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600" onclick="showAddCustomerForm()">
+                                    <div class="flex items-center justify-center mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="9" cy="7" r="4"/>
+                                            <circle cx="22" cy="11" r="3"/>
+                                            <path d="m16 11 2 2 4-4"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-heading-7 dark:text-dark-base-600 text-center mb-2">Add New Customer</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500 text-center">Onboard a new customer</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- POC Tab Content -->
+                        <div id="pocTabContent" class="hidden">
+                            <div class="text-center py-12">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">POC Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">Proof of Concept customers will be displayed here</p>
+                            </div>
+                        </div>
+
+                        <!-- Onboarded Tab Content -->
+                        <div id="onboardedTabContent" class="hidden">
+                            <div class="text-center py-12">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Onboarded Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">Fully onboarded customers will be displayed here</p>
+                            </div>
+                        </div>
+
+                        <!-- Closed Leads Tab Content -->
+                        <div id="closedLeadsTabContent" class="hidden">
+                            <div class="text-center py-12">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Closed Leads</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">Closed leads will be displayed here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other page contents (Finance, Ground Operations, Inventory Management) -->
+                <div id="financeContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Finance</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Finance management content will be displayed here</p>
+                    </div>
+                </div>
+
+                <div id="groundOperationsContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Ground operations content will be displayed here</p>
+                    </div>
+                </div>
+
+                <div id="inventoryManagementContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Inventory Management</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Inventory management content will be displayed here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Lead Form Modal -->
+    <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add New Lead</h2>
+                <button onclick="closeAddLeadForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addLeadForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Inbound/Outbound</label>
+                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>Inbound</option>
+                        <option>Outbound</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                    <input type="text" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name">
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact</label>
+                    <input type="text" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter contact information">
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Potential Fleet Size</label>
+                    <input type="number" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size">
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Status</label>
+                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>New</option>
+                        <option>In Progress</option>
+                        <option>Qualified</option>
+                        <option>Not Qualified</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Save Lead
+                    </button>
+                    <button type="button" onclick="closeAddLeadForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Customer Form Modal -->
+    <div id="addCustomerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add New Customer</h2>
+                <button onclick="closeAddCustomerForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addCustomerForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Form (Use existing template)</label>
+                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>Template 1</option>
+                        <option>Template 2</option>
+                        <option>Template 3</option>
+                        <option>Custom Template</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Fleet tracking requirements</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Real-time monitoring</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver behavior analysis</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Fuel management</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
+                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>Free POC</option>
+                        <option>Paid POC</option>
+                        <option>Direct Onboarding</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Time</label>
+                    <input type="date" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Save Customer
+                    </button>
+                    <button type="button" onclick="closeAddCustomerForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let sidebarExpanded = false;
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email === 'admin@gm.com' && password === 'admin123') {
+                // Hide login page and show dashboard
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+                
+                // Initialize dashboard
+                showCustomersOverview();
+            } else {
+                alert('Invalid credentials. Please use admin@gm.com and admin123');
+            }
+        });
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+        }
+
+        // Sidebar toggle functionality
+        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebarExpanded) {
+                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
+                mainContent.classList.remove('sidebar-expanded');
+                mainContent.classList.add('sidebar-collapsed');
+            } else {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+                mainContent.classList.remove('sidebar-collapsed');
+                mainContent.classList.add('sidebar-expanded');
+            }
+            
+            sidebarExpanded = !sidebarExpanded;
+        });
+
+        // Sidebar hover functionality
+        document.getElementById('sidebar').addEventListener('mouseenter', function() {
+            if (!sidebarExpanded) {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+                mainContent.classList.remove('sidebar-collapsed');
+                mainContent.classList.add('sidebar-expanded');
+            }
+        });
+
+        document.getElementById('sidebar').addEventListener('mouseleave', function() {
+            if (!sidebarExpanded) {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                
+                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
+                mainContent.classList.remove('sidebar-expanded');
+                mainContent.classList.add('sidebar-collapsed');
+            }
+        });
+
+        // Menu navigation functions
+        function showCustomersOverview() {
+            hideAllContent();
+            document.getElementById('customersOverviewContent').classList.remove('hidden');
+            updateMenuHighlight('customers');
+        }
+
+        function showFinance() {
+            hideAllContent();
+            document.getElementById('financeContent').classList.remove('hidden');
+            updateMenuHighlight('finance');
+        }
+
+        function showGroundOperations() {
+            hideAllContent();
+            document.getElementById('groundOperationsContent').classList.remove('hidden');
+            updateMenuHighlight('ground');
+        }
+
+        function showInventoryManagement() {
+            hideAllContent();
+            document.getElementById('inventoryManagementContent').classList.remove('hidden');
+            updateMenuHighlight('inventory');
+        }
+
+        function hideAllContent() {
+            document.getElementById('customersOverviewContent').classList.add('hidden');
+            document.getElementById('financeContent').classList.add('hidden');
+            document.getElementById('groundOperationsContent').classList.add('hidden');
+            document.getElementById('inventoryManagementContent').classList.add('hidden');
+        }
+
+        function updateMenuHighlight(activeMenu) {
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('dark:bg-brand-blue-600', 'dark:text-utility-white');
+                item.classList.add('hover:dark:bg-dark-fill-base-600');
+            });
+            
+            // Add active class to the selected menu item based on the onclick attribute
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                if ((activeMenu === 'customers' && onclick.includes('showCustomersOverview')) ||
+                    (activeMenu === 'finance' && onclick.includes('showFinance')) ||
+                    (activeMenu === 'ground' && onclick.includes('showGroundOperations')) ||
+                    (activeMenu === 'inventory' && onclick.includes('showInventoryManagement'))) {
+                    item.classList.add('dark:bg-brand-blue-600', 'dark:text-utility-white');
+                    item.classList.remove('hover:dark:bg-dark-fill-base-600');
+                }
+            });
+        }
+
+        // Dashboard tab functions
+        function showAddTab() {
+            hideAllTabContent();
+            document.getElementById('addTabContent').classList.remove('hidden');
+            updateTabHighlight('addTab');
+        }
+
+        function showPOCTab() {
+            hideAllTabContent();
+            document.getElementById('pocTabContent').classList.remove('hidden');
+            updateTabHighlight('pocTab');
+        }
+
+        function showOnboardedTab() {
+            hideAllTabContent();
+            document.getElementById('onboardedTabContent').classList.remove('hidden');
+            updateTabHighlight('onboardedTab');
+        }
+
+        function showClosedLeadsTab() {
+            hideAllTabContent();
+            document.getElementById('closedLeadsTabContent').classList.remove('hidden');
+            updateTabHighlight('closedLeadsTab');
+        }
+
+        function hideAllTabContent() {
+            document.getElementById('addTabContent').classList.add('hidden');
+            document.getElementById('pocTabContent').classList.add('hidden');
+            document.getElementById('onboardedTabContent').classList.add('hidden');
+            document.getElementById('closedLeadsTabContent').classList.add('hidden');
+        }
+
+        function updateTabHighlight(activeTabId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.dashboard-tab').forEach(tab => {
+                tab.classList.remove('border-brand-blue-600', 'dark:text-brand-blue-600');
+                tab.classList.add('border-transparent');
+            });
+            
+            // Add active class to the selected tab
+            const activeTab = document.getElementById(activeTabId);
+            activeTab.classList.add('border-brand-blue-600', 'dark:text-brand-blue-600');
+            activeTab.classList.remove('border-transparent');
+        }
+
+        // Form modal functions
+        function showAddLeadForm() {
+            document.getElementById('addLeadModal').classList.remove('hidden');
+        }
+
+        function closeAddLeadForm() {
+            document.getElementById('addLeadModal').classList.add('hidden');
+        }
+
+        function showAddCustomerForm() {
+            document.getElementById('addCustomerModal').classList.remove('hidden');
+        }
+
+        function closeAddCustomerForm() {
+            document.getElementById('addCustomerModal').classList.add('hidden');
+        }
+
+        // Form submission handlers
+        document.getElementById('addLeadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Lead saved successfully!');
+            closeAddLeadForm();
+        });
+
+        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Customer saved successfully!');
+            closeAddCustomerForm();
+        });
+
+        // Logout function
+        function logout() {
+            document.getElementById('dashboardPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            
+            // Clear form fields
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Initialize active tab on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTabHighlight('addTab');
+        });
+    </script>
+
+    <next-route-announcer style="position: absolute;" data-scrapbook-shadowdom="&lt;div aria-live=&quot;assertive&quot; id=&quot;__next-route-announcer__&quot; role=&quot;alert&quot; style=&quot;position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;&quot;&gt;&lt;/div&gt;"></next-route-announcer>
+    <script data-scrapbook-elem="basic-loader">(function () { var k1 = "data-scrapbook-shadowdom", k2 = "data-scrapbook-canvas", k3 = "data-scrapbook-input-indeterminate", k4 = "data-scrapbook-input-checked", k5 = "data-scrapbook-option-selected", k6 = "data-scrapbook-input-value", k7 = "data-scrapbook-textarea-value", k8 = "data-scrapbook-adoptedstylesheets", k9 = /^data-scrapbook-adoptedstylesheet-(\d+)$/, k10 = "data-scrapbook-shadowdom-mode", k11 = "data-scrapbook-shadowdom-clonable", k12 = "data-scrapbook-shadowdom-delegates-focus", k13 = "data-scrapbook-shadowdom-serializable", k14 = "data-scrapbook-shadowdom-slot-assignment", k15 = "data-scrapbook-slot-assigned", k16 = "data-scrapbook-slot-index", k17 = /^scrapbook-slot-index=(\d+)$/, k18 = '/scrapbook-slot-index', d = document, r = d.documentElement, $s = !!r.attachShadow, $as = !!d.adoptedStyleSheets, $c = !!window.HTMLCanvasElement, $sa = !!d.createElement('slot').assign, sle = [], sls = [], slt = function (r) { if ($sa) { var E = r.childNodes, i, e, s, m; for (i = 0; i < E.length; i++) { e = E[i]; if (e.nodeType === 8) { s = e.nodeValue; if (m = s.match(k17)) { s = e.nextSibling; if (s.nodeType === 3) { sls[m[1]] = s; } r.removeChild(e); i--; } else if (s === k18) { r.removeChild(e); i--; } } } } }, sl = function () { var i = sle.length, j, d, e; while (i--) { d = sle[i]; e = d.elem; d = d.value.split(','); j = d.length; while (j--) { d[j] = sls[parseInt(d[j], 10)]; } try { try { e.assign.apply(e, d); } catch (ex) { if (ex.message.includes('must have a callable @@iterator')) { e.assign(d); } else { throw ex; } } } catch (ex) { console.error(ex); } } }, asl = (function (r) { var l = [], E, i, e, m, c, j; if ($as) { E = r.attributes; i = E.length; while (i--) { e = E[i]; if (!(m = e.nodeName.match(k9))) { continue; } c = l[m[1]] = new CSSStyleSheet(); r.removeAttribute(m[0]); m = e.nodeValue.split('\n\n'); j = m.length; while (j--) { try { m[j] && c.insertRule(m[j]); } catch (ex) { console.error(ex); } } } } return l; })(r), as = function (d, e) { var l, i, I; if ($as && (l = e.getAttribute(k8)) !== null) { l = l.split(',').map(i => asl[i]); d.adoptedStyleSheets = d.adoptedStyleSheets.concat(l); e.removeAttribute(k8); } }, fn = function (r) { var E = r.querySelectorAll ? r.querySelectorAll("*") : r.getElementsByTagName("*"), i = E.length, e, d, s, m; while (i--) { e = E[i]; s = e.shadowRoot; if ($s && (d = e.getAttribute(k1))) { if (!s) { try { s = e.attachShadow({ mode: (m = e.getAttribute(k10)) !== null ? m : 'open', clonable: e.hasAttribute(k11), delegatesFocus: e.hasAttribute(k12), serializable: e.hasAttribute(k13), slotAssignment: (m = e.getAttribute(k14)) !== null ? m : void 0, }); s.innerHTML = d; } catch (ex) { console.error(ex); } } e.removeAttribute(k1); e.removeAttribute(k10); e.removeAttribute(k11); e.removeAttribute(k12); e.removeAttribute(k13); e.removeAttribute(k14); } if ($c && (d = e.getAttribute(k2)) !== null) { (function () { var c = e, g = new Image(); g.onload = function () { c.getContext('2d').drawImage(g, 0, 0); }; g.src = d; })(); e.removeAttribute(k2); } if ((d = e.getAttribute(k3)) !== null) { e.indeterminate = true; e.removeAttribute(k3); } if ((d = e.getAttribute(k4)) !== null) { e.checked = d === 'true'; e.removeAttribute(k4); } if ((d = e.getAttribute(k5)) !== null) { e.selected = d === 'true'; e.removeAttribute(k5); } if ((d = e.getAttribute(k6)) !== null) { e.value = d; e.removeAttribute(k6); } if ((d = e.getAttribute(k7)) !== null) { e.value = d; e.removeAttribute(k7); } if ($sa && (d = e.getAttribute(k15)) !== null) { sle.push({elem: e, value: d}); e.removeAttribute(k15); } if ($sa && (d = e.getAttribute(k16)) !== null) { sls[d] = e; e.removeAttribute(k16); } if (s) { slt(e); as(s, e); fn(s); } } }; as(d, r); fn(d); sl(); })()</script>
+</body>
+</html>
