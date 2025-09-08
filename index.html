@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-scrapbook-source="https://beta.cautio.in/en/auth/login?m_logout=false&amp;redirect=fleet?m_logout=false" data-scrapbook-create="20250904045553117">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <title>Cautio</title>
     <link rel="icon" href="favicon.ico">
-    <meta name="next-size-adjust">
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -250,11 +249,11 @@
                     <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600 truncate">Cautio</span>
                 </div>
                 <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600 hamburger-lines">
-                        <line x1="3" x2="21" y1="6" y2="6"/>
-                        <line x1="3" x2="21" y1="12" y2="12"/>
-                        <line x1="3" x2="21" y1="18" y2="18"/>
-                    </svg>
+                    <div class="hamburger-icon w-5 h-5 flex flex-col justify-center items-center space-y-1">
+                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
+                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
+                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
+                    </div>
                 </button>
             </div>
 
@@ -309,6 +308,7 @@
                     <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
                     <div class="flex items-center gap-4">
                         <span id="totalCustomersHeader" class="text-body-l-regular dark:text-dark-base-600">Total Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
+                        <span id="totalLeadsHeader" class="text-body-l-regular dark:text-dark-base-600">Total Leads: <span id="totalLeadsHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
                         <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -328,8 +328,17 @@
                     <!-- Total Customers Count -->
                     <div class="text-center mb-8">
                         <div class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers</h2>
-                            <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
+                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers & Leads</h2>
+                            <div class="flex gap-8">
+                                <div>
+                                    <p class="text-body-l-regular dark:text-dark-base-500 mb-1">Customers</p>
+                                    <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
+                                </div>
+                                <div>
+                                    <p class="text-body-l-regular dark:text-dark-base-500 mb-1">Leads</p>
+                                    <p id="totalLeadsDisplay" class="text-display-3 dark:text-dark-success-600">0</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -339,6 +348,9 @@
                             <div class="flex space-x-8">
                                 <button onclick="showAddTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600 active" id="addTab">
                                     Add
+                                </button>
+                                <button onclick="showLeadsTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="leadsTab">
+                                    Leads
                                 </button>
                                 <button onclick="showPOCTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="pocTab">
                                     POC
@@ -397,6 +409,23 @@
                                     <h3 class="text-heading-7 dark:text-dark-base-600 text-center mb-2">Add New Customer</h3>
                                     <p class="text-body-m-regular dark:text-dark-base-500 text-center">Onboard a new customer</p>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Leads Tab Content -->
+                        <div id="leadsTabContent" class="hidden">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">All Leads</h3>
+                                <button onclick="showAddLeadForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                    Add New Lead
+                                </button>
+                            </div>
+                            <div id="leadsList" class="space-y-4">
+                                <!-- Leads will be populated here -->
+                            </div>
+                            <div id="leadsEmptyState" class="text-center py-12">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Leads</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No leads found</p>
                             </div>
                         </div>
 
@@ -574,6 +603,8 @@
                         <option>In Progress</option>
                         <option>Qualified</option>
                         <option>Not Qualified</option>
+                        <option>Converted</option>
+                        <option>Closed</option>
                     </select>
                 </div>
                 
@@ -792,6 +823,62 @@
         </div>
     </div>
 
+    <!-- Manual Email Scheduling Modal -->
+    <div id="manualEmailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Schedule Email</h2>
+                <button onclick="closeManualEmailModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="manualEmailForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer</label>
+                    <p id="selectedCustomerName" class="text-body-m-regular dark:text-dark-base-500 mb-2"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email Type</label>
+                    <select name="emailType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option value="poc_reminder">POC Reminder</option>
+                        <option value="followup">Follow-up</option>
+                        <option value="onboarding_reminder">Onboarding Reminder</option>
+                        <option value="custom">Custom Message</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Date</label>
+                    <input type="date" name="scheduleDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Time</label>
+                    <input type="time" name="scheduleTime" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                
+                <div id="customMessageDiv" class="hidden">
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Message</label>
+                    <textarea name="customMessage" rows="4" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Schedule Email
+                    </button>
+                    <button type="button" onclick="closeManualEmailModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Email Status Toast -->
     <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm bg-green-600 text-white p-4 rounded-lg shadow-lg">
         <div class="flex items-center">
@@ -803,7 +890,5 @@
     </div>
 
     <script src="script.js"></script>
-    <next-route-announcer style="position: absolute;" data-scrapbook-shadowdom="&lt;div aria-live=&quot;assertive&quot; id=&quot;__next-route-announcer__&quot; role=&quot;alert&quot; style=&quot;position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;&quot;&gt;&lt;/div&gt;"></next-route-announcer>
-    <script data-scrapbook-elem="basic-loader">(function () { var k1 = "data-scrapbook-shadowdom", k2 = "data-scrapbook-canvas", k3 = "data-scrapbook-input-indeterminate", k4 = "data-scrapbook-input-checked", k5 = "data-scrapbook-option-selected", k6 = "data-scrapbook-input-value", k7 = "data-scrapbook-textarea-value", k8 = "data-scrapbook-adoptedstylesheets", k9 = /^data-scrapbook-adoptedstylesheet-(\d+)$/, k10 = "data-scrapbook-shadowdom-mode", k11 = "data-scrapbook-shadowdom-clonable", k12 = "data-scrapbook-shadowdom-delegates-focus", k13 = "data-scrapbook-shadowdom-serializable", k14 = "data-scrapbook-shadowdom-slot-assignment", k15 = "data-scrapbook-slot-assigned", k16 = "data-scrapbook-slot-index", k17 = /^scrapbook-slot-index=(\d+)$/, k18 = '/scrapbook-slot-index', d = document, r = d.documentElement, $s = !!r.attachShadow, $as = !!d.adoptedStyleSheets, $c = !!window.HTMLCanvasElement, $sa = !!d.createElement('slot').assign, sle = [], sls = [], slt = function (r) { if ($sa) { var E = r.childNodes, i, e, s, m; for (i = 0; i < E.length; i++) { e = E[i]; if (e.nodeType === 8) { s = e.nodeValue; if (m = s.match(k17)) { s = e.nextSibling; if (s.nodeType === 3) { sls[m[1]] = s; } r.removeChild(e); i--; } else if (s === k18) { r.removeChild(e); i--; } } } } }, sl = function () { var i = sle.length, j, d, e; while (i--) { d = sle[i]; e = d.elem; d = d.value.split(','); j = d.length; while (j--) { d[j] = sls[parseInt(d[j], 10)]; } try { try { e.assign.apply(e, d); } catch (ex) { if (ex.message.includes('must have a callable @@iterator')) { e.assign(d); } else { throw ex; } } } catch (ex) { console.error(ex); } } }, asl = (function (r) { var l = [], E, i, e, m, c, j; if ($as) { E = r.attributes; i = E.length; while (i--) { e = E[i]; if (!(m = e.nodeName.match(k9))) { continue; } c = l[m[1]] = new CSSStyleSheet(); r.removeAttribute(m[0]); m = e.nodeValue.split('\n\n'); j = m.length; while (j--) { try { m[j] && c.insertRule(m[j]); } catch (ex) { console.error(ex); } } } } return l; })(r), as = function (d, e) { var l, i, I; if ($as && (l = e.getAttribute(k8)) !== null) { l = l.split(',').map(i => asl[i]); d.adoptedStyleSheets = d.adoptedStyleSheets.concat(l); e.removeAttribute(k8); } }, fn = function (r) { var E = r.querySelectorAll ? r.querySelectorAll("*") : r.getElementsByTagName("*"), i = E.length, e, d, s, m; while (i--) { e = E[i]; s = e.shadowRoot; if ($s && (d = e.getAttribute(k1))) { if (!s) { try { s = e.attachShadow({ mode: (m = e.getAttribute(k10)) !== null ? m : 'open', clonable: e.hasAttribute(k11), delegatesFocus: e.hasAttribute(k12), serializable: e.hasAttribute(k13), slotAssignment: (m = e.getAttribute(k14)) !== null ? m : void 0, }); s.innerHTML = d; } catch (ex) { console.error(ex); } } e.removeAttribute(k1); e.removeAttribute(k10); e.removeAttribute(k11); e.removeAttribute(k12); e.removeAttribute(k13); e.removeAttribute(k14); } if ($c && (d = e.getAttribute(k2)) !== null) { (function () { var c = e, g = new Image(); g.onload = function () { c.getContext('2d').drawImage(g, 0, 0); }; g.src = d; })(); e.removeAttribute(k2); } if ((d = e.getAttribute(k3)) !== null) { e.indeterminate = true; e.removeAttribute(k3); } if ((d = e.getAttribute(k4)) !== null) { e.checked = d === 'true'; e.removeAttribute(k4); } if ((d = e.getAttribute(k5)) !== null) { e.selected = d === 'true'; e.removeAttribute(k5); } if ((d = e.getAttribute(k6)) !== null) { e.value = d; e.removeAttribute(k6); } if ((d = e.getAttribute(k7)) !== null) { e.value = d; e.removeAttribute(k7); } if ($sa && (d = e.getAttribute(k15)) !== null) { sle.push({elem: e, value: d}); e.removeAttribute(k15); } if ($sa && (d = e.getAttribute(k16)) !== null) { sls[d] = e; e.removeAttribute(k16); } if (s) { slt(e); as(s, e); fn(s); } } }; as(d, r); fn(d); sl(); })()</script>
 </body>
 </html>
