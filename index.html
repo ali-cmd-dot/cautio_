@@ -1,19 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-scrapbook-source="https://beta.cautio.in/en/auth/login?m_logout=false&amp;redirect=fleet?m_logout=false" data-scrapbook-create="20250904045553117">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <title>Cautio</title>
     <link rel="icon" href="favicon.ico">
+    <meta name="next-size-adjust">
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body class="__variable_3c557b dark font-sans dark:bg-dark-fill-base-400 locale-en" style="--primary-font:'__Inter_e8ce0c', '__Inter_Fallback_e8ce0c'">
     
-    <!-- Login Page -->
+    <!-- Login Page (Original) -->
     <div id="loginPage" class="ml-5 min-h-screen flex-1 pr-6" style="padding-left:4.68rem;padding-top:0">
+        <style>
+            #nprogress {
+                pointer-events: none;
+            }
+
+            #nprogress .bar {
+                background: #0045ff;
+                position: fixed;
+                z-index: 99999;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+            }
+
+            #nprogress .peg {
+                display: block;
+                position: absolute;
+                right: 0px;
+                width: 100px;
+                height: 100%;
+                box-shadow: 0 0 10px #0045ff, 0 0 5px #0045ff;
+                opacity: 1.0;
+                -webkit-transform: rotate(3deg) translate(0px, -4px);
+                -ms-transform: rotate(3deg) translate(0px, -4px);
+                transform: rotate(3deg) translate(0px, -4px);
+            }
+
+            #nprogress .spinner {
+                display: block;
+                position: fixed;
+                z-index: 1031;
+                top: 15px;
+                right: 15px;
+            }
+
+            #nprogress .spinner-icon {
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: solid 2px transparent;
+                border-top-color: #0045ff;
+                border-left-color: #0045ff;
+                border-radius: 50%;
+                -webkit-animation: nprogress-spinner 400ms linear infinite;
+                animation: nprogress-spinner 400ms linear infinite;
+            }
+
+            .nprogress-custom-parent {
+                overflow: hidden;
+                position: relative;
+            }
+
+            .nprogress-custom-parent #nprogress .spinner,
+            .nprogress-custom-parent #nprogress .bar {
+                position: absolute;
+            }
+
+            @-webkit-keyframes nprogress-spinner {
+                0%   { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+            }
+            @keyframes nprogress-spinner {
+                0%   { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+        
         <div>
             <div class="grid grid-cols-2">
                 <div class="relative flex items-center justify-center sm:mt-0">
@@ -46,17 +115,17 @@
                         <form id="loginForm" class="gap-4" novalidate="">
                             <div class="mb-5">
                                 <div class="flex flex-col items-start">
-                                    <label for="email" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email</label>
+                                    <label for=":Rujttvejsq:" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email</label>
                                     <div class="relative flex w-full items-center">
-                                        <input id="email" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="example@gmail.com" name="email" value="">
+                                        <input id=":Rujttvejsq:" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="example@gmail.com" name="email" value="">
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-3 mt-5">
                                 <div class="flex flex-col items-start">
-                                    <label for="password" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Password</label>
+                                    <label for=":R1ejttvejsq:" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Password</label>
                                     <div class="relative flex w-full items-center">
-                                        <input id="password" style="padding-right: 44px;" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="password" placeholder="Password" name="password" value="">
+                                        <input id=":R1ejttvejsq:" style="padding-right: 44px;" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="password" placeholder="Password" name="password" value="">
                                         <div class="absolute right-2 top-1/2 flex -translate-y-1/2 items-center space-x-2">
                                             <span class="cursor-pointer" onclick="togglePasswordVisibility()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-6 w-6 text-dark-stroke-base-600">
@@ -521,6 +590,44 @@
         </div>
     </div>
 
+    <!-- POC Action Modal -->
+    <div id="pocActionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">POC Action Required</h2>
+                <button onclick="closePOCActionModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-body-l-regular dark:text-dark-base-600 mb-4">
+                    Customer: <span id="pocCustomerName" class="font-semibold"></span>
+                </p>
+                <p class="text-body-m-regular dark:text-dark-base-500 mb-6">
+                    What would you like to do with this POC?
+                </p>
+                
+                <div class="space-y-3">
+                    <button onclick="extendPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Extend POC by 10 days
+                    </button>
+                    <button onclick="endPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
+                        End POC
+                    </button>
+                    <button onclick="onboardCustomer()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
+                        Onboard Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <next-route-announcer style="position: absolute;" data-scrapbook-shadowdom="&lt;div aria-live=&quot;assertive&quot; id=&quot;__next-route-announcer__&quot; role=&quot;alert&quot; style=&quot;position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;&quot;&gt;&lt;/div&gt;"></next-route-announcer>
+    <script data-scrapbook-elem="basic-loader">(function () { var k1 = "data-scrapbook-shadowdom", k2 = "data-scrapbook-canvas", k3 = "data-scrapbook-input-indeterminate", k4 = "data-scrapbook-input-checked", k5 = "data-scrapbook-option-selected", k6 = "data-scrapbook-input-value", k7 = "data-scrapbook-textarea-value", k8 = "data-scrapbook-adoptedstylesheets", k9 = /^data-scrapbook-adoptedstylesheet-(\d+)$/, k10 = "data-scrapbook-shadowdom-mode", k11 = "data-scrapbook-shadowdom-clonable", k12 = "data-scrapbook-shadowdom-delegates-focus", k13 = "data-scrapbook-shadowdom-serializable", k14 = "data-scrapbook-shadowdom-slot-assignment", k15 = "data-scrapbook-slot-assigned", k16 = "data-scrapbook-slot-index", k17 = /^scrapbook-slot-index=(\d+)$/, k18 = '/scrapbook-slot-index', d = document, r = d.documentElement, $s = !!r.attachShadow, $as = !!d.adoptedStyleSheets, $c = !!window.HTMLCanvasElement, $sa = !!d.createElement('slot').assign, sle = [], sls = [], slt = function (r) { if ($sa) { var E = r.childNodes, i, e, s, m; for (i = 0; i < E.length; i++) { e = E[i]; if (e.nodeType === 8) { s = e.nodeValue; if (m = s.match(k17)) { s = e.nextSibling; if (s.nodeType === 3) { sls[m[1]] = s; } r.removeChild(e); i--; } else if (s === k18) { r.removeChild(e); i--; } } } } }, sl = function () { var i = sle.length, j, d, e; while (i--) { d = sle[i]; e = d.elem; d = d.value.split(','); j = d.length; while (j--) { d[j] = sls[parseInt(d[j], 10)]; } try { try { e.assign.apply(e, d); } catch (ex) { if (ex.message.includes('must have a callable @@iterator')) { e.assign(d); } else { throw ex; } } } catch (ex) { console.error(ex); } } }, asl = (function (r) { var l = [], E, i, e, m, c, j; if ($as) { E = r.attributes; i = E.length; while (i--) { e = E[i]; if (!(m = e.nodeName.match(k9))) { continue; } c = l[m[1]] = new CSSStyleSheet(); r.removeAttribute(m[0]); m = e.nodeValue.split('\n\n'); j = m.length; while (j--) { try { m[j] && c.insertRule(m[j]); } catch (ex) { console.error(ex); } } } } return l; })(r), as = function (d, e) { var l, i, I; if ($as && (l = e.getAttribute(k8)) !== null) { l = l.split(',').map(i => asl[i]); d.adoptedStyleSheets = d.adoptedStyleSheets.concat(l); e.removeAttribute(k8); } }, fn = function (r) { var E = r.querySelectorAll ? r.querySelectorAll("*") : r.getElementsByTagName("*"), i = E.length, e, d, s, m; while (i--) { e = E[i]; s = e.shadowRoot; if ($s && (d = e.getAttribute(k1))) { if (!s) { try { s = e.attachShadow({ mode: (m = e.getAttribute(k10)) !== null ? m : 'open', clonable: e.hasAttribute(k11), delegatesFocus: e.hasAttribute(k12), serializable: e.hasAttribute(k13), slotAssignment: (m = e.getAttribute(k14)) !== null ? m : void 0, }); s.innerHTML = d; } catch (ex) { console.error(ex); } } e.removeAttribute(k1); e.removeAttribute(k10); e.removeAttribute(k11); e.removeAttribute(k12); e.removeAttribute(k13); e.removeAttribute(k14); } if ($c && (d = e.getAttribute(k2)) !== null) { (function () { var c = e, g = new Image(); g.onload = function () { c.getContext('2d').drawImage(g, 0, 0); }; g.src = d; })(); e.removeAttribute(k2); } if ((d = e.getAttribute(k3)) !== null) { e.indeterminate = true; e.removeAttribute(k3); } if ((d = e.getAttribute(k4)) !== null) { e.checked = d === 'true'; e.removeAttribute(k4); } if ((d = e.getAttribute(k5)) !== null) { e.selected = d === 'true'; e.removeAttribute(k5); } if ((d = e.getAttribute(k6)) !== null) { e.value = d; e.removeAttribute(k6); } if ((d = e.getAttribute(k7)) !== null) { e.value = d; e.removeAttribute(k7); } if ($sa && (d = e.getAttribute(k15)) !== null) { sle.push({elem: e, value: d}); e.removeAttribute(k15); } if ($sa && (d = e.getAttribute(k16)) !== null) { sls[d] = e; e.removeAttribute(k16); } if (s) { slt(e); as(s, e); fn(s); } } }; as(d, r); fn(d); sl(); })()</script>
 </body>
 </html>
