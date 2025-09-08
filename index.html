@@ -249,10 +249,10 @@
                     <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600 truncate">Cautio</span>
                 </div>
                 <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
-                    <div class="hamburger-icon w-5 h-5 flex flex-col justify-center items-center space-y-1">
-                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
-                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
-                        <div class="hamburger-line w-5 h-0.5 bg-dark-base-600 transition-all duration-300"></div>
+                    <div class="hamburger-menu-icon">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
                     </div>
                 </button>
             </div>
@@ -307,8 +307,7 @@
                 <div class="flex items-center justify-between">
                     <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
                     <div class="flex items-center gap-4">
-                        <span id="totalCustomersHeader" class="text-body-l-regular dark:text-dark-base-600">Total Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
-                        <span id="totalLeadsHeader" class="text-body-l-regular dark:text-dark-base-600">Total Leads: <span id="totalLeadsHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
+                        <span onclick="showAllCustomers()" class="text-body-l-regular dark:text-dark-base-600 cursor-pointer hover:dark:text-brand-blue-600 transition-colors">Total Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
                         <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -327,39 +326,34 @@
                 <div id="customersOverviewContent">
                     <!-- Total Customers Count -->
                     <div class="text-center mb-8">
-                        <div class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers & Leads</h2>
-                            <div class="flex gap-8">
-                                <div>
-                                    <p class="text-body-l-regular dark:text-dark-base-500 mb-1">Customers</p>
-                                    <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
-                                </div>
-                                <div>
-                                    <p class="text-body-l-regular dark:text-dark-base-500 mb-1">Leads</p>
-                                    <p id="totalLeadsDisplay" class="text-display-3 dark:text-dark-success-600">0</p>
-                                </div>
-                            </div>
+                        <div onclick="showAllCustomers()" class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-colors">
+                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers</h2>
+                            <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
                         </div>
                     </div>
 
-                    <!-- Dashboard Tabs and Search -->
+                    <!-- Dashboard Tabs -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex space-x-8">
-                                <button onclick="showAddTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600 active" id="addTab">
-                                    Add
+                            <div class="flex space-x-0">
+                                <button onclick="showAddTab()" class="tab-button active" id="addTab">
+                                    <span class="tab-label">Add</span>
                                 </button>
-                                <button onclick="showLeadsTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="leadsTab">
-                                    Leads
+                                <button onclick="showLeadsTab()" class="tab-button" id="leadsTab">
+                                    <span class="tab-label">Leads</span>
+                                    <span class="tab-count" id="leadsCount">0</span>
                                 </button>
-                                <button onclick="showPOCTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="pocTab">
-                                    POC
+                                <button onclick="showPOCTab()" class="tab-button" id="pocTab">
+                                    <span class="tab-label">POC</span>
+                                    <span class="tab-count" id="pocCount">0</span>
                                 </button>
-                                <button onclick="showOnboardedTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="onboardedTab">
-                                    Onboarded Customers
+                                <button onclick="showOnboardedTab()" class="tab-button" id="onboardedTab">
+                                    <span class="tab-label">Onboarded</span>
+                                    <span class="tab-count" id="onboardedCount">0</span>
                                 </button>
-                                <button onclick="showClosedLeadsTab()" class="dashboard-tab py-3 px-6 border-b-2 border-transparent text-body-l-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600 hover:border-brand-blue-600" id="closedLeadsTab">
-                                    Closed Leads
+                                <button onclick="showClosedLeadsTab()" class="tab-button" id="closedLeadsTab">
+                                    <span class="tab-label">Closed</span>
+                                    <span class="tab-count" id="closedCount">0</span>
                                 </button>
                             </div>
                             
@@ -377,7 +371,6 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="border-b dark:border-dark-stroke-contrast-400"></div>
                     </div>
 
                     <!-- Tab Content -->
@@ -464,6 +457,23 @@
                     </div>
                 </div>
 
+                <!-- Finance Content -->
+                <div id="financeContent" class="hidden">
+                    <div class="mb-8">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Finance - Customer Approval</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Review and approve pending customer onboardings</p>
+                    </div>
+
+                    <div id="pendingApprovalsList" class="space-y-4">
+                        <!-- Pending approvals will be populated here -->
+                    </div>
+                    
+                    <div id="financeEmptyState" class="text-center py-12">
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">All customer onboardings have been processed</p>
+                    </div>
+                </div>
+
                 <!-- Add Credentials Content -->
                 <div id="addCredentialsContent" class="hidden">
                     <div class="mb-8">
@@ -535,13 +545,6 @@
                 </div>
 
                 <!-- Other page contents -->
-                <div id="financeContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Finance</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Finance management content will be displayed here</p>
-                    </div>
-                </div>
-
                 <div id="groundOperationsContent" class="hidden">
                     <div class="text-center py-12">
                         <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
@@ -620,7 +623,7 @@
         </div>
     </div>
 
-    <!-- Add Customer Form Modal -->
+    <!-- Add Customer Multi-Step Form Modal -->
     <div id="addCustomerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
@@ -632,156 +635,199 @@
                     </svg>
                 </button>
             </div>
+
+            <!-- Step Indicator -->
+            <div class="mb-6">
+                <div class="flex items-center">
+                    <div class="step-indicator active" id="step1Indicator">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Basic Details</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator" id="step2Indicator">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Requirements & POC</div>
+                    </div>
+                </div>
+            </div>
             
-            <form id="addCustomerForm" class="space-y-6">
-                <!-- Account Manager Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name of Account Manager</label>
-                        <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
-                    </div>
+            <form id="addCustomerForm">
+                <!-- Step 1: Basic Details -->
+                <div id="step1Content">
+                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Basic Customer Information</h3>
                     
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Employee ID of Account Manager</label>
-                        <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter employee ID" required>
+                    <!-- Account Manager Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name of Account Manager</label>
+                            <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Employee ID of Account Manager</label>
+                            <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter employee ID" required>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                            <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile no.</label>
+                            <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter mobile number" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
+                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
+                    </div>
+
+                    <!-- Lead Source -->
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source (Select multiple)</label>
+                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 max-h-48 overflow-y-auto">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="social_media" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Other Digital Channels (Social Media)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="market_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Market Referrals (friend of Cautio)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="onground_marketing" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Onground Marketing (Roadshows, Events, Tradeshows, others etc.)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="field_sales" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Field Sales (walk-ins, via drivers or fleets)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="word_of_mouth" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">WORD OF MOUTH</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="customer_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Customer Referrals (customer of Cautio)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="cold_outreach" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach (Email or Call)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="linkedin" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">LinkedIn</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="channel_partners" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Channel Partners (Redbus, Wheelseye, others etc.)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="website_form" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Website Form (cautio.in/com)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="other" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button" onclick="goToStep2()" class="py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Next
+                        </button>
                     </div>
                 </div>
 
-                <!-- Customer Details -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                        <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
-                    </div>
+                <!-- Step 2: Requirements & POC -->
+                <div id="step2Content" class="hidden">
+                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Requirements & POC Details</h3>
                     
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile no.</label>
-                        <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter mobile number" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
-                    <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
-                </div>
-
-                <!-- Lead Source -->
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source (Select multiple)</label>
-                    <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 max-h-48 overflow-y-auto">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <!-- Customer Requirements -->
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
+                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 space-y-2">
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="social_media" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Other Digital Channels (Social Media)</span>
+                                <input type="checkbox" name="requirements" value="driver_no_uniform" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver has not worn uniform</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="market_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Market Referrals (friend of Cautio)</span>
+                                <input type="checkbox" name="requirements" value="driver_seatbelt" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver Seatbelt is unfastened</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="onground_marketing" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Onground Marketing (Roadshows, Events, Tradeshows, others etc.)</span>
+                                <input type="checkbox" name="requirements" value="driver_on_call" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver on call</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="field_sales" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Field Sales (walk-ins, via drivers or fleets)</span>
+                                <input type="checkbox" name="requirements" value="driver_smoking" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is smoking</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="word_of_mouth" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">WORD OF MOUTH</span>
+                                <input type="checkbox" name="requirements" value="driver_consuming" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is Consuming Paan Masala/ Alcohol</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="customer_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Customer Referrals (customer of Cautio)</span>
+                                <input type="checkbox" name="requirements" value="driver_drowsiness" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Signs of driver drowsiness detected</span>
                             </label>
                             <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="cold_outreach" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach (Email or Call)</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="linkedin" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">LinkedIn</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="channel_partners" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Channel Partners (Redbus, Wheelseye, others etc.)</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="website_form" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Website Form (cautio.in/com)</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="leadSource" value="other" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
+                                <input type="checkbox" name="requirements" value="overspeed_alert" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Overspeed Alert detected (__km/h)</span>
                             </label>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Customer Requirements -->
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
-                    <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 space-y-2">
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_no_uniform" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver has not worn uniform</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_seatbelt" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver Seatbelt is unfastened</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_on_call" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver on call</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_smoking" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver is smoking</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_consuming" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver is Consuming Paan Masala/ Alcohol</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="driver_drowsiness" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Signs of driver drowsiness detected</span>
-                        </label>
-                        <label class="flex items-start">
-                            <input type="checkbox" name="requirements" value="overspeed_alert" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Overspeed Alert detected (__km/h)</span>
-                        </label>
+                    
+                    <!-- POC Type and Duration -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
+                            <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <option value="free_poc">Free POC</option>
+                                <option value="paid_poc">Paid POC</option>
+                                <option value="direct_onboarding">Direct Onboarding</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Duration</label>
+                            <div class="flex gap-2">
+                                <select name="pocDuration" id="pocDurationSelect" class="flex-1 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                    <option value="15">15 days</option>
+                                    <option value="30" selected>30 days</option>
+                                    <option value="45">45 days</option>
+                                    <option value="60">60 days</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                                <div id="customDurationDiv" class="hidden flex items-center gap-2">
+                                    <input type="number" name="customDuration" id="customDurationInput" min="1" max="365" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="30">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">days</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- POC Type and Dates -->
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
-                    <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option value="free_poc">Free POC</option>
-                        <option value="paid_poc">Paid POC</option>
-                        <option value="direct_onboarding">Direct Onboarding</option>
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    
+                    <div class="mb-6">
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Start Date</label>
                         <input type="date" name="pocStartDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                     </div>
                     
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC End Date</label>
-                        <input type="date" name="pocEndDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    <div class="flex gap-4 pt-4">
+                        <button type="button" onclick="goToStep1()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Back
+                        </button>
+                        <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Save Customer
+                        </button>
                     </div>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Save Customer
-                    </button>
-                    <button type="button" onclick="closeAddCustomerForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
                 </div>
             </form>
         </div>
@@ -809,15 +855,34 @@
                 </p>
                 
                 <div class="space-y-3">
-                    <button onclick="extendPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Extend POC by 10 days
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="showExtendPOCForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Extend POC
+                        </button>
+                    </div>
                     <button onclick="endPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
                         End POC
                     </button>
                     <button onclick="onboardCustomer()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
                         Onboard Customer
                     </button>
+                </div>
+
+                <!-- Extend POC Form -->
+                <div id="extendPOCForm" class="hidden mt-4 p-4 border-t dark:border-dark-stroke-contrast-400">
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Extend by how many days?</label>
+                    <div class="flex items-center gap-2 mb-4">
+                        <input type="number" id="extendDaysInput" min="1" max="365" value="10" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <span class="text-body-m-regular dark:text-dark-base-600">days</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="confirmExtendPOC()" class="flex-1 py-2 px-4 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Confirm Extend
+                        </button>
+                        <button onclick="hideExtendPOCForm()" class="py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
