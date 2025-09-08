@@ -49,6 +49,7 @@
 .gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}
 .space-x-8>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * calc(1 - var(--tw-space-x-reverse)))}
 .space-x-0>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0px * var(--tw-space-x-reverse));margin-left:calc(0px * calc(1 - var(--tw-space-x-reverse)))}
+.space-x-1>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}
 .space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem * var(--tw-space-y-reverse))}
 .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem * var(--tw-space-y-reverse))}
 .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem * var(--tw-space-y-reverse))}
@@ -78,6 +79,7 @@
 .font-sans{font-family:var(--primary-font),ui-sans-serif,system-ui,sans-serif}
 .font-semibold{font-weight:600}
 .text-white{color:#fff}.text-xs{font-size:.75rem;line-height:1rem}
+.text-green-600{color:#059669}.text-blue-600{color:#2563eb}
 
 .text-heading-5{font-size:var(--font-size-heading-5);line-height:var(--line-height-heading-5);letter-spacing:var(--letter-spacing-heading-5);font-weight:600}
 .text-heading-6{font-size:var(--font-size-heading-6);line-height:var(--line-height-heading-6);letter-spacing:var(--letter-spacing-heading-6);font-weight:600}
@@ -234,7 +236,18 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     margin-left: 16rem;
 }
 
-/* FIXED: Hamburger Menu - Perfect 3-line alignment */
+/* FIXED: Hamburger Menu - Perfect alignment and positioning */
+.hamburger-button {
+    position: relative;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+}
+
 .hamburger-menu-icon {
     display: flex;
     flex-direction: column;
@@ -268,51 +281,45 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     transform: translateY(-6px) rotate(-45deg);
 }
 
-/* Custom Tab Button Styling - Like Screenshot */
+/* FIXED: Tab Button Styling - Fully rounded and proper highlighting */
 .tab-button {
     position: relative;
     display: inline-flex;
     align-items: center;
-    padding: 12px 24px;
+    padding: 12px 20px;
     background: #2d3748;
-    border: none;
-    border-radius: 25px 25px 0 0;
-    margin-right: -1px;
+    border: 2px solid transparent;
+    border-radius: 20px; /* Fully rounded instead of just top */
+    margin-right: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
     font-weight: 600;
     font-size: 0.875rem;
     color: #a0aec0;
-    min-height: 48px;
-}
-
-.tab-button:first-child {
-    border-radius: 25px 0 0 0;
-}
-
-.tab-button:last-child {
-    border-radius: 0 25px 0 0;
-    margin-right: 0;
-}
-
-.tab-button.active {
-    background: #4a5568;
-    color: #0045ff;
-    border-bottom-color: #0045ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.2);
+    min-height: 44px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-button:hover:not(.active) {
     background: #3a4a5c;
     color: #cbd5e0;
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
+    color: #ffffff;
+    border-color: #0045ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 69, 255, 0.3);
+    font-weight: 700;
 }
 
 .tab-label {
     display: block;
     line-height: 1.2;
+    white-space: nowrap;
 }
 
 .tab-count {
@@ -321,19 +328,26 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     justify-content: center;
     margin-left: 8px;
     padding: 2px 8px;
-    background: rgba(0, 69, 255, 0.8);
-    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 700;
     min-width: 20px;
     height: 20px;
     line-height: 1;
+    backdrop-filter: blur(4px);
 }
 
 .tab-button.active .tab-count {
-    background: #0045ff;
-    color: white;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button:not(.active) .tab-count {
+    background: rgba(0, 69, 255, 0.6);
+    color: #ffffff;
 }
 
 /* Multi-step form styling */
@@ -708,6 +722,7 @@ button:active {
     .tab-button {
         padding: 8px 16px;
         font-size: 0.75rem;
+        margin-right: 4px;
     }
     
     .tab-count {
@@ -735,4 +750,99 @@ button:active {
 
 .dark ::-webkit-scrollbar-thumb:hover {
     background: rgba(220, 226, 229, 0.5);
+}
+
+/* Manual Email Button Styling */
+.manual-email-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.manual-email-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Search Bar Enhancement */
+#searchInput {
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.15);
+}
+
+/* Enhanced card hover effects */
+.p-4.rounded-lg.dark\:bg-dark-fill-base-300:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 69, 255, 0.1);
+}
+
+/* Total Customers display enhancement */
+#totalCustomersDisplay {
+    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 8px rgba(0, 69, 255, 0.3);
+}
+
+/* Add Customer/Lead cards enhancement */
+.grid.grid-cols-2.gap-6 > div {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.grid.grid-cols-2.gap-6 > div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.grid.grid-cols-2.gap-6 > div:hover::before {
+    opacity: 1;
+}
+
+/* Fix for typo in HTML - "outline-ne" should be "outline-none" */
+input[placeholder="Enter fleet size"] {
+    outline: none !important;
+}
+
+/* Enhanced form styling */
+form input:focus,
+form select:focus,
+form textarea:focus {
+    box-shadow: 0 0 0 3px rgba(0, 69, 255, 0.1);
+    border-color: #0045ff;
+    outline: none;
+}
+
+/* Tab container styling */
+.flex.space-x-1 {
+    background: rgba(45, 55, 72, 0.5);
+    padding: 8px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced loading animation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading {
+    animation: pulse 2s infinite;
 }
