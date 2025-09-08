@@ -8,12 +8,16 @@
     <title>Cautio</title>
     <link rel="icon" href="favicon.ico">
     <meta name="next-size-adjust">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <style type="text/css">
         :where(html[dir="ltr"]),:where([data-sonner-toaster][dir="ltr"]){--toast-icon-margin-start: -3px;--toast-icon-margin-end: 4px;--toast-svg-margin-start: -1px;--toast-svg-margin-end: 0px;--toast-button-margin-start: auto;--toast-button-margin-end: 0;--toast-close-button-start: 0;--toast-close-button-end: unset;--toast-close-button-transform: translate(-35%, -35%)}:where(html[dir="rtl"]),:where([data-sonner-toaster][dir="rtl"]){--toast-icon-margin-start: 4px;--toast-icon-margin-end: -3px;--toast-svg-margin-start: 0px;--toast-svg-margin-end: -1px;--toast-button-margin-start: 0;--toast-button-margin-end: auto;--toast-close-button-start: unset;--toast-close-button-end: 0;--toast-close-button-transform: translate(35%, -35%)}:where([data-sonner-toaster]){position:fixed;width:var(--width);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;--gray1: hsl(0, 0%, 99%);--gray2: hsl(0, 0%, 97.3%);--gray3: hsl(0, 0%, 95.1%);--gray4: hsl(0, 0%, 93%);--gray5: hsl(0, 0%, 90.9%);--gray6: hsl(0, 0%, 88.7%);--gray7: hsl(0, 0%, 85.8%);--gray8: hsl(0, 0%, 78%);--gray9: hsl(0, 0%, 56.1%);--gray10: hsl(0, 0%, 52.3%);--gray11: hsl(0, 0%, 43.5%);--gray12: hsl(0, 0%, 9%);--border-radius: 8px;box-sizing:border-box;padding:0;margin:0;list-style:none;outline:none;z-index:999999999}:where([data-sonner-toaster][data-x-position="right"]){right:max(var(--offset),env(safe-area-inset-right))}:where([data-sonner-toaster][data-x-position="left"]){left:max(var(--offset),env(safe-area-inset-left))}:where([data-sonner-toaster][data-x-position="center"]){left:50%;transform:translate(-50%)}:where([data-sonner-toaster][data-y-position="top"]){top:max(var(--offset),env(safe-area-inset-top))}:where([data-sonner-toaster][data-y-position="bottom"]){bottom:max(var(--offset),env(safe-area-inset-bottom))}:where([data-sonner-toast]){--y: translateY(100%);--lift-amount: calc(var(--lift) * var(--gap));z-index:var(--z-index);position:absolute;opacity:0;transform:var(--y);filter:blur(0);touch-action:none;transition:transform .4s,opacity .4s,height .4s,box-shadow .2s;box-sizing:border-box;outline:none;overflow-wrap:anywhere}:where([data-sonner-toast][data-styled="true"]){padding:16px;background:var(--normal-bg);border:1px solid var(--normal-border);color:var(--normal-text);border-radius:var(--border-radius);box-shadow:0 4px 12px #0000001a;width:var(--width);font-size:13px;display:flex;align-items:center;gap:6px}:where([data-sonner-toast]:focus-visible){box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast][data-y-position="top"]){top:0;--y: translateY(-100%);--lift: 1;--lift-amount: calc(1 * var(--gap))}:where([data-sonner-toast][data-y-position="bottom"]){bottom:0;--y: translateY(100%);--lift: -1;--lift-amount: calc(var(--lift) * var(--gap))}:where([data-sonner-toast]) :where([data-description]){font-weight:400;line-height:1.4;color:inherit}:where([data-sonner-toast]) :where([data-title]){font-weight:500;line-height:1.5;color:inherit}:where([data-sonner-toast]) :where([data-icon]){display:flex;height:16px;width:16px;position:relative;justify-content:flex-start;align-items:center;flex-shrink:0;margin-left:var(--toast-icon-margin-start);margin-right:var(--toast-icon-margin-end)}:where([data-sonner-toast][data-promise="true"]) :where([data-icon])>svg{opacity:0;transform:scale(.8);transform-origin:center;animation:sonner-fade-in .3s ease forwards}:where([data-sonner-toast]) :where([data-icon])>*{flex-shrink:0}:where([data-sonner-toast]) :where([data-icon]) svg{margin-left:var(--toast-svg-margin-start);margin-right:var(--toast-svg-margin-end)}:where([data-sonner-toast]) :where([data-content]){display:flex;flex-direction:column;gap:2px}[data-sonner-toast][data-styled=true] [data-button]{border-radius:4px;padding-left:8px;padding-right:8px;height:24px;font-size:12px;color:var(--normal-bg);background:var(--normal-text);margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end);border:none;cursor:pointer;outline:none;display:flex;align-items:center;flex-shrink:0;transition:opacity .4s,box-shadow .2s}:where([data-sonner-toast]) :where([data-button]):focus-visible{box-shadow:0 0 0 2px #0006}:where([data-sonner-toast]) :where([data-button]):first-of-type{margin-left:var(--toast-button-margin-start);margin-right:var(--toast-button-margin-end)}:where([data-sonner-toast]) :where([data-cancel]){color:var(--normal-text);background:rgba(0,0,0,.08)}:where([data-sonner-toast][data-theme="dark"]) :where([data-cancel]){background:rgba(255,255,255,.3)}:where([data-sonner-toast]) :where([data-close-button]){position:absolute;left:var(--toast-close-button-start);right:var(--toast-close-button-end);top:0;height:20px;width:20px;display:flex;justify-content:center;align-items:center;padding:0;background:var(--gray1);color:var(--gray12);border:1px solid var(--gray4);transform:var(--toast-close-button-transform);border-radius:50%;cursor:pointer;z-index:1;transition:opacity .1s,background .2s,border-color .2s}:where([data-sonner-toast]) :where([data-close-button]):focus-visible{box-shadow:0 4px 12px #0000001a,0 0 0 2px #0003}:where([data-sonner-toast]) :where([data-disabled="true"]){cursor:not-allowed}:where([data-sonner-toast]):hover :where([data-close-button]):hover{background:var(--gray2);border-color:var(--gray5)}:where([data-sonner-toast][data-swiping="true"]):before{content:"";position:absolute;left:0;right:0;height:100%;z-index:-1}:where([data-sonner-toast][data-y-position="top"][data-swiping="true"]):before{bottom:50%;transform:scaleY(3) translateY(50%)}:where([data-sonner-toast][data-y-position="bottom"][data-swiping="true"]):before{top:50%;transform:scaleY(3) translateY(-50%)}:where([data-sonner-toast][data-swiping="false"][data-removed="true"]):before{content:"";position:absolute;inset:0;transform:scaleY(2)}:where([data-sonner-toast]):after{content:"";position:absolute;left:0;height:calc(var(--gap) + 1px);bottom:100%;width:100%}:where([data-sonner-toast][data-mounted="true"]){--y: translateY(0);opacity:1}:where([data-sonner-toast][data-expanded="false"][data-front="false"]){--scale: var(--toasts-before) * .05 + 1;--y: translateY(calc(var(--lift-amount) * var(--toasts-before))) scale(calc(-1 * var(--scale)));height:var(--front-toast-height)}:where([data-sonner-toast])>*{transition:opacity .4s}:where([data-sonner-toast][data-expanded="false"][data-front="false"][data-styled="true"])>*{opacity:0}:where([data-sonner-toast][data-visible="false"]){opacity:0;pointer-events:none}:where([data-sonner-toast][data-mounted="true"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset)));height:var(--initial-height)}:where([data-sonner-toast][data-removed="true"][data-front="true"][data-swipe-out="false"]){--y: translateY(calc(var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="true"]){--y: translateY(calc(var(--lift) * var(--offset) + var(--lift) * -100%));opacity:0}:where([data-sonner-toast][data-removed="true"][data-front="false"][data-swipe-out="false"][data-expanded="false"]){--y: translateY(40%);opacity:0;transition:transform .5s,opacity .2s}:where([data-sonner-toast][data-removed="true"][data-front="false"]):before{height:calc(var(--initial-height) + 20%)}[data-sonner-toast][data-swiping=true]{transform:var(--y) translateY(var(--swipe-amount, 0px));transition:none}[data-sonner-toast][data-swipe-out=true][data-y-position=bottom],[data-sonner-toast][data-swipe-out=true][data-y-position=top]{animation:swipe-out .2s ease-out forwards}@keyframes swipe-out{0%{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount)));opacity:1}to{transform:translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount) + var(--lift) * -100%));opacity:0}}@media (max-width: 600px){[data-sonner-toaster]{position:fixed;--mobile-offset: 16px;right:var(--mobile-offset);left:var(--mobile-offset);width:100%}[data-sonner-toaster] [data-sonner-toast]{left:0;right:0;width:calc(100% - var(--mobile-offset) * 2)}[data-sonner-toaster][data-x-position=left]{left:var(--mobile-offset)}[data-sonner-toaster][data-y-position=bottom]{bottom:20px}[data-sonner-toaster][data-y-position=top]{top:20px}[data-sonner-toaster][data-x-position=center]{left:var(--mobile-offset);right:var(--mobile-offset);transform:none}}[data-sonner-toaster][data-theme=light]{--normal-bg: #fff;--normal-border: var(--gray4);--normal-text: var(--gray12);--success-bg: hsl(143, 85%, 96%);--success-border: hsl(145, 92%, 91%);--success-text: hsl(140, 100%, 27%);--info-bg: hsl(208, 100%, 97%);--info-border: hsl(221, 91%, 91%);--info-text: hsl(210, 92%, 45%);--warning-bg: hsl(49, 100%, 97%);--warning-border: hsl(49, 91%, 91%);--warning-text: hsl(31, 92%, 45%);--error-bg: hsl(359, 100%, 97%);--error-border: hsl(359, 100%, 94%);--error-text: hsl(360, 100%, 45%)}[data-sonner-toaster][data-theme=light] [data-sonner-toast][data-invert=true]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1)}[data-sonner-toaster][data-theme=dark] [data-sonner-toast][data-invert=true]{--normal-bg: #fff;--normal-border: var(--gray3);--normal-text: var(--gray12)}[data-sonner-toaster][data-theme=dark]{--normal-bg: #000;--normal-border: hsl(0, 0%, 20%);--normal-text: var(--gray1);--success-bg: hsl(150, 100%, 6%);--success-border: hsl(147, 100%, 12%);--success-text: hsl(150, 86%, 65%);--info-bg: hsl(215, 100%, 6%);--info-border: hsl(223, 100%, 12%);--info-text: hsl(216, 87%, 65%);--warning-bg: hsl(64, 100%, 6%);--warning-border: hsl(60, 100%, 12%);--warning-text: hsl(46, 87%, 65%);--error-bg: hsl(358, 76%, 10%);--error-border: hsl(357, 89%, 16%);--error-text: hsl(358, 100%, 81%)}[data-rich-colors=true][data-sonner-toast][data-type=success],[data-rich-colors=true][data-sonner-toast][data-type=success] [data-close-button]{background:var(--success-bg);border-color:var(--success-border);color:var(--success-text)}[data-rich-colors=true][data-sonner-toast][data-type=info],[data-rich-colors=true][data-sonner-toast][data-type=info] [data-close-button]{background:var(--info-bg);border-color:var(--info-border);color:var(--info-text)}[data-rich-colors=true][data-sonner-toast][data-type=warning],[data-rich-colors=true][data-sonner-toast][data-type=warning] [data-close-button]{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}[data-rich-colors=true][data-sonner-toast][data-type=error],[data-rich-colors=true][data-sonner-toast][data-type=error] [data-close-button]{background:var(--error-bg);border-color:var(--error-border);color:var(--error-text)}.sonner-loading-wrapper{--size: 16px;height:var(--size);width:var(--size);position:absolute;inset:0;z-index:10}.sonner-loading-wrapper[data-visible=false]{transform-origin:center;animation:sonner-fade-out .2s ease forwards}.sonner-spinner{position:relative;top:50%;left:50%;height:var(--size);width:var(--size)}.sonner-loading-bar{animation:sonner-spin 1.2s linear infinite;background:var(--gray11);border-radius:6px;height:8%;left:-10%;position:absolute;top:-3.9%;width:24%}.sonner-loading-bar:nth-child(1){animation-delay:-1.2s;transform:rotate(.0001deg) translate(146%)}.sonner-loading-bar:nth-child(2){animation-delay:-1.1s;transform:rotate(30deg) translate(146%)}.sonner-loading-bar:nth-child(3){animation-delay:-1s;transform:rotate(60deg) translate(146%)}.sonner-loading-bar:nth-child(4){animation-delay:-.9s;transform:rotate(90deg) translate(146%)}.sonner-loading-bar:nth-child(5){animation-delay:-.8s;transform:rotate(120deg) translate(146%)}.sonner-loading-bar:nth-child(6){animation-delay:-.7s;transform:rotate(150deg) translate(146%)}.sonner-loading-bar:nth-child(7){animation-delay:-.6s;transform:rotate(180deg) translate(146%)}.sonner-loading-bar:nth-child(8){animation-delay:-.5s;transform:rotate(210deg) translate(146%)}.sonner-loading-bar:nth-child(9){animation-delay:-.4s;transform:rotate(240deg) translate(146%)}.sonner-loading-bar:nth-child(10){animation-delay:-.3s;transform:rotate(270deg) translate(146%)}.sonner-loading-bar:nth-child(11){animation-delay:-.2s;transform:rotate(300deg) translate(146%)}.sonner-loading-bar:nth-child(12){animation-delay:-.1s;transform:rotate(330deg) translate(146%)}@keyframes sonner-fade-in{0%{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}@keyframes sonner-fade-out{0%{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.8)}}@keyframes sonner-spin{0%{opacity:1}to{opacity:.15}}@media (prefers-reduced-motion){[data-sonner-toast],[data-sonner-toast]>*,.sonner-loading-bar{transition:none!important;animation:none!important}}.sonner-loader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transform-origin:center;transition:opacity .2s,transform .2s}.sonner-loader[data-visible=false]{opacity:0;transform:scale(.8) translate(-50%,-50%)}
 
         /* Custom styles for sidebar */
         .sidebar {
-            transition: transform 0.3s ease, width 0.3s ease;
+            transition: width 0.3s ease;
         }
         .sidebar.collapsed {
             width: 4rem;
@@ -36,6 +40,18 @@
         }
         .main-content.sidebar-expanded {
             margin-left: 16rem;
+        }
+        
+        /* Custom checkbox styles */
+        .checkbox-group {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Loading indicator */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
     </style>
     <script data-scrapbook-elem="custom-elements-loader">(function (names) { if (!customElements) { return; } for (const name of names) { customElements.define(name, class CustomElement extends HTMLElement {}); } })(["next-route-announcer"])</script>
@@ -183,14 +199,14 @@
         <div id="sidebar" class="sidebar collapsed fixed left-0 top-0 h-full dark:bg-dark-fill-base-300 dark:border-r dark:border-dark-stroke-contrast-400 z-50">
             <!-- Hamburger Menu Button -->
             <div class="flex items-center justify-between p-4 dark:border-b dark:border-dark-stroke-contrast-400">
-                <div class="flex items-center">
-                    <svg class="h-8 w-8 rounded-lg" width="32" height="32" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div class="flex items-center min-w-0">
+                    <svg class="h-8 w-8 rounded-lg flex-shrink-0" width="32" height="32" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="1080" height="1080" fill="#0026A3"></rect>
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
                     </svg>
-                    <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600">Cautio</span>
+                    <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600 truncate">Cautio</span>
                 </div>
-                <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <line x1="3" x2="21" y1="6" y2="6"/>
                         <line x1="3" x2="21" y1="12" y2="12"/>
@@ -201,38 +217,38 @@
 
             <!-- Menu Items -->
             <nav class="mt-4">
-                <div class="px-4 space-y-2">
+                <div class="px-2 space-y-2">
                     <a href="#" onclick="showCustomersOverview()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                             <path d="m22 21-3-3"/>
                         </svg>
-                        <span class="menu-text ml-3">Customers Overview</span>
+                        <span class="menu-text ml-3 truncate">Customers Overview</span>
                     </a>
                     <a href="#" onclick="showFinance()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
                             <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
                         </svg>
-                        <span class="menu-text ml-3">Finance</span>
+                        <span class="menu-text ml-3 truncate">Finance</span>
                     </a>
                     <a href="#" onclick="showGroundOperations()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
                             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
                             <path d="M15 18H9"/>
                             <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
                             <circle cx="17" cy="18" r="2"/>
                             <circle cx="7" cy="18" r="2"/>
                         </svg>
-                        <span class="menu-text ml-3">Ground Operations</span>
+                        <span class="menu-text ml-3 truncate">Ground Operations</span>
                     </a>
                     <a href="#" onclick="showInventoryManagement()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
                             <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
                             <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
                             <path d="M12 3v6"/>
                         </svg>
-                        <span class="menu-text ml-3">Inventory Management</span>
+                        <span class="menu-text ml-3 truncate">Inventory Management</span>
                     </a>
                 </div>
             </nav>
@@ -244,14 +260,17 @@
             <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
                 <div class="flex items-center justify-between">
                     <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
-                    <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16,17 21,12 16,7"/>
-                            <line x1="21" x2="9" y1="12" y2="12"/>
-                        </svg>
-                        Logout
-                    </button>
+                    <div class="flex items-center gap-4">
+                        <span id="totalCustomersHeader" class="text-body-l-regular dark:text-dark-base-600">Total Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
+                        <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16,17 21,12 16,7"/>
+                                <line x1="21" x2="9" y1="12" y2="12"/>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -263,7 +282,7 @@
                     <div class="text-center mb-8">
                         <div class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
                             <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Customers</h2>
-                            <p class="text-display-3 dark:text-brand-blue-600">1,247</p>
+                            <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
                         </div>
                     </div>
 
@@ -321,25 +340,34 @@
 
                         <!-- POC Tab Content -->
                         <div id="pocTabContent" class="hidden">
-                            <div class="text-center py-12">
+                            <div id="pocCustomersList" class="space-y-4">
+                                <!-- POC customers will be populated here -->
+                            </div>
+                            <div id="pocEmptyState" class="text-center py-12">
                                 <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">POC Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">Proof of Concept customers will be displayed here</p>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No POC customers found</p>
                             </div>
                         </div>
 
                         <!-- Onboarded Tab Content -->
                         <div id="onboardedTabContent" class="hidden">
-                            <div class="text-center py-12">
+                            <div id="onboardedCustomersList" class="space-y-4">
+                                <!-- Onboarded customers will be populated here -->
+                            </div>
+                            <div id="onboardedEmptyState" class="text-center py-12">
                                 <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Onboarded Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">Fully onboarded customers will be displayed here</p>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No onboarded customers found</p>
                             </div>
                         </div>
 
                         <!-- Closed Leads Tab Content -->
                         <div id="closedLeadsTabContent" class="hidden">
-                            <div class="text-center py-12">
+                            <div id="closedLeadsList" class="space-y-4">
+                                <!-- Closed leads will be populated here -->
+                            </div>
+                            <div id="closedLeadsEmptyState" class="text-center py-12">
                                 <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Closed Leads</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">Closed leads will be displayed here</p>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No closed leads found</p>
                             </div>
                         </div>
                     </div>
@@ -386,7 +414,7 @@
             <form id="addLeadForm" class="space-y-4">
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Inbound/Outbound</label>
-                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    <select name="type" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                         <option>Inbound</option>
                         <option>Outbound</option>
                     </select>
@@ -394,22 +422,22 @@
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                    <input type="text" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name">
+                    <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
                 </div>
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact</label>
-                    <input type="text" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter contact information">
+                    <input type="text" name="contact" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter contact information" required>
                 </div>
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Potential Fleet Size</label>
-                    <input type="number" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size">
+                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size" required>
                 </div>
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Status</label>
-                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    <select name="status" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                         <option>New</option>
                         <option>In Progress</option>
                         <option>Qualified</option>
@@ -431,7 +459,7 @@
 
     <!-- Add Customer Form Modal -->
     <div id="addCustomerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Customer</h2>
                 <button onclick="closeAddCustomerForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
@@ -443,9 +471,38 @@
             </div>
             
             <form id="addCustomerForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name of Account Manager</label>
+                        <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Employee ID of Account Manager</label>
+                        <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter employee ID" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                        <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile no.</label>
+                        <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter mobile number" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
+                    <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
+                </div>
+
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Form (Use existing template)</label>
-                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    <select name="template" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                         <option>Template 1</option>
                         <option>Template 2</option>
                         <option>Template 3</option>
@@ -454,39 +511,108 @@
                 </div>
                 
                 <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source (Select multiple)</label>
+                    <div class="checkbox-group border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-3 space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="social_media" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Other Digital Channels (Social Media)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="market_referrals" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Market Referrals (friend of Cautio)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="onground_marketing" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Onground Marketing (Roadshows, Events, Tradeshows, others etc.)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="field_sales" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Field Sales (walk-ins, via drivers or fleets)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="word_of_mouth" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">WORD OF MOUTH</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="customer_referrals" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Customer Referrals (customer of Cautio)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="cold_outreach" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach (Email or Call)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="linkedin" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">LinkedIn</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="channel_partners" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Channel Partners (Redbus, Wheelseye, others etc.)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="website_form" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Website Form (cautio.in/com)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="leadSource" value="other" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
-                    <div class="space-y-2">
+                    <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-3 space-y-2">
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Fleet tracking requirements</span>
+                            <input type="checkbox" name="requirements" value="driver_no_uniform" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver has not worn uniform</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Real-time monitoring</span>
+                            <input type="checkbox" name="requirements" value="driver_seatbelt" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver Seatbelt is unfastened</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Driver behavior analysis</span>
+                            <input type="checkbox" name="requirements" value="driver_on_call" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver on call</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                            <span class="text-body-m-regular dark:text-dark-base-600">Fuel management</span>
+                            <input type="checkbox" name="requirements" value="driver_smoking" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver is smoking</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="requirements" value="driver_consuming" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Driver is Consuming Paan Masala/ Alcohol</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="requirements" value="driver_drowsiness" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Signs of driver drowsiness detected</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="requirements" value="overspeed_alert" class="mr-2 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                            <span class="text-body-m-regular dark:text-dark-base-600">Overspeed Alert detected (__km/h)</span>
                         </label>
                     </div>
                 </div>
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
-                    <select class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option>Free POC</option>
-                        <option>Paid POC</option>
-                        <option>Direct Onboarding</option>
+                    <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option value="free_poc">Free POC</option>
+                        <option value="paid_poc">Paid POC</option>
+                        <option value="direct_onboarding">Direct Onboarding</option>
                     </select>
                 </div>
                 
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Time</label>
-                    <input type="date" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Start Date</label>
+                        <input type="date" name="pocStartDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC End Date</label>
+                        <input type="date" name="pocEndDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
@@ -502,8 +628,228 @@
     </div>
 
     <script>
+        // Supabase Configuration
+        const supabaseUrl = 'https://jcmjazindwonrplvjwxl.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         // Global variables
         let sidebarExpanded = false;
+        let customers = [];
+        let leads = [];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTabHighlight('addTab');
+            loadData();
+            checkExpiredPOCs();
+            
+            // Set up real-time listeners
+            setupRealtimeListeners();
+        });
+
+        // Supabase Real-time listeners
+        function setupRealtimeListeners() {
+            // Listen for customer changes
+            supabase
+                .channel('customers')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'customers' }, 
+                    (payload) => {
+                        console.log('Customer change received!', payload);
+                        loadData();
+                    }
+                )
+                .subscribe();
+
+            // Listen for lead changes
+            supabase
+                .channel('leads')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, 
+                    (payload) => {
+                        console.log('Lead change received!', payload);
+                        loadData();
+                    }
+                )
+                .subscribe();
+        }
+
+        // Load data from Supabase
+        async function loadData() {
+            try {
+                // Load customers
+                const { data: customerData, error: customerError } = await supabase
+                    .from('customers')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (customerError) {
+                    console.error('Error loading customers:', customerError);
+                } else {
+                    customers = customerData || [];
+                }
+
+                // Load leads
+                const { data: leadData, error: leadError } = await supabase
+                    .from('leads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (leadError) {
+                    console.error('Error loading leads:', leadError);
+                } else {
+                    leads = leadData || [];
+                }
+
+                // Update UI
+                updateCustomerCounts();
+                updateTabsContent();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Update customer counts
+        function updateCustomerCounts() {
+            const totalCustomers = customers.length;
+            document.getElementById('totalCustomersDisplay').textContent = totalCustomers;
+            document.getElementById('totalCustomersHeaderCount').textContent = totalCustomers;
+        }
+
+        // Update tabs content
+        function updateTabsContent() {
+            updatePOCTab();
+            updateOnboardedTab();
+            updateClosedLeadsTab();
+        }
+
+        // Update POC tab
+        function updatePOCTab() {
+            const pocCustomers = customers.filter(customer => 
+                (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
+                customer.status !== 'closed'
+            );
+
+            const pocList = document.getElementById('pocCustomersList');
+            const pocEmpty = document.getElementById('pocEmptyState');
+
+            if (pocCustomers.length === 0) {
+                pocList.innerHTML = '';
+                pocEmpty.style.display = 'block';
+            } else {
+                pocEmpty.style.display = 'none';
+                pocList.innerHTML = pocCustomers.map(customer => createCustomerCard(customer)).join('');
+            }
+        }
+
+        // Update onboarded tab
+        function updateOnboardedTab() {
+            const onboardedCustomers = customers.filter(customer => 
+                customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
+            );
+
+            const onboardedList = document.getElementById('onboardedCustomersList');
+            const onboardedEmpty = document.getElementById('onboardedEmptyState');
+
+            if (onboardedCustomers.length === 0) {
+                onboardedList.innerHTML = '';
+                onboardedEmpty.style.display = 'block';
+            } else {
+                onboardedEmpty.style.display = 'none';
+                onboardedList.innerHTML = onboardedCustomers.map(customer => createCustomerCard(customer)).join('');
+            }
+        }
+
+        // Update closed leads tab
+        function updateClosedLeadsTab() {
+            const closedCustomers = customers.filter(customer => customer.status === 'closed');
+
+            const closedList = document.getElementById('closedLeadsList');
+            const closedEmpty = document.getElementById('closedLeadsEmptyState');
+
+            if (closedCustomers.length === 0) {
+                closedList.innerHTML = '';
+                closedEmpty.style.display = 'block';
+            } else {
+                closedEmpty.style.display = 'none';
+                closedList.innerHTML = closedCustomers.map(customer => createCustomerCard(customer)).join('');
+            }
+        }
+
+        // Create customer card HTML
+        function createCustomerCard(customer) {
+            const formatDate = (dateString) => {
+                if (!dateString) return 'Not set';
+                return new Date(dateString).toLocaleDateString();
+            };
+
+            const getStatusBadge = (status, pocType) => {
+                if (status === 'closed') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Closed</span>';
+                if (pocType === 'direct_onboarding') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">Onboarded</span>';
+                if (pocType === 'free_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Free POC</span>';
+                if (pocType === 'paid_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Paid POC</span>';
+                return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
+            };
+
+            return `
+                <div class="p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
+                            <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
+                        </div>
+                        ${getStatusBadge(customer.status, customer.poc_type)}
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
+                        <div>
+                            <span class="font-semibold">Mobile:</span> ${customer.customer_mobile}
+                        </div>
+                        <div>
+                            <span class="font-semibold">Account Manager:</span> ${customer.account_manager_name}
+                        </div>
+                        <div>
+                            <span class="font-semibold">POC Start:</span> ${formatDate(customer.poc_start_date)}
+                        </div>
+                        <div>
+                            <span class="font-semibold">POC End:</span> ${formatDate(customer.poc_end_date)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Check and move expired POCs to closed leads
+        async function checkExpiredPOCs() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            try {
+                const { data: expiredPOCs, error } = await supabase
+                    .from('customers')
+                    .select('*')
+                    .lt('poc_end_date', today)
+                    .neq('status', 'closed')
+                    .in('poc_type', ['free_poc', 'paid_poc']);
+
+                if (error) {
+                    console.error('Error checking expired POCs:', error);
+                    return;
+                }
+
+                // Update expired POCs to closed status
+                for (const customer of expiredPOCs) {
+                    await supabase
+                        .from('customers')
+                        .update({ status: 'closed' })
+                        .eq('id', customer.id);
+                }
+
+                if (expiredPOCs.length > 0) {
+                    console.log(`Moved ${expiredPOCs.length} expired POCs to closed leads`);
+                    loadData(); // Refresh data
+                }
+            } catch (error) {
+                console.error('Error processing expired POCs:', error);
+            }
+        }
 
         // Login functionality
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -513,12 +859,10 @@
             const password = document.getElementById('password').value;
             
             if (email === 'admin@gm.com' && password === 'admin123') {
-                // Hide login page and show dashboard
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('dashboardPage').classList.remove('hidden');
-                
-                // Initialize dashboard
                 showCustomersOverview();
+                loadData();
             } else {
                 alert('Invalid credentials. Please use admin@gm.com and admin123');
             }
@@ -609,13 +953,11 @@
         }
 
         function updateMenuHighlight(activeMenu) {
-            // Remove active class from all menu items
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('dark:bg-brand-blue-600', 'dark:text-utility-white');
                 item.classList.add('hover:dark:bg-dark-fill-base-600');
             });
             
-            // Add active class to the selected menu item based on the onclick attribute
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => {
                 const onclick = item.getAttribute('onclick');
@@ -662,13 +1004,11 @@
         }
 
         function updateTabHighlight(activeTabId) {
-            // Remove active class from all tabs
             document.querySelectorAll('.dashboard-tab').forEach(tab => {
                 tab.classList.remove('border-brand-blue-600', 'dark:text-brand-blue-600');
                 tab.classList.add('border-transparent');
             });
             
-            // Add active class to the selected tab
             const activeTab = document.getElementById(activeTabId);
             activeTab.classList.add('border-brand-blue-600', 'dark:text-brand-blue-600');
             activeTab.classList.remove('border-transparent');
@@ -681,6 +1021,7 @@
 
         function closeAddLeadForm() {
             document.getElementById('addLeadModal').classList.add('hidden');
+            document.getElementById('addLeadForm').reset();
         }
 
         function showAddCustomerForm() {
@@ -689,19 +1030,94 @@
 
         function closeAddCustomerForm() {
             document.getElementById('addCustomerModal').classList.add('hidden');
+            document.getElementById('addCustomerForm').reset();
         }
 
         // Form submission handlers
-        document.getElementById('addLeadForm').addEventListener('submit', function(e) {
+        document.getElementById('addLeadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Lead saved successfully!');
-            closeAddLeadForm();
+            
+            const formData = new FormData(e.target);
+            const leadData = {
+                type: formData.get('type'),
+                customer_name: formData.get('customerName'),
+                contact: formData.get('contact'),
+                fleet_size: parseInt(formData.get('fleetSize')),
+                status: formData.get('status'),
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('leads')
+                    .insert([leadData]);
+
+                if (error) {
+                    console.error('Error saving lead:', error);
+                    alert('Error saving lead: ' + error.message);
+                } else {
+                    alert('Lead saved successfully!');
+                    closeAddLeadForm();
+                    loadData();
+                }
+            } catch (error) {
+                console.error('Error saving lead:', error);
+                alert('Error saving lead');
+            }
         });
 
-        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+        document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Customer saved successfully!');
-            closeAddCustomerForm();
+            
+            const formData = new FormData(e.target);
+            
+            // Get selected lead sources
+            const leadSources = [];
+            const leadSourceCheckboxes = document.querySelectorAll('input[name="leadSource"]:checked');
+            leadSourceCheckboxes.forEach(checkbox => {
+                leadSources.push(checkbox.value);
+            });
+
+            // Get selected requirements
+            const requirements = [];
+            const requirementCheckboxes = document.querySelectorAll('input[name="requirements"]:checked');
+            requirementCheckboxes.forEach(checkbox => {
+                requirements.push(checkbox.value);
+            });
+
+            const customerData = {
+                account_manager_name: formData.get('accountManagerName'),
+                account_manager_id: formData.get('accountManagerId'),
+                customer_name: formData.get('customerName'),
+                customer_mobile: formData.get('customerMobile'),
+                customer_email: formData.get('customerEmail'),
+                template: formData.get('template'),
+                lead_sources: leadSources,
+                requirements: requirements,
+                poc_type: formData.get('pocType'),
+                poc_start_date: formData.get('pocStartDate') || null,
+                poc_end_date: formData.get('pocEndDate') || null,
+                status: formData.get('pocType') === 'direct_onboarding' ? 'onboarded' : 'active',
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('customers')
+                    .insert([customerData]);
+
+                if (error) {
+                    console.error('Error saving customer:', error);
+                    alert('Error saving customer: ' + error.message);
+                } else {
+                    alert('Customer saved successfully!');
+                    closeAddCustomerForm();
+                    loadData();
+                }
+            } catch (error) {
+                console.error('Error saving customer:', error);
+                alert('Error saving customer');
+            }
         });
 
         // Logout function
@@ -709,15 +1125,12 @@
             document.getElementById('dashboardPage').classList.add('hidden');
             document.getElementById('loginPage').classList.remove('hidden');
             
-            // Clear form fields
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
         }
 
-        // Initialize active tab on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTabHighlight('addTab');
-        });
+        // Run expired POC check every hour
+        setInterval(checkExpiredPOCs, 60 * 60 * 1000);
     </script>
 
     <next-route-announcer style="position: absolute;" data-scrapbook-shadowdom="&lt;div aria-live=&quot;assertive&quot; id=&quot;__next-route-announcer__&quot; role=&quot;alert&quot; style=&quot;position: absolute; border: 0px; height: 1px; margin: -1px; padding: 0px; width: 1px; clip: rect(0px, 0px, 0px, 0px); overflow: hidden; white-space: nowrap; overflow-wrap: normal;&quot;&gt;&lt;/div&gt;"></next-route-announcer>
