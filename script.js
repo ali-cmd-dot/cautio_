@@ -9,6 +9,7 @@ let customers = [];
 let leads = [];
 let filteredCustomers = [];
 let currentFilter = '';
+let currentPOCAction = null;
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkExpiredPOCs();
     setupEventListeners();
     setupRealtimeListeners();
+    checkPOCReminders();
 });
 
 // Setup Event Listeners
@@ -102,6 +104,159 @@ async function loadData() {
     }
 }
 
+// Calculate days remaining for POC
+function calculateDaysRemaining(endDate) {
+    if (!endDate) return null;
+    const today = new Date();
+    const pocEnd = new Date(endDate);
+    const diffTime = pocEnd - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
+// Check for POC reminders (every 7 days)
+async function checkPOCReminders() {
+    try {
+        const { data: pocCustomers, error } = await supabase
+            .from('customers')
+            .select('*')
+            .in('poc_type', ['free_poc', 'paid_poc'])
+            .neq('status', 'closed');
+
+        if (error) {
+            console.error('Error checking POC reminders:', error);
+            return;
+        }
+
+        for (const customer of pocCustomers) {
+            if (customer.poc_start_date) {
+                const startDate = new Date(customer.poc_start_date);
+                const today = new Date();
+                const diffTime = today - startDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Check if it's been 7 days or multiples of 7 days since start
+                if (diffDays > 0 && diffDays % 7 === 0) {
+                    // Send email reminder (simulate with console log for now)
+                    console.log(`EMAIL REMINDER: Customer ${customer.customer_name} POC started ${diffDays} days ago. Action required.`);
+                    
+                    // Show action modal
+                    showPOCActionModal(customer);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error processing POC reminders:', error);
+    }
+}
+
+// Show POC Action Modal
+function showPOCActionModal(customer) {
+    currentPOCAction = customer;
+    document.getElementById('pocCustomerName').textContent = customer.customer_name;
+    document.getElementById('pocActionModal').classList.remove('hidden');
+}
+
+// Close POC Action Modal
+function closePOCActionModal() {
+    currentPOCAction = null;
+    document.getElementById('pocActionModal').classList.add('hidden');
+}
+
+// Extend POC by 10 days
+async function extendPOC() {
+    if (!currentPOCAction) return;
+    
+    try {
+        const currentEndDate = new Date(currentPOCAction.poc_end_date);
+        const newEndDate = new Date(currentEndDate);
+        newEndDate.setDate(newEndDate.getDate() + 10);
+        
+        const { error } = await supabase
+            .from('customers')
+            .update({
+                poc_end_date: newEndDate.toISOString().split('T')[0],
+                last_extended: new Date().toISOString()
+            })
+            .eq('id', currentPOCAction.id);
+
+        if (error) {
+            console.error('Error extending POC:', error);
+            alert('Error extending POC: ' + error.message);
+        } else {
+            alert(`POC extended by 10 days for ${currentPOCAction.customer_name}`);
+            closePOCActionModal();
+            loadData();
+            
+            // Send confirmation email (simulate)
+            console.log(`EMAIL SENT: POC extended for ${currentPOCAction.customer_name} until ${newEndDate.toDateString()}`);
+        }
+    } catch (error) {
+        console.error('Error extending POC:', error);
+        alert('Error extending POC');
+    }
+}
+
+// End POC
+async function endPOC() {
+    if (!currentPOCAction) return;
+    
+    try {
+        const { error } = await supabase
+            .from('customers')
+            .update({
+                status: 'closed',
+                poc_end_date: new Date().toISOString().split('T')[0]
+            })
+            .eq('id', currentPOCAction.id);
+
+        if (error) {
+            console.error('Error ending POC:', error);
+            alert('Error ending POC: ' + error.message);
+        } else {
+            alert(`POC ended for ${currentPOCAction.customer_name}`);
+            closePOCActionModal();
+            loadData();
+            
+            // Send confirmation email (simulate)
+            console.log(`EMAIL SENT: POC ended for ${currentPOCAction.customer_name}`);
+        }
+    } catch (error) {
+        console.error('Error ending POC:', error);
+        alert('Error ending POC');
+    }
+}
+
+// Onboard Customer
+async function onboardCustomer() {
+    if (!currentPOCAction) return;
+    
+    try {
+        const { error } = await supabase
+            .from('customers')
+            .update({
+                status: 'onboarded',
+                poc_type: 'direct_onboarding'
+            })
+            .eq('id', currentPOCAction.id);
+
+        if (error) {
+            console.error('Error onboarding customer:', error);
+            alert('Error onboarding customer: ' + error.message);
+        } else {
+            alert(`${currentPOCAction.customer_name} has been onboarded successfully!`);
+            closePOCActionModal();
+            loadData();
+            
+            // Send confirmation email (simulate)
+            console.log(`EMAIL SENT: ${currentPOCAction.customer_name} has been onboarded successfully`);
+        }
+    } catch (error) {
+        console.error('Error onboarding customer:', error);
+        alert('Error onboarding customer');
+    }
+}
+
 // Update customer counts
 function updateCustomerCounts() {
     const totalCustomers = customers.length;
@@ -131,7 +286,7 @@ function updatePOCTab() {
         pocEmpty.style.display = 'block';
     } else {
         pocEmpty.style.display = 'none';
-        pocList.innerHTML = pocCustomers.map(customer => createCustomerCard(customer)).join('');
+        pocList.innerHTML = pocCustomers.map(customer => createCustomerCard(customer, true)).join('');
     }
 }
 
@@ -170,7 +325,7 @@ function updateClosedLeadsTab() {
 }
 
 // Create customer card HTML
-function createCustomerCard(customer) {
+function createCustomerCard(customer, showTimeRemaining = false) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
         return new Date(dateString).toLocaleDateString();
@@ -184,6 +339,30 @@ function createCustomerCard(customer) {
         return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
     };
 
+    const getTimeRemainingBadge = (endDate) => {
+        if (!endDate) return '';
+        const daysRemaining = calculateDaysRemaining(endDate);
+        if (daysRemaining === null) return '';
+        
+        let badgeClass = 'dark:bg-dark-info-600';
+        let text = `${daysRemaining} days left`;
+        
+        if (daysRemaining <= 0) {
+            badgeClass = 'dark:bg-dark-semantic-danger-300';
+            text = 'Expired';
+        } else if (daysRemaining <= 3) {
+            badgeClass = 'dark:bg-dark-warning-600';
+            text = `${daysRemaining} days left`;
+        }
+        
+        return `<span class="px-2 py-1 text-xs rounded-full ${badgeClass} dark:text-utility-white">${text}</span>`;
+    };
+
+    const extendButton = (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && customer.status !== 'closed' ? 
+        `<button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
+            Manage POC
+        </button>` : '';
+
     return `
         <div class="p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
             <div class="flex justify-between items-start mb-3">
@@ -191,7 +370,10 @@ function createCustomerCard(customer) {
                     <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
                     <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
                 </div>
-                ${getStatusBadge(customer.status, customer.poc_type)}
+                <div class="flex flex-col gap-2 items-end">
+                    ${getStatusBadge(customer.status, customer.poc_type)}
+                    ${showTimeRemaining ? getTimeRemainingBadge(customer.poc_end_date) : ''}
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
                 <div>
@@ -207,6 +389,7 @@ function createCustomerCard(customer) {
                     <span class="font-semibold">POC End:</span> ${formatDate(customer.poc_end_date)}
                 </div>
             </div>
+            ${extendButton}
         </div>
     `;
 }
@@ -249,8 +432,8 @@ async function checkExpiredPOCs() {
 function handleLogin(e) {
     e.preventDefault();
     
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById(':Rujttvejsq:').value;
+    const password = document.getElementById(':R1ejttvejsq:').value;
     
     if (email === 'admin@gm.com' && password === 'admin123') {
         document.getElementById('loginPage').classList.add('hidden');
@@ -264,7 +447,7 @@ function handleLogin(e) {
 
 // Toggle password visibility
 function togglePasswordVisibility() {
-    const passwordField = document.getElementById('password');
+    const passwordField = document.getElementById(':R1ejttvejsq:');
     const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordField.setAttribute('type', type);
 }
@@ -543,6 +726,13 @@ async function handleAddCustomer(e) {
             alert('Customer saved successfully!');
             closeAddCustomerForm();
             loadData();
+            
+            // Send welcome email (simulate)
+            if (customerData.poc_type !== 'direct_onboarding') {
+                console.log(`EMAIL SENT: POC started for ${customerData.customer_name}`);
+            } else {
+                console.log(`EMAIL SENT: Welcome to Cautio, ${customerData.customer_name}!`);
+            }
         }
     } catch (error) {
         console.error('Error saving customer:', error);
@@ -555,9 +745,29 @@ function logout() {
     document.getElementById('dashboardPage').classList.add('hidden');
     document.getElementById('loginPage').classList.remove('hidden');
     
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
+    document.getElementById(':Rujttvejsq:').value = '';
+    document.getElementById(':R1ejttvejsq:').value = '';
 }
 
-// Run expired POC check every hour
-setInterval(checkExpiredPOCs, 60 * 60 * 1000);
+// Run checks periodically
+setInterval(checkExpiredPOCs, 60 * 60 * 1000); // Every hour
+setInterval(checkPOCReminders, 60 * 60 * 1000 * 24); // Every 24 hours
+
+// Send automated emails (simulation)
+function sendAutomatedEmail(type, customerName, details = '') {
+    const emailTypes = {
+        'poc_reminder': `Reminder: POC review required for ${customerName}`,
+        'poc_extended': `POC extended for ${customerName} - ${details}`,
+        'poc_ended': `POC ended for ${customerName}`,
+        'customer_onboarded': `Welcome ${customerName}! You've been successfully onboarded.`,
+        'poc_started': `POC started for ${customerName}`
+    };
+    
+    console.log(`📧 EMAIL SENT: ${emailTypes[type] || 'Email notification'}`);
+    
+    // In a real application, you would integrate with an email service like:
+    // - SendGrid
+    // - Mailgun
+    // - AWS SES
+    // - Nodemailer
+}
