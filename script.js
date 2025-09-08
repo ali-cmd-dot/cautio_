@@ -9,6 +9,7 @@ let customers = [];
 let leads = [];
 let credentials = [];
 let scheduledEmails = [];
+let pendingApprovals = [];
 let filteredCustomers = [];
 let filteredLeads = [];
 let currentFilter = '';
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(saveUserSession, 30000);
 });
 
-// FIXED: Session Management - Prevents logout on refresh
+// Session Management - Prevents logout on refresh
 function saveUserSession() {
     if (userSession) {
         localStorage.setItem('cautio_user_session', JSON.stringify({
@@ -77,7 +78,7 @@ function showSessionRestored() {
     showEmailToast(`Welcome back, ${userSession.full_name || userSession.email}! Session restored.`);
 }
 
-// ENHANCED: Email Scheduling System
+// Email Scheduling System
 async function startEmailScheduler() {
     // Load scheduled emails
     await loadScheduledEmails();
@@ -170,7 +171,7 @@ async function processScheduledEmail(scheduledEmail) {
     }
 }
 
-// ENHANCED: Manual Email Scheduling
+// Manual Email Scheduling
 function showManualEmailModal(customer) {
     currentEmailTarget = customer;
     document.getElementById('selectedCustomerName').textContent = customer.customer_name;
@@ -260,6 +261,18 @@ function setupEventListeners() {
             customDiv.classList.add('hidden');
         }
     });
+
+    // POC Duration change listener
+    document.getElementById('pocDurationSelect').addEventListener('change', function(e) {
+        const customDiv = document.getElementById('customDurationDiv');
+        if (e.target.value === 'custom') {
+            customDiv.classList.remove('hidden');
+            customDiv.classList.add('show');
+        } else {
+            customDiv.classList.add('hidden');
+            customDiv.classList.remove('show');
+        }
+    });
     
     // Sidebar toggle
     document.getElementById('hamburgerBtn').addEventListener('click', toggleSidebar);
@@ -277,7 +290,7 @@ function setupEventListeners() {
     document.getElementById('addCustomerForm').addEventListener('submit', handleAddCustomer);
 }
 
-// ENHANCED: Automatic 7-day Email System
+// Automatic 7-day Email System
 async function checkPOCReminders() {
     try {
         const { data: pocCustomers, error } = await supabase
@@ -357,7 +370,7 @@ function showEmailToast(message) {
     }, 3000);
 }
 
-// ENHANCED: Email Service Integration with better logging
+// Email Service Integration
 async function sendEmail(type, customerData, additionalInfo = '') {
     try {
         // Log email to database
@@ -425,7 +438,7 @@ function getEmailSubject(type, customerName) {
 function getEmailMessage(type, customerData, additionalInfo = '') {
     const messages = {
         'poc_reminder': `Dear ${customerData.customer_name},\n\nThis is a reminder that your POC requires review. Please contact your account manager ${customerData.account_manager_name} for next steps.\n\n${additionalInfo}\n\nBest regards,\nCautio Team`,
-        'poc_extended': `Dear ${customerData.customer_name},\n\nYour POC has been extended by 10 days. ${additionalInfo}\n\nNew end date: ${additionalInfo}\n\nBest regards,\nCautio Team`,
+        'poc_extended': `Dear ${customerData.customer_name},\n\nYour POC has been extended by ${additionalInfo} days.\n\nBest regards,\nCautio Team`,
         'poc_ended': `Dear ${customerData.customer_name},\n\nYour POC period has concluded. Thank you for trying Cautio. Please contact us if you'd like to continue with our services.\n\nBest regards,\nCautio Team`,
         'customer_onboarded': `Dear ${customerData.customer_name},\n\nWelcome to Cautio! We're excited to have you onboard. Your account manager ${customerData.account_manager_name} will be in touch soon.\n\nBest regards,\nCautio Team`,
         'poc_started': `Dear ${customerData.customer_name},\n\nYour POC has started successfully. Duration: ${additionalInfo}.\n\nYour account manager: ${customerData.account_manager_name}\n\nBest regards,\nCautio Team`,
@@ -748,7 +761,7 @@ function setupRealtimeListeners() {
         .subscribe();
 }
 
-// ENHANCED: Load data from Supabase with leads
+// Load data from Supabase
 async function loadData() {
     try {
         // Load customers
@@ -777,9 +790,23 @@ async function loadData() {
             filteredLeads = [...leads];
         }
 
+        // Load pending approvals
+        const { data: approvalData, error: approvalError } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('approval_status', 'pending')
+            .order('created_at', { ascending: false });
+
+        if (approvalError) {
+            console.error('Error loading pending approvals:', approvalError);
+        } else {
+            pendingApprovals = approvalData || [];
+        }
+
         // Update UI
         updateCustomerCounts();
         updateTabsContent();
+        updateFinanceContent();
         applyCurrentFilter();
     } catch (error) {
         console.error('Error loading data:', error);
@@ -807,16 +834,29 @@ function showPOCActionModal(customer) {
 function closePOCActionModal() {
     currentPOCAction = null;
     document.getElementById('pocActionModal').classList.add('hidden');
+    document.getElementById('extendPOCForm').classList.add('hidden');
 }
 
-// Extend POC by 10 days - FIXED
-async function extendPOC() {
+// Show Extend POC Form
+function showExtendPOCForm() {
+    document.getElementById('extendPOCForm').classList.remove('hidden');
+}
+
+// Hide Extend POC Form
+function hideExtendPOCForm() {
+    document.getElementById('extendPOCForm').classList.add('hidden');
+}
+
+// Confirm Extend POC with custom days
+async function confirmExtendPOC() {
     if (!currentPOCAction) return;
+    
+    const extendDays = parseInt(document.getElementById('extendDaysInput').value) || 10;
     
     try {
         const currentEndDate = new Date(currentPOCAction.poc_end_date);
         const newEndDate = new Date(currentEndDate);
-        newEndDate.setDate(newEndDate.getDate() + 10);
+        newEndDate.setDate(newEndDate.getDate() + extendDays);
         
         const { error } = await supabase
             .from('customers')
@@ -824,7 +864,7 @@ async function extendPOC() {
                 poc_end_date: newEndDate.toISOString().split('T')[0],
                 last_extended: new Date().toISOString(),
                 extension_count: (currentPOCAction.extension_count || 0) + 1,
-                poc_extended_days: (currentPOCAction.poc_extended_days || 0) + 10
+                poc_extended_days: (currentPOCAction.poc_extended_days || 0) + extendDays
             })
             .eq('id', currentPOCAction.id);
 
@@ -832,12 +872,12 @@ async function extendPOC() {
             console.error('Error extending POC:', error);
             alert('Error extending POC: ' + error.message);
         } else {
-            alert(`POC extended by 10 days for ${currentPOCAction.customer_name}`);
+            alert(`POC extended by ${extendDays} days for ${currentPOCAction.customer_name}`);
             closePOCActionModal();
             loadData();
             
             // Send confirmation email
-            await sendEmail('poc_extended', currentPOCAction, newEndDate.toDateString());
+            await sendEmail('poc_extended', currentPOCAction, extendDays.toString());
         }
     } catch (error) {
         console.error('Error extending POC:', error);
@@ -906,18 +946,33 @@ async function onboardCustomer() {
     }
 }
 
-// ENHANCED: Update customer counts with leads
+// Update customer counts with tab counts
 function updateCustomerCounts() {
     const totalCustomers = customers.length;
-    const totalLeads = leads.length;
     
+    // Count different categories
+    const leadsCount = leads.filter(lead => lead.status !== 'Closed').length;
+    const pocCount = customers.filter(customer => 
+        (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
+        customer.status !== 'closed'
+    ).length;
+    const onboardedCount = customers.filter(customer => 
+        customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
+    ).length;
+    const closedCount = customers.filter(customer => customer.status === 'closed').length;
+    
+    // Update main display
     document.getElementById('totalCustomersDisplay').textContent = totalCustomers;
     document.getElementById('totalCustomersHeaderCount').textContent = totalCustomers;
-    document.getElementById('totalLeadsDisplay').textContent = totalLeads;
-    document.getElementById('totalLeadsHeaderCount').textContent = totalLeads;
+    
+    // Update tab counts
+    document.getElementById('leadsCount').textContent = leadsCount;
+    document.getElementById('pocCount').textContent = pocCount;
+    document.getElementById('onboardedCount').textContent = onboardedCount;
+    document.getElementById('closedCount').textContent = closedCount;
 }
 
-// ENHANCED: Update tabs content with leads
+// Update tabs content
 function updateTabsContent() {
     updateLeadsTab();
     updatePOCTab();
@@ -925,21 +980,22 @@ function updateTabsContent() {
     updateClosedLeadsTab();
 }
 
-// NEW: Update leads tab
+// Update leads tab
 function updateLeadsTab() {
+    const activeLeads = filteredLeads.filter(lead => lead.status !== 'Closed');
     const leadsList = document.getElementById('leadsList');
     const leadsEmpty = document.getElementById('leadsEmptyState');
 
-    if (filteredLeads.length === 0) {
+    if (activeLeads.length === 0) {
         leadsList.innerHTML = '';
         leadsEmpty.style.display = 'block';
     } else {
         leadsEmpty.style.display = 'none';
-        leadsList.innerHTML = filteredLeads.map(lead => createLeadCard(lead)).join('');
+        leadsList.innerHTML = activeLeads.map(lead => createLeadCard(lead)).join('');
     }
 }
 
-// NEW: Create lead card HTML
+// Create lead card HTML - Updated with only 2 actions
 function createLeadCard(lead) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
@@ -987,12 +1043,9 @@ function createLeadCard(lead) {
             </div>
             <div class="mt-3 flex gap-2">
                 <button onclick="convertLeadToCustomer(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
-                    Convert to Customer
+                    Add to Customer
                 </button>
-                <button onclick="updateLeadStatus(${lead.id}, 'Qualified')" class="px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
-                    Mark Qualified
-                </button>
-                <button onclick="updateLeadStatus(${lead.id}, 'Closed')" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                <button onclick="closeLeadAction(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
                     Close Lead
                 </button>
             </div>
@@ -1000,43 +1053,13 @@ function createLeadCard(lead) {
     `;
 }
 
-// NEW: Convert lead to customer
+// Convert lead to customer - Redirect to Add New Customer
 async function convertLeadToCustomer(leadId) {
     try {
         const lead = leads.find(l => l.id === leadId);
         if (!lead) return;
 
-        // Create customer from lead data
-        const customerData = {
-            account_manager_name: 'To be assigned',
-            account_manager_id: 'TBA',
-            customer_name: lead.customer_name,
-            customer_mobile: lead.contact,
-            customer_email: lead.contact.includes('@') ? lead.contact : `${lead.customer_name.toLowerCase().replace(/\s+/g, '.')}@example.com`,
-            lead_sources: ['lead_conversion'],
-            requirements: [],
-            poc_type: 'free_poc',
-            poc_start_date: null,
-            poc_end_date: null,
-            status: 'active',
-            onboard_source: 'lead_conversion',
-            extension_count: 0,
-            poc_extended_days: 0,
-            email_notifications_sent: 0,
-            created_at: new Date().toISOString()
-        };
-
-        const { error: customerError } = await supabase
-            .from('customers')
-            .insert([customerData]);
-
-        if (customerError) {
-            console.error('Error creating customer:', customerError);
-            alert('Error converting lead: ' + customerError.message);
-            return;
-        }
-
-        // Update lead status to converted
+        // Mark lead as converted
         const { error: leadError } = await supabase
             .from('leads')
             .update({ status: 'Converted' })
@@ -1046,9 +1069,23 @@ async function convertLeadToCustomer(leadId) {
             console.error('Error updating lead:', leadError);
         }
 
-        alert(`Lead "${lead.customer_name}" has been converted to customer successfully!`);
+        // Show Add tab and open Add Customer form
+        showAddTab();
+        showAddCustomerForm();
+        
+        // Pre-fill customer form with lead data
+        document.querySelector('input[name="customerName"]').value = lead.customer_name;
+        document.querySelector('input[name="customerMobile"]').value = lead.contact;
+        
+        // If contact looks like email, fill email field
+        if (lead.contact.includes('@')) {
+            document.querySelector('input[name="customerEmail"]').value = lead.contact;
+        } else {
+            document.querySelector('input[name="customerEmail"]').value = `${lead.customer_name.toLowerCase().replace(/\s+/g, '.')}@example.com`;
+        }
+
         loadData();
-        showEmailToast(`Lead converted: ${lead.customer_name}`);
+        showEmailToast(`Lead converted: ${lead.customer_name}. Please complete customer details.`);
         
     } catch (error) {
         console.error('Error converting lead:', error);
@@ -1056,25 +1093,35 @@ async function convertLeadToCustomer(leadId) {
     }
 }
 
-// NEW: Update lead status
-async function updateLeadStatus(leadId, newStatus) {
+// Close lead action - Move to Closed Leads
+async function closeLeadAction(leadId) {
     try {
+        const lead = leads.find(l => l.id === leadId);
+        if (!lead) return;
+
+        if (!confirm(`Are you sure you want to close lead "${lead.customer_name}"?`)) {
+            return;
+        }
+
         const { error } = await supabase
             .from('leads')
-            .update({ status: newStatus })
+            .update({ status: 'Closed' })
             .eq('id', leadId);
 
         if (error) {
-            console.error('Error updating lead status:', error);
-            alert('Error updating lead: ' + error.message);
+            console.error('Error closing lead:', error);
+            alert('Error closing lead: ' + error.message);
             return;
         }
 
         loadData();
-        showEmailToast(`Lead status updated to ${newStatus}`);
+        showEmailToast(`Lead closed: ${lead.customer_name}`);
+        
+        // Show Closed Leads tab
+        showClosedLeadsTab();
     } catch (error) {
-        console.error('Error updating lead status:', error);
-        alert('Error updating lead status');
+        console.error('Error closing lead:', error);
+        alert('Error closing lead');
     }
 }
 
@@ -1097,7 +1144,7 @@ function updatePOCTab() {
     }
 }
 
-// Update onboarded tab - ENHANCED to show onboard source
+// Update onboarded tab
 function updateOnboardedTab() {
     const onboardedCustomers = filteredCustomers.filter(customer => 
         customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
@@ -1115,23 +1162,43 @@ function updateOnboardedTab() {
     }
 }
 
-// Update closed leads tab
+// Update closed leads tab - Include both closed customers and closed leads
 function updateClosedLeadsTab() {
     const closedCustomers = filteredCustomers.filter(customer => customer.status === 'closed');
+    const closedLeads = filteredLeads.filter(lead => lead.status === 'Closed');
 
     const closedList = document.getElementById('closedLeadsList');
     const closedEmpty = document.getElementById('closedLeadsEmptyState');
 
-    if (closedCustomers.length === 0) {
+    if (closedCustomers.length === 0 && closedLeads.length === 0) {
         closedList.innerHTML = '';
         closedEmpty.style.display = 'block';
     } else {
         closedEmpty.style.display = 'none';
-        closedList.innerHTML = closedCustomers.map(customer => createCustomerCard(customer)).join('');
+        
+        let closedHTML = '';
+        
+        // Add closed customers
+        if (closedCustomers.length > 0) {
+            closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4">Closed Customers</h4>';
+            closedHTML += closedCustomers.map(customer => createCustomerCard(customer)).join('');
+        }
+        
+        // Add closed leads
+        if (closedLeads.length > 0) {
+            if (closedCustomers.length > 0) {
+                closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4 mt-8">Closed Leads</h4>';
+            } else {
+                closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4">Closed Leads</h4>';
+            }
+            closedHTML += closedLeads.map(lead => createLeadCard(lead)).join('');
+        }
+        
+        closedList.innerHTML = closedHTML;
     }
 }
 
-// ENHANCED: Create customer card HTML with manual email button
+// Create customer card HTML with enhanced features
 function createCustomerCard(customer, showTimeRemaining = false, showOnboardSource = false) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
@@ -1183,10 +1250,10 @@ function createCustomerCard(customer, showTimeRemaining = false, showOnboardSour
             Manage POC
         </button>` : '';
 
-    const emailButton = `
+    const emailButton = customer.status !== 'closed' ? `
         <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 ml-2 px-3 py-1 text-xs rounded-lg manual-email-btn dark:text-utility-white">
             📧 Schedule Email
-        </button>`;
+        </button>` : '';
 
     const extensionInfo = customer.extension_count > 0 ? 
         `<div class="text-body-s-regular dark:text-dark-base-500">
@@ -1236,6 +1303,152 @@ function createCustomerCard(customer, showTimeRemaining = false, showOnboardSour
     `;
 }
 
+// Finance Tab Content
+function showFinance() {
+    hideAllContent();
+    document.getElementById('financeContent').classList.remove('hidden');
+    updateMenuHighlight('finance');
+    updateFinanceContent();
+}
+
+function updateFinanceContent() {
+    const pendingList = document.getElementById('pendingApprovalsList');
+    const financeEmpty = document.getElementById('financeEmptyState');
+
+    if (pendingApprovals.length === 0) {
+        pendingList.innerHTML = '';
+        financeEmpty.style.display = 'block';
+    } else {
+        financeEmpty.style.display = 'none';
+        pendingList.innerHTML = pendingApprovals.map(customer => createApprovalCard(customer)).join('');
+    }
+}
+
+function createApprovalCard(customer) {
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Not set';
+        return new Date(dateString).toLocaleDateString();
+    };
+
+    return `
+        <div class="approval-card p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
+                    <p class="text-body-s-regular dark:text-dark-base-500">Submitted: ${formatDate(customer.created_at)}</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end">
+                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Pending Approval</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500 mb-4">
+                <div>
+                    <span class="font-semibold">Mobile:</span> ${customer.customer_mobile}
+                </div>
+                <div>
+                    <span class="font-semibold">Account Manager:</span> ${customer.account_manager_name}
+                </div>
+                <div>
+                    <span class="font-semibold">POC Type:</span> ${customer.poc_type}
+                </div>
+                <div>
+                    <span class="font-semibold">POC Duration:</span> ${customer.poc_duration || 30} days
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="approveCustomer(${customer.id})" class="px-4 py-2 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
+                    Approve
+                </button>
+                <button onclick="rejectCustomer(${customer.id})" class="px-4 py-2 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                    Reject
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Approve customer from finance
+async function approveCustomer(customerId) {
+    try {
+        const customer = pendingApprovals.find(c => c.id === customerId);
+        if (!customer) return;
+
+        if (!confirm(`Approve customer "${customer.customer_name}"?`)) {
+            return;
+        }
+
+        // Calculate POC end date from start date and duration
+        let pocEndDate = null;
+        if (customer.poc_start_date && customer.poc_duration) {
+            const startDate = new Date(customer.poc_start_date);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + parseInt(customer.poc_duration));
+            pocEndDate = endDate.toISOString().split('T')[0];
+        }
+
+        const { error } = await supabase
+            .from('customers')
+            .update({
+                approval_status: 'approved',
+                poc_end_date: pocEndDate,
+                approved_at: new Date().toISOString(),
+                approved_by: userSession?.email || 'admin'
+            })
+            .eq('id', customerId);
+
+        if (error) {
+            console.error('Error approving customer:', error);
+            alert('Error approving customer: ' + error.message);
+            return;
+        }
+
+        alert(`Customer "${customer.customer_name}" approved successfully!`);
+        loadData();
+        
+        // Send approval email
+        await sendEmail('customer_onboarded', customer);
+        showEmailToast(`Customer approved: ${customer.customer_name}`);
+    } catch (error) {
+        console.error('Error approving customer:', error);
+        alert('Error approving customer');
+    }
+}
+
+// Reject customer from finance
+async function rejectCustomer(customerId) {
+    try {
+        const customer = pendingApprovals.find(c => c.id === customerId);
+        if (!customer) return;
+
+        const reason = prompt(`Reject customer "${customer.customer_name}"?\nPlease provide a reason:`);
+        if (!reason) return;
+
+        const { error } = await supabase
+            .from('customers')
+            .update({
+                approval_status: 'rejected',
+                rejection_reason: reason,
+                rejected_at: new Date().toISOString(),
+                rejected_by: userSession?.email || 'admin'
+            })
+            .eq('id', customerId);
+
+        if (error) {
+            console.error('Error rejecting customer:', error);
+            alert('Error rejecting customer: ' + error.message);
+            return;
+        }
+
+        alert(`Customer "${customer.customer_name}" rejected.`);
+        loadData();
+        showEmailToast(`Customer rejected: ${customer.customer_name}`);
+    } catch (error) {
+        console.error('Error rejecting customer:', error);
+        alert('Error rejecting customer');
+    }
+}
+
 // Check and move expired POCs to closed leads
 async function checkExpiredPOCs() {
     const today = new Date().toISOString().split('T')[0];
@@ -1273,7 +1486,7 @@ async function checkExpiredPOCs() {
     }
 }
 
-// ENHANCED: Login functionality with session management
+// Login functionality with session management
 async function handleLogin(e) {
     e.preventDefault();
     
@@ -1345,7 +1558,7 @@ function togglePasswordVisibility() {
     passwordField.setAttribute('type', type);
 }
 
-// FIXED: Sidebar toggle functionality with hamburger animation
+// Sidebar toggle functionality
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -1390,7 +1603,7 @@ function handleSidebarMouseLeave() {
     }
 }
 
-// ENHANCED: Search functionality for both customers and leads
+// Search functionality for both customers and leads
 function handleSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     currentFilter = searchTerm;
@@ -1435,17 +1648,17 @@ function clearSearch() {
     applyCurrentFilter();
 }
 
+// Show all customers - Clickable total customers
+function showAllCustomers() {
+    showCustomersOverview();
+    showOnboardedTab(); // Show all onboarded customers
+}
+
 // Menu navigation functions
 function showCustomersOverview() {
     hideAllContent();
     document.getElementById('customersOverviewContent').classList.remove('hidden');
     updateMenuHighlight('customers');
-}
-
-function showFinance() {
-    hideAllContent();
-    document.getElementById('financeContent').classList.remove('hidden');
-    updateMenuHighlight('finance');
 }
 
 function showGroundOperations() {
@@ -1495,7 +1708,6 @@ function showAddTab() {
     updateTabHighlight('addTab');
 }
 
-// NEW: Show leads tab
 function showLeadsTab() {
     hideAllTabContent();
     document.getElementById('leadsTabContent').classList.remove('hidden');
@@ -1529,16 +1741,54 @@ function hideAllTabContent() {
 }
 
 function updateTabHighlight(activeTabId) {
-    document.querySelectorAll('.dashboard-tab').forEach(tab => {
-        tab.classList.remove('border-brand-blue-600', 'dark:text-brand-blue-600');
-        tab.classList.add('border-transparent');
+    document.querySelectorAll('.tab-button').forEach(tab => {
+        tab.classList.remove('active');
     });
     
     const activeTab = document.getElementById(activeTabId);
     if (activeTab) {
-        activeTab.classList.add('border-brand-blue-600', 'dark:text-brand-blue-600');
-        activeTab.classList.remove('border-transparent');
+        activeTab.classList.add('active');
     }
+}
+
+// Multi-step form functions
+function goToStep2() {
+    // Validate step 1 required fields
+    const requiredFields = ['accountManagerName', 'accountManagerId', 'customerName', 'customerMobile', 'customerEmail'];
+    
+    for (const fieldName of requiredFields) {
+        const field = document.querySelector(`input[name="${fieldName}"]`);
+        if (!field || !field.value.trim()) {
+            alert(`Please fill in ${field.previousElementSibling.textContent}`);
+            field.focus();
+            return;
+        }
+    }
+
+    // Check if at least one lead source is selected
+    const leadSources = document.querySelectorAll('input[name="leadSource"]:checked');
+    if (leadSources.length === 0) {
+        alert('Please select at least one lead source');
+        return;
+    }
+
+    document.getElementById('step1Content').classList.add('hidden');
+    document.getElementById('step2Content').classList.remove('hidden');
+    
+    // Update step indicator
+    document.getElementById('step1Indicator').classList.remove('active');
+    document.getElementById('step1Indicator').classList.add('completed');
+    document.getElementById('step2Indicator').classList.add('active');
+}
+
+function goToStep1() {
+    document.getElementById('step2Content').classList.add('hidden');
+    document.getElementById('step1Content').classList.remove('hidden');
+    
+    // Update step indicator
+    document.getElementById('step2Indicator').classList.remove('active');
+    document.getElementById('step1Indicator').classList.remove('completed');
+    document.getElementById('step1Indicator').classList.add('active');
 }
 
 // Form modal functions
@@ -1553,11 +1803,16 @@ function closeAddLeadForm() {
 
 function showAddCustomerForm() {
     document.getElementById('addCustomerModal').classList.remove('hidden');
+    // Reset to step 1
+    goToStep1();
 }
 
 function closeAddCustomerForm() {
     document.getElementById('addCustomerModal').classList.add('hidden');
     document.getElementById('addCustomerForm').reset();
+    document.getElementById('customDurationDiv').classList.add('hidden');
+    // Reset to step 1
+    goToStep1();
 }
 
 // Form submission handlers
@@ -1613,6 +1868,22 @@ async function handleAddCustomer(e) {
         requirements.push(checkbox.value);
     });
 
+    // Get POC duration
+    let pocDuration = parseInt(formData.get('pocDuration'));
+    if (formData.get('pocDuration') === 'custom') {
+        pocDuration = parseInt(formData.get('customDuration')) || 30;
+    }
+
+    // Calculate POC end date from start date + duration
+    let pocEndDate = null;
+    const pocStartDate = formData.get('pocStartDate');
+    if (pocStartDate && pocDuration) {
+        const startDate = new Date(pocStartDate);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + pocDuration);
+        pocEndDate = endDate.toISOString().split('T')[0];
+    }
+
     const customerData = {
         account_manager_name: formData.get('accountManagerName'),
         account_manager_id: formData.get('accountManagerId'),
@@ -1622,10 +1893,12 @@ async function handleAddCustomer(e) {
         lead_sources: leadSources,
         requirements: requirements,
         poc_type: formData.get('pocType'),
-        poc_start_date: formData.get('pocStartDate') || null,
-        poc_end_date: formData.get('pocEndDate') || null,
+        poc_duration: pocDuration,
+        poc_start_date: pocStartDate || null,
+        poc_end_date: pocEndDate,
         status: formData.get('pocType') === 'direct_onboarding' ? 'onboarded' : 'active',
         onboard_source: formData.get('pocType') === 'direct_onboarding' ? 'direct' : 'poc_conversion',
+        approval_status: 'pending', // Always pending for finance approval
         extension_count: 0,
         poc_extended_days: 0,
         email_notifications_sent: 0,
@@ -1642,22 +1915,14 @@ async function handleAddCustomer(e) {
             console.error('Error saving customer:', error);
             alert('Error saving customer: ' + error.message);
         } else {
-            alert('Customer saved successfully!');
+            alert('Customer saved successfully! Pending finance approval.');
             closeAddCustomerForm();
             loadData();
             
-            // Send welcome email
-            if (data && data[0]) {
-                if (customerData.poc_type !== 'direct_onboarding') {
-                    const pocDuration = customerData.poc_start_date && customerData.poc_end_date ? 
-                        `${customerData.poc_start_date} to ${customerData.poc_end_date}` : 'As discussed';
-                    await sendEmail('poc_started', data[0], pocDuration);
-                } else {
-                    await sendEmail('customer_onboarded', data[0]);
-                }
-            }
+            // Navigate to Finance tab
+            showFinance();
             
-            showEmailToast(`Customer "${customerData.customer_name}" added successfully`);
+            showEmailToast(`Customer "${customerData.customer_name}" submitted for approval`);
         }
     } catch (error) {
         console.error('Error saving customer:', error);
@@ -1665,7 +1930,7 @@ async function handleAddCustomer(e) {
     }
 }
 
-// ENHANCED: Logout function with session cleanup
+// Logout function with session cleanup
 function logout() {
     // Clear session
     clearUserSession();
@@ -1683,6 +1948,7 @@ function logout() {
     leads = [];
     credentials = [];
     scheduledEmails = [];
+    pendingApprovals = [];
     filteredCustomers = [];
     filteredLeads = [];
     currentFilter = '';
