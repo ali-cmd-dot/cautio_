@@ -26,14 +26,16 @@
 .m-4{margin:1rem}.mx-4{margin-left:1rem;margin-right:1rem}.my-8{margin-top:2rem;margin-bottom:2rem}
 .mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}
 .mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.ml-3{margin-left:.75rem}.mr-2{margin-right:.5rem}.mt-1{margin-top:.25rem}
+.mb-1{margin-bottom:.25rem}
 
 .block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}
 
 .h-full{height:100%}.h-screen{height:100vh}.min-h-screen{min-h:100vh}
-.h-6{height:1.5rem}.h-8{height:2rem}.h-20{height:5rem}.h-5{height:1.25rem}
+.h-6{height:1.5rem}.h-8{height:2rem}.h-20{height:5rem}.h-5{height:1.25rem}.h-4{height:1rem}
+.h-0\.5{height:0.125rem}.h-0{height:0}
 .max-h-48{max-height:12rem}.max-h-\[90vh\]{max-height:90vh}.max-h-96{max-height:24rem}
 
-.w-full{width:100%}.w-64{width:16rem}.w-8{width:2rem}.w-20{width:5rem}.w-5{width:1.25rem}
+.w-full{width:100%}.w-64{width:16rem}.w-8{width:2rem}.w-20{width:5rem}.w-5{width:1.25rem}.w-4{width:1rem}
 .max-w-2xl{max-width:42rem}.max-w-4xl{max-width:56rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}
 
 .flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}
@@ -46,6 +48,7 @@
 
 .gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}
 .space-x-8>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2rem * var(--tw-space-x-reverse));margin-left:calc(2rem * calc(1 - var(--tw-space-x-reverse)))}
+.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem * var(--tw-space-y-reverse))}
 .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem * var(--tw-space-y-reverse))}
 .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem * var(--tw-space-y-reverse))}
 .space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}
@@ -92,6 +95,9 @@
 .outline-offset-0{outline-offset:0}
 
 .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}
+.duration-300{transition-duration:300ms}
+
 .shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05)}
 
 .opacity-90:hover{opacity:.9}
@@ -225,17 +231,41 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     margin-left: 16rem;
 }
 
-/* Hamburger Menu - Fixed Alignment */
-.hamburger-lines {
+/* FIXED: Hamburger Menu - Proper 3-line alignment */
+.hamburger-icon {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    gap: 3px;
+    width: 20px;
+    height: 20px;
 }
 
-.hamburger-lines line {
-    stroke-width: 2;
-    stroke-linecap: round;
+.hamburger-line {
+    width: 16px;
+    height: 2px;
+    background-color: #dce2e5;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+/* Hamburger animation states */
+.sidebar.expanded .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
+
+.sidebar.expanded .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar.expanded .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+}
+
+.dark .hamburger-line {
+    background-color: #dce2e5;
 }
 
 /* Custom checkbox styles */
@@ -372,6 +402,36 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
 
 .status-badge.poc-converted {
     background-color: #0284c7;
+    color: #fff;
+}
+
+.status-badge.lead-new {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.status-badge.lead-progress {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.status-badge.lead-qualified {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.status-badge.lead-not-qualified {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+.status-badge.lead-converted {
+    background-color: #8b5cf6;
+    color: #fff;
+}
+
+.status-badge.lead-closed {
+    background-color: #6b7280;
     color: #fff;
 }
 
@@ -571,7 +631,166 @@ button:active {
         grid-template-columns: 1fr;
     }
     
-    .hamburger-lines {
-        display: block;
+    .hamburger-icon {
+        display: flex;
     }
+}
+
+/* Lead card specific styles */
+.lead-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+}
+
+.lead-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Schedule indicator */
+.schedule-indicator {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.schedule-indicator::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10b981;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+}
+
+/* Email scheduling modal enhancements */
+#manualEmailModal .dark\:bg-dark-fill-base-300 {
+    background: linear-gradient(135deg, rgb(18 19 22) 0%, rgb(24 25 28) 100%);
+    border: 1px solid rgba(0, 69, 255, 0.2);
+}
+
+/* Date and time input styling */
+input[type="date"], 
+input[type="time"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Custom select styling for email type */
+select[name="emailType"] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* POC days remaining styling */
+.days-remaining-expired {
+    background-color: #dc2626;
+    color: white;
+    animation: blink 1s infinite;
+}
+
+.days-remaining-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.days-remaining-safe {
+    background-color: #10b981;
+    color: white;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
+}
+
+/* Enhanced success toast colors */
+.dark\:text-dark-success-600:where(.dark,.dark *){
+    color: #10b981;
+}
+
+/* Manual email button styling */
+.manual-email-btn {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    transition: all 0.3s ease;
+}
+
+.manual-email-btn:hover {
+    background: linear-gradient(135deg, #047857 0%, #059669 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+/* Session persistence indicator */
+.session-indicator {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.session-indicator.show {
+    opacity: 1;
+}
+
+/* Lead priority indicators */
+.priority-high {
+    border-left: 4px solid #ef4444;
+}
+
+.priority-medium {
+    border-left: 4px solid #f59e0b;
+}
+
+.priority-low {
+    border-left: 4px solid #10b981;
+}
+
+/* Enhanced scrollbar for dark theme */
+.dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: rgba(220, 226, 229, 0.3);
+    border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(220, 226, 229, 0.5);
 }
