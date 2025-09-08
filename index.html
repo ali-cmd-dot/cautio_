@@ -239,7 +239,7 @@
     <div id="dashboardPage" class="hidden min-h-screen dark:bg-dark-fill-base-400">
         <!-- Sidebar -->
         <div id="sidebar" class="sidebar collapsed fixed left-0 top-0 h-full dark:bg-dark-fill-base-300 dark:border-r dark:border-dark-stroke-contrast-400 z-50">
-            <!-- Hamburger Menu Button -->
+            <!-- Hamburger Menu Button - Fixed Position -->
             <div class="flex items-center justify-between p-4 dark:border-b dark:border-dark-stroke-contrast-400">
                 <div class="flex items-center min-w-0">
                     <svg class="h-8 w-8 rounded-lg flex-shrink-0" width="32" height="32" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -248,7 +248,7 @@
                     </svg>
                     <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600 truncate">Cautio</span>
                 </div>
-                <button id="hamburgerBtn" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
+                <button id="hamburgerBtn" class="hamburger-button p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
                     <div class="hamburger-menu-icon">
                         <span class="hamburger-line"></span>
                         <span class="hamburger-line"></span>
@@ -335,7 +335,7 @@
                     <!-- Dashboard Tabs -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex space-x-0">
+                            <div class="flex space-x-1">
                                 <button onclick="showAddTab()" class="tab-button active" id="addTab">
                                     <span class="tab-label">Add</span>
                                 </button>
@@ -378,7 +378,7 @@
                         <!-- Add Tab Content -->
                         <div id="addTabContent">
                             <div class="grid grid-cols-2 gap-6">
-                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600" onclick="showAddLeadForm()">
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-all" onclick="showAddLeadForm()">
                                     <div class="flex items-center justify-center mb-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
                                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -390,7 +390,7 @@
                                     <p class="text-body-m-regular dark:text-dark-base-500 text-center">Create a new potential customer lead</p>
                                 </div>
 
-                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600" onclick="showAddCustomerForm()">
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-all" onclick="showAddCustomerForm()">
                                     <div class="flex items-center justify-center mb-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
                                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -596,7 +596,7 @@
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Potential Fleet Size</label>
-                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size" required>
+                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-ne dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size" required>
                 </div>
                 
                 <div>
