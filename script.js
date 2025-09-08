@@ -282,8 +282,14 @@ function setupEventListeners() {
     sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
     sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
     
-    // Search functionality
+    // Enhanced Search functionality
     document.getElementById('searchInput').addEventListener('input', handleSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch(e);
+        }
+    });
     
     // Form submissions
     document.getElementById('addLeadForm').addEventListener('submit', handleAddLead);
@@ -1603,55 +1609,119 @@ function handleSidebarMouseLeave() {
     }
 }
 
-// Search functionality for both customers and leads
+// Enhanced Search functionality for both customers and leads
 function handleSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     currentFilter = searchTerm;
-    applyCurrentFilter();
-}
-
-function applyCurrentFilter() {
-    if (!currentFilter) {
+    
+    if (!searchTerm) {
+        // If search is empty, show all data
         filteredCustomers = [...customers];
         filteredLeads = [...leads];
     } else {
+        // Filter customers
         filteredCustomers = customers.filter(customer => {
             return (
-                customer.customer_name.toLowerCase().includes(currentFilter) ||
-                customer.customer_email.toLowerCase().includes(currentFilter) ||
-                customer.customer_mobile.includes(currentFilter) ||
-                customer.account_manager_name.toLowerCase().includes(currentFilter) ||
+                customer.customer_name.toLowerCase().includes(searchTerm) ||
+                customer.customer_email.toLowerCase().includes(searchTerm) ||
+                customer.customer_mobile.includes(searchTerm) ||
+                customer.account_manager_name.toLowerCase().includes(searchTerm) ||
+                customer.account_manager_id.toLowerCase().includes(searchTerm) ||
                 (customer.lead_sources && customer.lead_sources.some(source => 
-                    source.toLowerCase().includes(currentFilter)
+                    source.toLowerCase().includes(searchTerm)
                 )) ||
                 (customer.requirements && customer.requirements.some(req => 
-                    req.toLowerCase().includes(currentFilter)
-                ))
+                    req.toLowerCase().includes(searchTerm)
+                )) ||
+                customer.poc_type.toLowerCase().includes(searchTerm) ||
+                (customer.status && customer.status.toLowerCase().includes(searchTerm))
             );
         });
 
+        // Filter leads
         filteredLeads = leads.filter(lead => {
             return (
-                lead.customer_name.toLowerCase().includes(currentFilter) ||
-                lead.contact.toLowerCase().includes(currentFilter) ||
-                lead.status.toLowerCase().includes(currentFilter) ||
-                lead.type.toLowerCase().includes(currentFilter)
+                lead.customer_name.toLowerCase().includes(searchTerm) ||
+                lead.contact.toLowerCase().includes(searchTerm) ||
+                lead.status.toLowerCase().includes(searchTerm) ||
+                lead.type.toLowerCase().includes(searchTerm) ||
+                (lead.fleet_size && lead.fleet_size.toString().includes(searchTerm))
             );
         });
     }
+    
+    // Update all tabs content
     updateTabsContent();
+    
+    // Show search results message
+    if (searchTerm && (filteredCustomers.length === 0 && filteredLeads.length === 0)) {
+        showEmailToast(`No results found for "${searchTerm}"`);
+    } else if (searchTerm) {
+        const totalResults = filteredCustomers.length + filteredLeads.length;
+        showEmailToast(`Found ${totalResults} result(s) for "${searchTerm}"`);
+    }
 }
 
 function clearSearch() {
     document.getElementById('searchInput').value = '';
     currentFilter = '';
-    applyCurrentFilter();
+    filteredCustomers = [...customers];
+    filteredLeads = [...leads];
+    updateTabsContent();
+    showEmailToast('Search cleared - showing all data');
 }
 
-// Show all customers - Clickable total customers
+// FIXED: Show all customers - When "Total Customers" is clicked
 function showAllCustomers() {
     showCustomersOverview();
-    showOnboardedTab(); // Show all onboarded customers
+    
+    // Clear any existing search filter
+    currentFilter = '';
+    document.getElementById('searchInput').value = '';
+    filteredCustomers = [...customers];
+    filteredLeads = [...leads];
+    
+    // Show special "All Customers" view
+    showAllCustomersView();
+}
+
+// NEW: Function to show all customers in a comprehensive view
+function showAllCustomersView() {
+    hideAllTabContent();
+    
+    // Create a new tab content for showing all customers
+    const tabContent = document.getElementById('tabContent');
+    
+    // Remove any existing "All Customers" content
+    const existingAllCustomersContent = document.getElementById('allCustomersTabContent');
+    if (existingAllCustomersContent) {
+        existingAllCustomersContent.remove();
+    }
+    
+    // Create new content div
+    const allCustomersContent = document.createElement('div');
+    allCustomersContent.id = 'allCustomersTabContent';
+    allCustomersContent.innerHTML = `
+        <div class="mb-4">
+            <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">All Customers</h3>
+            <p class="text-body-m-regular dark:text-dark-base-500">Complete overview of all customers in the system</p>
+        </div>
+        <div id="allCustomersList" class="space-y-4">
+            ${customers.map(customer => createCustomerCard(customer, true, true)).join('')}
+        </div>
+        ${customers.length === 0 ? `
+            <div class="text-center py-12">
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers Found</h3>
+                <p class="text-body-l-regular dark:text-dark-base-500">Start by adding your first customer</p>
+            </div>
+        ` : ''}
+    `;
+    
+    tabContent.appendChild(allCustomersContent);
+    
+    // Update tab highlighting to show we're viewing all customers
+    updateTabHighlight(''); // Clear all highlights
+    showEmailToast(`Showing all ${customers.length} customers`);
 }
 
 // Menu navigation functions
@@ -1738,6 +1808,12 @@ function hideAllTabContent() {
     document.getElementById('pocTabContent').classList.add('hidden');
     document.getElementById('onboardedTabContent').classList.add('hidden');
     document.getElementById('closedLeadsTabContent').classList.add('hidden');
+    
+    // Also hide the "All Customers" view if it exists
+    const allCustomersContent = document.getElementById('allCustomersTabContent');
+    if (allCustomersContent) {
+        allCustomersContent.remove();
+    }
 }
 
 function updateTabHighlight(activeTabId) {
@@ -1745,9 +1821,11 @@ function updateTabHighlight(activeTabId) {
         tab.classList.remove('active');
     });
     
-    const activeTab = document.getElementById(activeTabId);
-    if (activeTab) {
-        activeTab.classList.add('active');
+    if (activeTabId) {
+        const activeTab = document.getElementById(activeTabId);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
     }
 }
 
