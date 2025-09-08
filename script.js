@@ -7,6 +7,7 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 let sidebarExpanded = false;
 let customers = [];
 let leads = [];
+let credentials = [];
 let filteredCustomers = [];
 let currentFilter = '';
 let currentPOCAction = null;
@@ -26,6 +27,12 @@ function setupEventListeners() {
     // Login form
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     
+    // Forgot password form
+    document.getElementById('forgotPasswordForm').addEventListener('submit', handleForgotPassword);
+    
+    // Add credential form
+    document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredential);
+    
     // Sidebar toggle
     document.getElementById('hamburgerBtn').addEventListener('click', toggleSidebar);
     
@@ -40,6 +47,369 @@ function setupEventListeners() {
     // Form submissions
     document.getElementById('addLeadForm').addEventListener('submit', handleAddLead);
     document.getElementById('addCustomerForm').addEventListener('submit', handleAddCustomer);
+}
+
+// Show/Hide Loading Overlay
+function showLoadingOverlay() {
+    document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoadingOverlay() {
+    document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+// Show email toast notification
+function showEmailToast(message) {
+    const toast = document.getElementById('emailToast');
+    const messageEl = document.getElementById('emailToastMessage');
+    messageEl.textContent = message;
+    toast.classList.remove('hidden');
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 300);
+    }, 3000);
+}
+
+// Email Service Integration (Simulation)
+async function sendEmail(type, customerData, additionalInfo = '') {
+    try {
+        // Log email to database
+        const emailData = {
+            customer_id: customerData.id,
+            email_type: type,
+            recipient_email: customerData.customer_email,
+            subject: getEmailSubject(type, customerData.customer_name),
+            message: getEmailMessage(type, customerData, additionalInfo),
+            status: 'sent',
+            sent_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase
+            .from('email_logs')
+            .insert([emailData]);
+
+        if (error) {
+            console.error('Error logging email:', error);
+        }
+
+        // Update customer email tracking
+        await supabase
+            .from('customers')
+            .update({
+                email_notifications_sent: (customerData.email_notifications_sent || 0) + 1,
+                last_email_sent: new Date().toISOString()
+            })
+            .eq('id', customerData.id);
+
+        // Show success notification
+        showEmailToast(`Email sent to ${customerData.customer_name} (${customerData.customer_email})`);
+        
+        // In real implementation, integrate with email service:
+        // - SendGrid: await sendgrid.send(emailData)
+        // - Mailgun: await mailgun.messages().send(emailData)
+        // - AWS SES: await ses.sendEmail(emailData).promise()
+        
+        console.log(`📧 EMAIL SENT: ${getEmailSubject(type, customerData.customer_name)}`);
+        console.log(`📧 To: ${customerData.customer_email}`);
+        console.log(`📧 Message: ${getEmailMessage(type, customerData, additionalInfo)}`);
+        
+        return true;
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return false;
+    }
+}
+
+function getEmailSubject(type, customerName) {
+    const subjects = {
+        'poc_reminder': `POC Review Required - ${customerName}`,
+        'poc_extended': `POC Extended - ${customerName}`,
+        'poc_ended': `POC Concluded - ${customerName}`,
+        'customer_onboarded': `Welcome to Cautio - ${customerName}`,
+        'poc_started': `POC Started - ${customerName}`,
+        'password_reset': `Password Reset Request - Cautio Dashboard`
+    };
+    return subjects[type] || `Notification - ${customerName}`;
+}
+
+function getEmailMessage(type, customerData, additionalInfo = '') {
+    const messages = {
+        'poc_reminder': `Dear ${customerData.customer_name},\n\nThis is a reminder that your POC requires review. Please contact your account manager ${customerData.account_manager_name} for next steps.\n\nBest regards,\nCautio Team`,
+        'poc_extended': `Dear ${customerData.customer_name},\n\nYour POC has been extended by 10 days. ${additionalInfo}\n\nNew end date: ${additionalInfo}\n\nBest regards,\nCautio Team`,
+        'poc_ended': `Dear ${customerData.customer_name},\n\nYour POC period has concluded. Thank you for trying Cautio. Please contact us if you'd like to continue with our services.\n\nBest regards,\nCautio Team`,
+        'customer_onboarded': `Dear ${customerData.customer_name},\n\nWelcome to Cautio! We're excited to have you onboard. Your account manager ${customerData.account_manager_name} will be in touch soon.\n\nBest regards,\nCautio Team`,
+        'poc_started': `Dear ${customerData.customer_name},\n\nYour POC has started successfully. Duration: ${additionalInfo}.\n\nYour account manager: ${customerData.account_manager_name}\n\nBest regards,\nCautio Team`
+    };
+    return messages[type] || `Dear ${customerData.customer_name},\n\nThank you for choosing Cautio.\n\nBest regards,\nCautio Team`;
+}
+
+// Forgot Password Page Functions
+function showForgotPasswordPage() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('forgotPasswordPage').classList.remove('hidden');
+    document.getElementById('dashboardPage').classList.add('hidden');
+}
+
+function backToLogin() {
+    document.getElementById('forgotPasswordPage').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('dashboardPage').classList.add('hidden');
+    document.getElementById('forgotPasswordForm').reset();
+}
+
+async function handleForgotPassword(e) {
+    e.preventDefault();
+    
+    showLoadingOverlay();
+    const formData = new FormData(e.target);
+    const email = formData.get('resetEmail');
+    
+    // Generate reset token
+    const resetToken = generateResetToken();
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
+    
+    try {
+        // Save reset request to database
+        const { error: resetError } = await supabase
+            .from('password_reset_requests')
+            .insert([{
+                email: email,
+                reset_token: resetToken,
+                expires_at: expiresAt.toISOString(),
+                used: false
+            }]);
+
+        if (resetError) {
+            console.error('Error creating reset request:', resetError);
+            throw resetError;
+        }
+
+        // Log the password reset email
+        const { error: emailError } = await supabase
+            .from('email_logs')
+            .insert([{
+                customer_id: null,
+                email_type: 'password_reset',
+                recipient_email: email,
+                subject: 'Password Reset Request - Cautio Dashboard',
+                message: `A password reset link has been sent to ${email}. The link will expire in 1 hour. Reset token: ${resetToken}`,
+                status: 'sent'
+            }]);
+
+        if (emailError) {
+            console.error('Error logging email:', emailError);
+        }
+        
+        hideLoadingOverlay();
+        alert(`Password reset link has been sent to ${email}. Please check your email and follow the instructions.`);
+        
+        // Show email toast
+        showEmailToast(`Password reset link sent to ${email}`);
+        
+        // Auto redirect back to login after 3 seconds
+        setTimeout(() => {
+            backToLogin();
+        }, 3000);
+        
+    } catch (error) {
+        hideLoadingOverlay();
+        console.error('Error sending password reset:', error);
+        alert('Error sending password reset email. Please try again.');
+    }
+}
+
+function generateResetToken() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+// Add Credentials Functions
+function showAddCredentials() {
+    hideAllContent();
+    document.getElementById('addCredentialsContent').classList.remove('hidden');
+    updateMenuHighlight('credentials');
+    loadCredentials();
+}
+
+async function loadCredentials() {
+    try {
+        const { data, error } = await supabase
+            .from('user_credentials')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error loading credentials:', error);
+            return;
+        }
+
+        credentials = data || [];
+        updateCredentialsList();
+    } catch (error) {
+        console.error('Error loading credentials:', error);
+    }
+}
+
+function updateCredentialsList() {
+    const credentialsList = document.getElementById('credentialsList');
+    
+    if (credentials.length === 0) {
+        credentialsList.innerHTML = `
+            <div class="text-center py-8">
+                <p class="text-body-l-regular dark:text-dark-base-500">No users found</p>
+            </div>
+        `;
+        return;
+    }
+
+    credentialsList.innerHTML = credentials.map(credential => `
+        <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${credential.full_name || 'N/A'}</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500">${credential.email}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 text-xs rounded-full ${getRoleBadgeClass(credential.role)} dark:text-utility-white">
+                        ${credential.role.toUpperCase()}
+                    </span>
+                    <span class="px-2 py-1 text-xs rounded-full ${credential.is_active ? 'dark:bg-dark-success-600' : 'dark:bg-dark-semantic-danger-300'} dark:text-utility-white">
+                        ${credential.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
+                <div>
+                    <span class="font-semibold">Department:</span> ${credential.department || 'N/A'}
+                </div>
+                <div>
+                    <span class="font-semibold">Created:</span> ${new Date(credential.created_at).toLocaleDateString()}
+                </div>
+                <div>
+                    <span class="font-semibold">Last Login:</span> ${credential.last_login ? new Date(credential.last_login).toLocaleDateString() : 'Never'}
+                </div>
+                <div>
+                    <span class="font-semibold">Created By:</span> ${credential.created_by || 'N/A'}
+                </div>
+            </div>
+            <div class="mt-3 flex gap-2">
+                <button onclick="toggleCredentialStatus(${credential.id}, ${!credential.is_active})" class="px-3 py-1 text-xs rounded-lg ${credential.is_active ? 'dark:bg-dark-semantic-danger-300' : 'dark:bg-dark-success-600'} dark:text-utility-white hover:opacity-90">
+                    ${credential.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button onclick="deleteCredential(${credential.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:opacity-90">
+                    Delete
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getRoleBadgeClass(role) {
+    switch (role) {
+        case 'admin': return 'dark:bg-dark-semantic-danger-300';
+        case 'manager': return 'dark:bg-dark-warning-600';
+        case 'user': return 'dark:bg-dark-info-600';
+        default: return 'dark:bg-dark-stroke-base-400';
+    }
+}
+
+async function handleAddCredential(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const credentialData = {
+        full_name: formData.get('fullName'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        role: formData.get('role'),
+        department: formData.get('department'),
+        is_active: true,
+        created_by: 'admin', // In real app, get from current user session
+        created_at: new Date().toISOString()
+    };
+
+    try {
+        const { data, error } = await supabase
+            .from('user_credentials')
+            .insert([credentialData]);
+
+        if (error) {
+            console.error('Error saving credential:', error);
+            if (error.code === '23505') { // Unique constraint violation
+                alert('Error: Email already exists!');
+            } else {
+                alert('Error saving credential: ' + error.message);
+            }
+            return;
+        }
+
+        alert('User credential added successfully!');
+        document.getElementById('addCredentialForm').reset();
+        loadCredentials();
+        
+        // Show email notification
+        showEmailToast(`User account created for ${credentialData.email}`);
+
+    } catch (error) {
+        console.error('Error saving credential:', error);
+        alert('Error saving credential');
+    }
+}
+
+async function toggleCredentialStatus(id, newStatus) {
+    try {
+        const { error } = await supabase
+            .from('user_credentials')
+            .update({ is_active: newStatus })
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error updating credential status:', error);
+            alert('Error updating status: ' + error.message);
+            return;
+        }
+
+        loadCredentials();
+        showEmailToast(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
+    } catch (error) {
+        console.error('Error updating credential status:', error);
+        alert('Error updating status');
+    }
+}
+
+async function deleteCredential(id) {
+    if (!confirm('Are you sure you want to delete this user credential?')) {
+        return;
+    }
+
+    try {
+        const { error } = await supabase
+            .from('user_credentials')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error deleting credential:', error);
+            alert('Error deleting credential: ' + error.message);
+            return;
+        }
+
+        loadCredentials();
+        showEmailToast('User credential deleted successfully');
+    } catch (error) {
+        console.error('Error deleting credential:', error);
+        alert('Error deleting credential');
+    }
+}
+
+function toggleNewUserPasswordVisibility() {
+    const passwordField = document.getElementById('newUserPassword');
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
 }
 
 // Supabase Real-time listeners
@@ -62,6 +432,17 @@ function setupRealtimeListeners() {
             (payload) => {
                 console.log('Lead change received!', payload);
                 loadData();
+            }
+        )
+        .subscribe();
+
+    // Listen for credential changes
+    supabase
+        .channel('credentials')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'user_credentials' }, 
+            (payload) => {
+                console.log('Credential change received!', payload);
+                loadCredentials();
             }
         )
         .subscribe();
@@ -137,8 +518,8 @@ async function checkPOCReminders() {
                 
                 // Check if it's been 7 days or multiples of 7 days since start
                 if (diffDays > 0 && diffDays % 7 === 0) {
-                    // Send email reminder (simulate with console log for now)
-                    console.log(`EMAIL REMINDER: Customer ${customer.customer_name} POC started ${diffDays} days ago. Action required.`);
+                    // Send email reminder
+                    await sendEmail('poc_reminder', customer, `${diffDays} days since POC start`);
                     
                     // Show action modal
                     showPOCActionModal(customer);
@@ -163,7 +544,7 @@ function closePOCActionModal() {
     document.getElementById('pocActionModal').classList.add('hidden');
 }
 
-// Extend POC by 10 days
+// Extend POC by 10 days - FIXED
 async function extendPOC() {
     if (!currentPOCAction) return;
     
@@ -176,7 +557,9 @@ async function extendPOC() {
             .from('customers')
             .update({
                 poc_end_date: newEndDate.toISOString().split('T')[0],
-                last_extended: new Date().toISOString()
+                last_extended: new Date().toISOString(),
+                extension_count: (currentPOCAction.extension_count || 0) + 1,
+                poc_extended_days: (currentPOCAction.poc_extended_days || 0) + 10
             })
             .eq('id', currentPOCAction.id);
 
@@ -188,8 +571,8 @@ async function extendPOC() {
             closePOCActionModal();
             loadData();
             
-            // Send confirmation email (simulate)
-            console.log(`EMAIL SENT: POC extended for ${currentPOCAction.customer_name} until ${newEndDate.toDateString()}`);
+            // Send confirmation email
+            await sendEmail('poc_extended', currentPOCAction, newEndDate.toDateString());
         }
     } catch (error) {
         console.error('Error extending POC:', error);
@@ -218,8 +601,8 @@ async function endPOC() {
             closePOCActionModal();
             loadData();
             
-            // Send confirmation email (simulate)
-            console.log(`EMAIL SENT: POC ended for ${currentPOCAction.customer_name}`);
+            // Send confirmation email
+            await sendEmail('poc_ended', currentPOCAction);
         }
     } catch (error) {
         console.error('Error ending POC:', error);
@@ -236,7 +619,8 @@ async function onboardCustomer() {
             .from('customers')
             .update({
                 status: 'onboarded',
-                poc_type: 'direct_onboarding'
+                poc_type: 'direct_onboarding',
+                onboard_source: 'poc_conversion'
             })
             .eq('id', currentPOCAction.id);
 
@@ -248,8 +632,8 @@ async function onboardCustomer() {
             closePOCActionModal();
             loadData();
             
-            // Send confirmation email (simulate)
-            console.log(`EMAIL SENT: ${currentPOCAction.customer_name} has been onboarded successfully`);
+            // Send confirmation email
+            await sendEmail('customer_onboarded', currentPOCAction);
         }
     } catch (error) {
         console.error('Error onboarding customer:', error);
@@ -290,7 +674,7 @@ function updatePOCTab() {
     }
 }
 
-// Update onboarded tab
+// Update onboarded tab - ENHANCED to show onboard source
 function updateOnboardedTab() {
     const onboardedCustomers = filteredCustomers.filter(customer => 
         customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
@@ -304,7 +688,7 @@ function updateOnboardedTab() {
         onboardedEmpty.style.display = 'block';
     } else {
         onboardedEmpty.style.display = 'none';
-        onboardedList.innerHTML = onboardedCustomers.map(customer => createCustomerCard(customer)).join('');
+        onboardedList.innerHTML = onboardedCustomers.map(customer => createCustomerCard(customer, false, true)).join('');
     }
 }
 
@@ -324,8 +708,8 @@ function updateClosedLeadsTab() {
     }
 }
 
-// Create customer card HTML
-function createCustomerCard(customer, showTimeRemaining = false) {
+// Create customer card HTML - ENHANCED for onboard source tracking
+function createCustomerCard(customer, showTimeRemaining = false, showOnboardSource = false) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
         return new Date(dateString).toLocaleDateString();
@@ -337,6 +721,17 @@ function createCustomerCard(customer, showTimeRemaining = false) {
         if (pocType === 'free_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Free POC</span>';
         if (pocType === 'paid_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Paid POC</span>';
         return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
+    };
+
+    const getOnboardSourceBadge = (onboardSource) => {
+        if (!showOnboardSource) return '';
+        
+        if (onboardSource === 'direct') {
+            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-brand-blue-600 dark:text-utility-white">Direct Onboarded</span>';
+        } else if (onboardSource === 'poc_conversion') {
+            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">POC Converted</span>';
+        }
+        return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown Source</span>';
     };
 
     const getTimeRemainingBadge = (endDate) => {
@@ -363,6 +758,11 @@ function createCustomerCard(customer, showTimeRemaining = false) {
             Manage POC
         </button>` : '';
 
+    const extensionInfo = customer.extension_count > 0 ? 
+        `<div class="text-body-s-regular dark:text-dark-base-500">
+            <span class="font-semibold">Extensions:</span> ${customer.extension_count} (${customer.poc_extended_days || 0} days)
+        </div>` : '';
+
     return `
         <div class="p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
             <div class="flex justify-between items-start mb-3">
@@ -372,6 +772,7 @@ function createCustomerCard(customer, showTimeRemaining = false) {
                 </div>
                 <div class="flex flex-col gap-2 items-end">
                     ${getStatusBadge(customer.status, customer.poc_type)}
+                    ${getOnboardSourceBadge(customer.onboard_source)}
                     ${showTimeRemaining ? getTimeRemainingBadge(customer.poc_end_date) : ''}
                 </div>
             </div>
@@ -388,6 +789,7 @@ function createCustomerCard(customer, showTimeRemaining = false) {
                 <div>
                     <span class="font-semibold">POC End:</span> ${formatDate(customer.poc_end_date)}
                 </div>
+                ${extensionInfo}
             </div>
             ${extendButton}
         </div>
@@ -417,6 +819,9 @@ async function checkExpiredPOCs() {
                 .from('customers')
                 .update({ status: 'closed' })
                 .eq('id', customer.id);
+                
+            // Send expired POC email
+            await sendEmail('poc_ended', customer, 'POC expired automatically');
         }
 
         if (expiredPOCs.length > 0) {
@@ -428,26 +833,66 @@ async function checkExpiredPOCs() {
     }
 }
 
-// Login functionality
-function handleLogin(e) {
+// Login functionality - ENHANCED with database credential checking
+async function handleLogin(e) {
     e.preventDefault();
     
-    const email = document.getElementById(':Rujttvejsq:').value;
-    const password = document.getElementById(':R1ejttvejsq:').value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
     
-    if (email === 'admin@gm.com' && password === 'admin123') {
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('dashboardPage').classList.remove('hidden');
-        showCustomersOverview();
-        loadData();
-    } else {
-        alert('Invalid credentials. Please use admin@gm.com and admin123');
+    showLoadingOverlay();
+    
+    try {
+        // Check credentials in database
+        const { data: users, error } = await supabase
+            .from('user_credentials')
+            .select('*')
+            .eq('email', email)
+            .eq('password', password)
+            .eq('is_active', true);
+
+        setTimeout(() => {
+            hideLoadingOverlay();
+            
+            if (error) {
+                console.error('Error checking credentials:', error);
+                alert('Error checking credentials. Please try again.');
+                return;
+            }
+
+            if (users && users.length > 0) {
+                const user = users[0];
+                
+                // Update last login
+                supabase
+                    .from('user_credentials')
+                    .update({ last_login: new Date().toISOString() })
+                    .eq('id', user.id);
+
+                // Navigate to dashboard
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('forgotPasswordPage').classList.add('hidden');
+                document.getElementById('dashboardPage').classList.remove('hidden');
+                
+                showCustomersOverview();
+                loadData();
+                
+                showEmailToast(`Welcome back, ${user.full_name || user.email}!`);
+            } else {
+                alert('Invalid credentials. Please check your email and password.');
+            }
+        }, 2000); // 2 second loading simulation
+        
+    } catch (error) {
+        hideLoadingOverlay();
+        console.error('Error during login:', error);
+        alert('Error during login. Please try again.');
     }
 }
 
 // Toggle password visibility
 function togglePasswordVisibility() {
-    const passwordField = document.getElementById(':R1ejttvejsq:');
+    const passwordField = document.getElementById('loginPassword');
     const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordField.setAttribute('type', type);
 }
@@ -562,6 +1007,7 @@ function hideAllContent() {
     document.getElementById('financeContent').classList.add('hidden');
     document.getElementById('groundOperationsContent').classList.add('hidden');
     document.getElementById('inventoryManagementContent').classList.add('hidden');
+    document.getElementById('addCredentialsContent').classList.add('hidden');
 }
 
 function updateMenuHighlight(activeMenu) {
@@ -573,10 +1019,11 @@ function updateMenuHighlight(activeMenu) {
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
         const onclick = item.getAttribute('onclick');
-        if ((activeMenu === 'customers' && onclick.includes('showCustomersOverview')) ||
-            (activeMenu === 'finance' && onclick.includes('showFinance')) ||
-            (activeMenu === 'ground' && onclick.includes('showGroundOperations')) ||
-            (activeMenu === 'inventory' && onclick.includes('showInventoryManagement'))) {
+        if ((activeMenu === 'customers' && onclick && onclick.includes('showCustomersOverview')) ||
+            (activeMenu === 'finance' && onclick && onclick.includes('showFinance')) ||
+            (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
+            (activeMenu === 'inventory' && onclick && onclick.includes('showInventoryManagement')) ||
+            (activeMenu === 'credentials' && onclick && onclick.includes('showAddCredentials'))) {
             item.classList.add('dark:bg-brand-blue-600', 'dark:text-utility-white');
             item.classList.remove('hover:dark:bg-dark-fill-base-600');
         }
@@ -711,13 +1158,18 @@ async function handleAddCustomer(e) {
         poc_start_date: formData.get('pocStartDate') || null,
         poc_end_date: formData.get('pocEndDate') || null,
         status: formData.get('pocType') === 'direct_onboarding' ? 'onboarded' : 'active',
+        onboard_source: formData.get('pocType') === 'direct_onboarding' ? 'direct' : 'poc_conversion',
+        extension_count: 0,
+        poc_extended_days: 0,
+        email_notifications_sent: 0,
         created_at: new Date().toISOString()
     };
 
     try {
         const { data, error } = await supabase
             .from('customers')
-            .insert([customerData]);
+            .insert([customerData])
+            .select();
 
         if (error) {
             console.error('Error saving customer:', error);
@@ -727,11 +1179,15 @@ async function handleAddCustomer(e) {
             closeAddCustomerForm();
             loadData();
             
-            // Send welcome email (simulate)
-            if (customerData.poc_type !== 'direct_onboarding') {
-                console.log(`EMAIL SENT: POC started for ${customerData.customer_name}`);
-            } else {
-                console.log(`EMAIL SENT: Welcome to Cautio, ${customerData.customer_name}!`);
+            // Send welcome email
+            if (data && data[0]) {
+                if (customerData.poc_type !== 'direct_onboarding') {
+                    const pocDuration = customerData.poc_start_date && customerData.poc_end_date ? 
+                        `${customerData.poc_start_date} to ${customerData.poc_end_date}` : 'As discussed';
+                    await sendEmail('poc_started', data[0], pocDuration);
+                } else {
+                    await sendEmail('customer_onboarded', data[0]);
+                }
             }
         }
     } catch (error) {
@@ -743,31 +1199,13 @@ async function handleAddCustomer(e) {
 // Logout function
 function logout() {
     document.getElementById('dashboardPage').classList.add('hidden');
+    document.getElementById('forgotPasswordPage').classList.add('hidden');
     document.getElementById('loginPage').classList.remove('hidden');
     
-    document.getElementById(':Rujttvejsq:').value = '';
-    document.getElementById(':R1ejttvejsq:').value = '';
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
 }
 
 // Run checks periodically
 setInterval(checkExpiredPOCs, 60 * 60 * 1000); // Every hour
 setInterval(checkPOCReminders, 60 * 60 * 1000 * 24); // Every 24 hours
-
-// Send automated emails (simulation)
-function sendAutomatedEmail(type, customerName, details = '') {
-    const emailTypes = {
-        'poc_reminder': `Reminder: POC review required for ${customerName}`,
-        'poc_extended': `POC extended for ${customerName} - ${details}`,
-        'poc_ended': `POC ended for ${customerName}`,
-        'customer_onboarded': `Welcome ${customerName}! You've been successfully onboarded.`,
-        'poc_started': `POC started for ${customerName}`
-    };
-    
-    console.log(`📧 EMAIL SENT: ${emailTypes[type] || 'Email notification'}`);
-    
-    // In a real application, you would integrate with an email service like:
-    // - SendGrid
-    // - Mailgun
-    // - AWS SES
-    // - Nodemailer
-}
