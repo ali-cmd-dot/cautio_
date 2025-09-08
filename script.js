@@ -8,19 +8,234 @@ let sidebarExpanded = false;
 let customers = [];
 let leads = [];
 let credentials = [];
+let scheduledEmails = [];
 let filteredCustomers = [];
+let filteredLeads = [];
 let currentFilter = '';
 let currentPOCAction = null;
+let currentEmailTarget = null;
+let userSession = null;
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     updateTabHighlight('addTab');
+    
+    // Check for existing session
+    checkUserSession();
+    
     loadData();
     checkExpiredPOCs();
     setupEventListeners();
     setupRealtimeListeners();
     checkPOCReminders();
+    
+    // Start email scheduler
+    startEmailScheduler();
+    
+    // Auto-save session every 30 seconds
+    setInterval(saveUserSession, 30000);
 });
+
+// FIXED: Session Management - Prevents logout on refresh
+function saveUserSession() {
+    if (userSession) {
+        localStorage.setItem('cautio_user_session', JSON.stringify({
+            user: userSession,
+            timestamp: Date.now(),
+            expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+        }));
+    }
+}
+
+function checkUserSession() {
+    const savedSession = localStorage.getItem('cautio_user_session');
+    if (savedSession) {
+        try {
+            const sessionData = JSON.parse(savedSession);
+            if (sessionData.expires > Date.now()) {
+                // Valid session found
+                userSession = sessionData.user;
+                navigateToDashboard();
+                showSessionRestored();
+            } else {
+                // Expired session
+                localStorage.removeItem('cautio_user_session');
+            }
+        } catch (error) {
+            console.error('Error parsing session:', error);
+            localStorage.removeItem('cautio_user_session');
+        }
+    }
+}
+
+function clearUserSession() {
+    userSession = null;
+    localStorage.removeItem('cautio_user_session');
+}
+
+function showSessionRestored() {
+    showEmailToast(`Welcome back, ${userSession.full_name || userSession.email}! Session restored.`);
+}
+
+// ENHANCED: Email Scheduling System
+async function startEmailScheduler() {
+    // Load scheduled emails
+    await loadScheduledEmails();
+    
+    // Check every minute for emails to send
+    setInterval(checkScheduledEmails, 60000);
+    
+    console.log('📧 Email scheduler started');
+}
+
+async function loadScheduledEmails() {
+    try {
+        const { data, error } = await supabase
+            .from('scheduled_emails')
+            .select('*')
+            .eq('status', 'pending')
+            .order('scheduled_datetime', { ascending: true });
+
+        if (error) {
+            console.error('Error loading scheduled emails:', error);
+            return;
+        }
+
+        scheduledEmails = data || [];
+        console.log(`📧 Loaded ${scheduledEmails.length} scheduled emails`);
+    } catch (error) {
+        console.error('Error loading scheduled emails:', error);
+    }
+}
+
+async function checkScheduledEmails() {
+    const now = new Date();
+    
+    for (const scheduledEmail of scheduledEmails) {
+        const scheduledTime = new Date(scheduledEmail.scheduled_datetime);
+        
+        if (scheduledTime <= now) {
+            await processScheduledEmail(scheduledEmail);
+        }
+    }
+}
+
+async function processScheduledEmail(scheduledEmail) {
+    try {
+        // Get customer data
+        const { data: customer, error: customerError } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('id', scheduledEmail.customer_id)
+            .single();
+
+        if (customerError) {
+            console.error('Error fetching customer:', customerError);
+            return;
+        }
+
+        // Send the email
+        const emailSent = await sendEmail(
+            scheduledEmail.email_type, 
+            customer, 
+            scheduledEmail.custom_message || ''
+        );
+
+        if (emailSent) {
+            // Mark as sent
+            await supabase
+                .from('scheduled_emails')
+                .update({ 
+                    status: 'sent',
+                    sent_at: new Date().toISOString()
+                })
+                .eq('id', scheduledEmail.id);
+
+            // Remove from local array
+            scheduledEmails = scheduledEmails.filter(e => e.id !== scheduledEmail.id);
+            
+            console.log(`📧 Sent scheduled email to ${customer.customer_name}`);
+        }
+    } catch (error) {
+        console.error('Error processing scheduled email:', error);
+        
+        // Mark as failed
+        await supabase
+            .from('scheduled_emails')
+            .update({ 
+                status: 'failed',
+                error_message: error.message
+            })
+            .eq('id', scheduledEmail.id);
+    }
+}
+
+// ENHANCED: Manual Email Scheduling
+function showManualEmailModal(customer) {
+    currentEmailTarget = customer;
+    document.getElementById('selectedCustomerName').textContent = customer.customer_name;
+    document.getElementById('manualEmailModal').classList.remove('hidden');
+    
+    // Set default date and time to tomorrow at 9 AM
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(9, 0, 0, 0);
+    
+    document.querySelector('input[name="scheduleDate"]').value = tomorrow.toISOString().split('T')[0];
+    document.querySelector('input[name="scheduleTime"]').value = '09:00';
+}
+
+function closeManualEmailModal() {
+    currentEmailTarget = null;
+    document.getElementById('manualEmailModal').classList.add('hidden');
+    document.getElementById('manualEmailForm').reset();
+    document.getElementById('customMessageDiv').classList.add('hidden');
+}
+
+async function handleManualEmailScheduling(e) {
+    e.preventDefault();
+    
+    if (!currentEmailTarget) return;
+    
+    const formData = new FormData(e.target);
+    const scheduleDate = formData.get('scheduleDate');
+    const scheduleTime = formData.get('scheduleTime');
+    const emailType = formData.get('emailType');
+    const customMessage = formData.get('customMessage');
+    
+    const scheduledDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+    
+    try {
+        const { error } = await supabase
+            .from('scheduled_emails')
+            .insert([{
+                customer_id: currentEmailTarget.id,
+                email_type: emailType,
+                scheduled_datetime: scheduledDateTime.toISOString(),
+                custom_message: emailType === 'custom' ? customMessage : null,
+                status: 'pending',
+                created_by: userSession?.email || 'admin',
+                created_at: new Date().toISOString()
+            }]);
+
+        if (error) {
+            console.error('Error scheduling email:', error);
+            alert('Error scheduling email: ' + error.message);
+            return;
+        }
+
+        alert(`Email scheduled for ${currentEmailTarget.customer_name} on ${scheduledDateTime.toLocaleString()}`);
+        closeManualEmailModal();
+        
+        // Reload scheduled emails
+        await loadScheduledEmails();
+        
+        showEmailToast(`Email scheduled for ${scheduledDateTime.toLocaleString()}`);
+    } catch (error) {
+        console.error('Error scheduling email:', error);
+        alert('Error scheduling email');
+    }
+}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -32,6 +247,19 @@ function setupEventListeners() {
     
     // Add credential form
     document.getElementById('addCredentialForm').addEventListener('submit', handleAddCredential);
+    
+    // Manual email form
+    document.getElementById('manualEmailForm').addEventListener('submit', handleManualEmailScheduling);
+    
+    // Email type change listener
+    document.querySelector('select[name="emailType"]').addEventListener('change', function(e) {
+        const customDiv = document.getElementById('customMessageDiv');
+        if (e.target.value === 'custom') {
+            customDiv.classList.remove('hidden');
+        } else {
+            customDiv.classList.add('hidden');
+        }
+    });
     
     // Sidebar toggle
     document.getElementById('hamburgerBtn').addEventListener('click', toggleSidebar);
@@ -47,6 +275,61 @@ function setupEventListeners() {
     // Form submissions
     document.getElementById('addLeadForm').addEventListener('submit', handleAddLead);
     document.getElementById('addCustomerForm').addEventListener('submit', handleAddCustomer);
+}
+
+// ENHANCED: Automatic 7-day Email System
+async function checkPOCReminders() {
+    try {
+        const { data: pocCustomers, error } = await supabase
+            .from('customers')
+            .select('*')
+            .in('poc_type', ['free_poc', 'paid_poc'])
+            .neq('status', 'closed');
+
+        if (error) {
+            console.error('Error checking POC reminders:', error);
+            return;
+        }
+
+        for (const customer of pocCustomers) {
+            if (customer.poc_start_date) {
+                const startDate = new Date(customer.poc_start_date);
+                const today = new Date();
+                const diffTime = today - startDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Check if it's been exactly 7, 14, 21, 28, etc. days since start
+                if (diffDays > 0 && diffDays % 7 === 0) {
+                    // Check if we already sent an email for this specific day
+                    const { data: existingEmails, error: emailError } = await supabase
+                        .from('email_logs')
+                        .select('*')
+                        .eq('customer_id', customer.id)
+                        .eq('email_type', 'poc_reminder')
+                        .gte('sent_at', new Date(today.setHours(0, 0, 0, 0)).toISOString());
+
+                    if (emailError) {
+                        console.error('Error checking existing emails:', emailError);
+                        continue;
+                    }
+
+                    // If no email sent today, send reminder
+                    if (existingEmails.length === 0) {
+                        await sendEmail('poc_reminder', customer, `${diffDays} days since POC start`);
+                        
+                        // Show action modal for manual review
+                        if (diffDays >= 14) { // Show modal after 2 weeks
+                            showPOCActionModal(customer);
+                        }
+                        
+                        console.log(`📧 Sent automatic POC reminder to ${customer.customer_name} (Day ${diffDays})`);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error processing POC reminders:', error);
+    }
 }
 
 // Show/Hide Loading Overlay
@@ -74,7 +357,7 @@ function showEmailToast(message) {
     }, 3000);
 }
 
-// Email Service Integration (Simulation)
+// ENHANCED: Email Service Integration with better logging
 async function sendEmail(type, customerData, additionalInfo = '') {
     try {
         // Log email to database
@@ -131,18 +414,24 @@ function getEmailSubject(type, customerName) {
         'poc_ended': `POC Concluded - ${customerName}`,
         'customer_onboarded': `Welcome to Cautio - ${customerName}`,
         'poc_started': `POC Started - ${customerName}`,
-        'password_reset': `Password Reset Request - Cautio Dashboard`
+        'password_reset': `Password Reset Request - Cautio Dashboard`,
+        'followup': `Follow-up - ${customerName}`,
+        'onboarding_reminder': `Onboarding Reminder - ${customerName}`,
+        'custom': `Message from Cautio - ${customerName}`
     };
     return subjects[type] || `Notification - ${customerName}`;
 }
 
 function getEmailMessage(type, customerData, additionalInfo = '') {
     const messages = {
-        'poc_reminder': `Dear ${customerData.customer_name},\n\nThis is a reminder that your POC requires review. Please contact your account manager ${customerData.account_manager_name} for next steps.\n\nBest regards,\nCautio Team`,
+        'poc_reminder': `Dear ${customerData.customer_name},\n\nThis is a reminder that your POC requires review. Please contact your account manager ${customerData.account_manager_name} for next steps.\n\n${additionalInfo}\n\nBest regards,\nCautio Team`,
         'poc_extended': `Dear ${customerData.customer_name},\n\nYour POC has been extended by 10 days. ${additionalInfo}\n\nNew end date: ${additionalInfo}\n\nBest regards,\nCautio Team`,
         'poc_ended': `Dear ${customerData.customer_name},\n\nYour POC period has concluded. Thank you for trying Cautio. Please contact us if you'd like to continue with our services.\n\nBest regards,\nCautio Team`,
         'customer_onboarded': `Dear ${customerData.customer_name},\n\nWelcome to Cautio! We're excited to have you onboard. Your account manager ${customerData.account_manager_name} will be in touch soon.\n\nBest regards,\nCautio Team`,
-        'poc_started': `Dear ${customerData.customer_name},\n\nYour POC has started successfully. Duration: ${additionalInfo}.\n\nYour account manager: ${customerData.account_manager_name}\n\nBest regards,\nCautio Team`
+        'poc_started': `Dear ${customerData.customer_name},\n\nYour POC has started successfully. Duration: ${additionalInfo}.\n\nYour account manager: ${customerData.account_manager_name}\n\nBest regards,\nCautio Team`,
+        'followup': `Dear ${customerData.customer_name},\n\nWe wanted to follow up on your recent interaction with Cautio. Please let us know if you have any questions.\n\nBest regards,\nCautio Team`,
+        'onboarding_reminder': `Dear ${customerData.customer_name},\n\nThis is a friendly reminder about your onboarding process. Please contact your account manager if you need any assistance.\n\nBest regards,\nCautio Team`,
+        'custom': additionalInfo || `Dear ${customerData.customer_name},\n\nThank you for choosing Cautio.\n\nBest regards,\nCautio Team`
     };
     return messages[type] || `Dear ${customerData.customer_name},\n\nThank you for choosing Cautio.\n\nBest regards,\nCautio Team`;
 }
@@ -328,7 +617,7 @@ async function handleAddCredential(e) {
         role: formData.get('role'),
         department: formData.get('department'),
         is_active: true,
-        created_by: 'admin', // In real app, get from current user session
+        created_by: userSession?.email || 'admin',
         created_at: new Date().toISOString()
     };
 
@@ -446,9 +735,20 @@ function setupRealtimeListeners() {
             }
         )
         .subscribe();
+
+    // Listen for scheduled email changes
+    supabase
+        .channel('scheduled_emails')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'scheduled_emails' }, 
+            (payload) => {
+                console.log('Scheduled email change received!', payload);
+                loadScheduledEmails();
+            }
+        )
+        .subscribe();
 }
 
-// Load data from Supabase
+// ENHANCED: Load data from Supabase with leads
 async function loadData() {
     try {
         // Load customers
@@ -474,6 +774,7 @@ async function loadData() {
             console.error('Error loading leads:', leadError);
         } else {
             leads = leadData || [];
+            filteredLeads = [...leads];
         }
 
         // Update UI
@@ -493,42 +794,6 @@ function calculateDaysRemaining(endDate) {
     const diffTime = pocEnd - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
-}
-
-// Check for POC reminders (every 7 days)
-async function checkPOCReminders() {
-    try {
-        const { data: pocCustomers, error } = await supabase
-            .from('customers')
-            .select('*')
-            .in('poc_type', ['free_poc', 'paid_poc'])
-            .neq('status', 'closed');
-
-        if (error) {
-            console.error('Error checking POC reminders:', error);
-            return;
-        }
-
-        for (const customer of pocCustomers) {
-            if (customer.poc_start_date) {
-                const startDate = new Date(customer.poc_start_date);
-                const today = new Date();
-                const diffTime = today - startDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                
-                // Check if it's been 7 days or multiples of 7 days since start
-                if (diffDays > 0 && diffDays % 7 === 0) {
-                    // Send email reminder
-                    await sendEmail('poc_reminder', customer, `${diffDays} days since POC start`);
-                    
-                    // Show action modal
-                    showPOCActionModal(customer);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error processing POC reminders:', error);
-    }
 }
 
 // Show POC Action Modal
@@ -641,18 +906,176 @@ async function onboardCustomer() {
     }
 }
 
-// Update customer counts
+// ENHANCED: Update customer counts with leads
 function updateCustomerCounts() {
     const totalCustomers = customers.length;
+    const totalLeads = leads.length;
+    
     document.getElementById('totalCustomersDisplay').textContent = totalCustomers;
     document.getElementById('totalCustomersHeaderCount').textContent = totalCustomers;
+    document.getElementById('totalLeadsDisplay').textContent = totalLeads;
+    document.getElementById('totalLeadsHeaderCount').textContent = totalLeads;
 }
 
-// Update tabs content
+// ENHANCED: Update tabs content with leads
 function updateTabsContent() {
+    updateLeadsTab();
     updatePOCTab();
     updateOnboardedTab();
     updateClosedLeadsTab();
+}
+
+// NEW: Update leads tab
+function updateLeadsTab() {
+    const leadsList = document.getElementById('leadsList');
+    const leadsEmpty = document.getElementById('leadsEmptyState');
+
+    if (filteredLeads.length === 0) {
+        leadsList.innerHTML = '';
+        leadsEmpty.style.display = 'block';
+    } else {
+        leadsEmpty.style.display = 'none';
+        leadsList.innerHTML = filteredLeads.map(lead => createLeadCard(lead)).join('');
+    }
+}
+
+// NEW: Create lead card HTML
+function createLeadCard(lead) {
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Not set';
+        return new Date(dateString).toLocaleDateString();
+    };
+
+    const getLeadStatusBadge = (status) => {
+        const statusClasses = {
+            'New': 'status-badge lead-new',
+            'In Progress': 'status-badge lead-progress',
+            'Qualified': 'status-badge lead-qualified',
+            'Not Qualified': 'status-badge lead-not-qualified',
+            'Converted': 'status-badge lead-converted',
+            'Closed': 'status-badge lead-closed'
+        };
+        
+        return `<span class="${statusClasses[status] || 'status-badge'}">${status}</span>`;
+    };
+
+    const getTypeColor = (type) => {
+        return type === 'Inbound' ? 'text-green-600' : 'text-blue-600';
+    };
+
+    return `
+        <div class="lead-card p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${lead.customer_name}</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500">${lead.contact}</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end">
+                    ${getLeadStatusBadge(lead.status)}
+                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600 ${getTypeColor(lead.type)}">
+                        ${lead.type}
+                    </span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
+                <div>
+                    <span class="font-semibold">Fleet Size:</span> ${lead.fleet_size || 'N/A'}
+                </div>
+                <div>
+                    <span class="font-semibold">Created:</span> ${formatDate(lead.created_at)}
+                </div>
+            </div>
+            <div class="mt-3 flex gap-2">
+                <button onclick="convertLeadToCustomer(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
+                    Convert to Customer
+                </button>
+                <button onclick="updateLeadStatus(${lead.id}, 'Qualified')" class="px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
+                    Mark Qualified
+                </button>
+                <button onclick="updateLeadStatus(${lead.id}, 'Closed')" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                    Close Lead
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// NEW: Convert lead to customer
+async function convertLeadToCustomer(leadId) {
+    try {
+        const lead = leads.find(l => l.id === leadId);
+        if (!lead) return;
+
+        // Create customer from lead data
+        const customerData = {
+            account_manager_name: 'To be assigned',
+            account_manager_id: 'TBA',
+            customer_name: lead.customer_name,
+            customer_mobile: lead.contact,
+            customer_email: lead.contact.includes('@') ? lead.contact : `${lead.customer_name.toLowerCase().replace(/\s+/g, '.')}@example.com`,
+            lead_sources: ['lead_conversion'],
+            requirements: [],
+            poc_type: 'free_poc',
+            poc_start_date: null,
+            poc_end_date: null,
+            status: 'active',
+            onboard_source: 'lead_conversion',
+            extension_count: 0,
+            poc_extended_days: 0,
+            email_notifications_sent: 0,
+            created_at: new Date().toISOString()
+        };
+
+        const { error: customerError } = await supabase
+            .from('customers')
+            .insert([customerData]);
+
+        if (customerError) {
+            console.error('Error creating customer:', customerError);
+            alert('Error converting lead: ' + customerError.message);
+            return;
+        }
+
+        // Update lead status to converted
+        const { error: leadError } = await supabase
+            .from('leads')
+            .update({ status: 'Converted' })
+            .eq('id', leadId);
+
+        if (leadError) {
+            console.error('Error updating lead:', leadError);
+        }
+
+        alert(`Lead "${lead.customer_name}" has been converted to customer successfully!`);
+        loadData();
+        showEmailToast(`Lead converted: ${lead.customer_name}`);
+        
+    } catch (error) {
+        console.error('Error converting lead:', error);
+        alert('Error converting lead');
+    }
+}
+
+// NEW: Update lead status
+async function updateLeadStatus(leadId, newStatus) {
+    try {
+        const { error } = await supabase
+            .from('leads')
+            .update({ status: newStatus })
+            .eq('id', leadId);
+
+        if (error) {
+            console.error('Error updating lead status:', error);
+            alert('Error updating lead: ' + error.message);
+            return;
+        }
+
+        loadData();
+        showEmailToast(`Lead status updated to ${newStatus}`);
+    } catch (error) {
+        console.error('Error updating lead status:', error);
+        alert('Error updating lead status');
+    }
 }
 
 // Update POC tab
@@ -708,7 +1131,7 @@ function updateClosedLeadsTab() {
     }
 }
 
-// Create customer card HTML - ENHANCED for onboard source tracking
+// ENHANCED: Create customer card HTML with manual email button
 function createCustomerCard(customer, showTimeRemaining = false, showOnboardSource = false) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
@@ -730,6 +1153,8 @@ function createCustomerCard(customer, showTimeRemaining = false, showOnboardSour
             return '<span class="px-2 py-1 text-xs rounded-full dark:bg-brand-blue-600 dark:text-utility-white">Direct Onboarded</span>';
         } else if (onboardSource === 'poc_conversion') {
             return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">POC Converted</span>';
+        } else if (onboardSource === 'lead_conversion') {
+            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Lead Converted</span>';
         }
         return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown Source</span>';
     };
@@ -739,28 +1164,39 @@ function createCustomerCard(customer, showTimeRemaining = false, showOnboardSour
         const daysRemaining = calculateDaysRemaining(endDate);
         if (daysRemaining === null) return '';
         
-        let badgeClass = 'dark:bg-dark-info-600';
+        let badgeClass = 'dark:bg-dark-info-600 days-remaining-safe';
         let text = `${daysRemaining} days left`;
         
         if (daysRemaining <= 0) {
-            badgeClass = 'dark:bg-dark-semantic-danger-300';
+            badgeClass = 'dark:bg-dark-semantic-danger-300 days-remaining-expired';
             text = 'Expired';
         } else if (daysRemaining <= 3) {
-            badgeClass = 'dark:bg-dark-warning-600';
+            badgeClass = 'dark:bg-dark-warning-600 days-remaining-warning';
             text = `${daysRemaining} days left`;
         }
         
         return `<span class="px-2 py-1 text-xs rounded-full ${badgeClass} dark:text-utility-white">${text}</span>`;
     };
 
-    const extendButton = (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && customer.status !== 'closed' ? 
+    const manageButtons = (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && customer.status !== 'closed' ? 
         `<button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
             Manage POC
         </button>` : '';
 
+    const emailButton = `
+        <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 ml-2 px-3 py-1 text-xs rounded-lg manual-email-btn dark:text-utility-white">
+            📧 Schedule Email
+        </button>`;
+
     const extensionInfo = customer.extension_count > 0 ? 
         `<div class="text-body-s-regular dark:text-dark-base-500">
             <span class="font-semibold">Extensions:</span> ${customer.extension_count} (${customer.poc_extended_days || 0} days)
+        </div>` : '';
+
+    const emailInfo = customer.email_notifications_sent > 0 ? 
+        `<div class="text-body-s-regular dark:text-dark-base-500">
+            <span class="font-semibold">Emails Sent:</span> ${customer.email_notifications_sent}
+            ${customer.last_email_sent ? `(Last: ${formatDate(customer.last_email_sent)})` : ''}
         </div>` : '';
 
     return `
@@ -790,8 +1226,12 @@ function createCustomerCard(customer, showTimeRemaining = false, showOnboardSour
                     <span class="font-semibold">POC End:</span> ${formatDate(customer.poc_end_date)}
                 </div>
                 ${extensionInfo}
+                ${emailInfo}
             </div>
-            ${extendButton}
+            <div class="flex items-center">
+                ${manageButtons}
+                ${emailButton}
+            </div>
         </div>
     `;
 }
@@ -833,7 +1273,7 @@ async function checkExpiredPOCs() {
     }
 }
 
-// Login functionality - ENHANCED with database credential checking
+// ENHANCED: Login functionality with session management
 async function handleLogin(e) {
     e.preventDefault();
     
@@ -869,13 +1309,12 @@ async function handleLogin(e) {
                     .update({ last_login: new Date().toISOString() })
                     .eq('id', user.id);
 
+                // Set session
+                userSession = user;
+                saveUserSession();
+
                 // Navigate to dashboard
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('forgotPasswordPage').classList.add('hidden');
-                document.getElementById('dashboardPage').classList.remove('hidden');
-                
-                showCustomersOverview();
-                loadData();
+                navigateToDashboard();
                 
                 showEmailToast(`Welcome back, ${user.full_name || user.email}!`);
             } else {
@@ -890,6 +1329,15 @@ async function handleLogin(e) {
     }
 }
 
+function navigateToDashboard() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('forgotPasswordPage').classList.add('hidden');
+    document.getElementById('dashboardPage').classList.remove('hidden');
+    
+    showCustomersOverview();
+    loadData();
+}
+
 // Toggle password visibility
 function togglePasswordVisibility() {
     const passwordField = document.getElementById('loginPassword');
@@ -897,7 +1345,7 @@ function togglePasswordVisibility() {
     passwordField.setAttribute('type', type);
 }
 
-// Sidebar toggle functionality
+// FIXED: Sidebar toggle functionality with hamburger animation
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -942,7 +1390,7 @@ function handleSidebarMouseLeave() {
     }
 }
 
-// Search functionality
+// ENHANCED: Search functionality for both customers and leads
 function handleSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     currentFilter = searchTerm;
@@ -952,6 +1400,7 @@ function handleSearch(e) {
 function applyCurrentFilter() {
     if (!currentFilter) {
         filteredCustomers = [...customers];
+        filteredLeads = [...leads];
     } else {
         filteredCustomers = customers.filter(customer => {
             return (
@@ -965,6 +1414,15 @@ function applyCurrentFilter() {
                 (customer.requirements && customer.requirements.some(req => 
                     req.toLowerCase().includes(currentFilter)
                 ))
+            );
+        });
+
+        filteredLeads = leads.filter(lead => {
+            return (
+                lead.customer_name.toLowerCase().includes(currentFilter) ||
+                lead.contact.toLowerCase().includes(currentFilter) ||
+                lead.status.toLowerCase().includes(currentFilter) ||
+                lead.type.toLowerCase().includes(currentFilter)
             );
         });
     }
@@ -1037,6 +1495,13 @@ function showAddTab() {
     updateTabHighlight('addTab');
 }
 
+// NEW: Show leads tab
+function showLeadsTab() {
+    hideAllTabContent();
+    document.getElementById('leadsTabContent').classList.remove('hidden');
+    updateTabHighlight('leadsTab');
+}
+
 function showPOCTab() {
     hideAllTabContent();
     document.getElementById('pocTabContent').classList.remove('hidden');
@@ -1057,6 +1522,7 @@ function showClosedLeadsTab() {
 
 function hideAllTabContent() {
     document.getElementById('addTabContent').classList.add('hidden');
+    document.getElementById('leadsTabContent').classList.add('hidden');
     document.getElementById('pocTabContent').classList.add('hidden');
     document.getElementById('onboardedTabContent').classList.add('hidden');
     document.getElementById('closedLeadsTabContent').classList.add('hidden');
@@ -1120,6 +1586,7 @@ async function handleAddLead(e) {
             alert('Lead saved successfully!');
             closeAddLeadForm();
             loadData();
+            showEmailToast(`Lead "${leadData.customer_name}" added successfully`);
         }
     } catch (error) {
         console.error('Error saving lead:', error);
@@ -1189,6 +1656,8 @@ async function handleAddCustomer(e) {
                     await sendEmail('customer_onboarded', data[0]);
                 }
             }
+            
+            showEmailToast(`Customer "${customerData.customer_name}" added successfully`);
         }
     } catch (error) {
         console.error('Error saving customer:', error);
@@ -1196,16 +1665,34 @@ async function handleAddCustomer(e) {
     }
 }
 
-// Logout function
+// ENHANCED: Logout function with session cleanup
 function logout() {
+    // Clear session
+    clearUserSession();
+    
+    // Reset UI
     document.getElementById('dashboardPage').classList.add('hidden');
     document.getElementById('forgotPasswordPage').classList.add('hidden');
     document.getElementById('loginPage').classList.remove('hidden');
     
     document.getElementById('loginEmail').value = '';
     document.getElementById('loginPassword').value = '';
+    
+    // Reset global variables
+    customers = [];
+    leads = [];
+    credentials = [];
+    scheduledEmails = [];
+    filteredCustomers = [];
+    filteredLeads = [];
+    currentFilter = '';
+    currentPOCAction = null;
+    currentEmailTarget = null;
+    
+    showEmailToast('Logged out successfully');
 }
 
 // Run checks periodically
 setInterval(checkExpiredPOCs, 60 * 60 * 1000); // Every hour
 setInterval(checkPOCReminders, 60 * 60 * 1000 * 24); // Every 24 hours
+setInterval(checkScheduledEmails, 60 * 1000); // Every minute
