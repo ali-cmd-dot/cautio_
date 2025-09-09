@@ -10,6 +10,7 @@ let leads = [];
 let credentials = [];
 let scheduledEmails = [];
 let pendingApprovals = [];
+let approvedCustomers = []; // NEW: Only approved customers
 let filteredCustomers = [];
 let filteredLeads = [];
 let currentFilter = '';
@@ -304,7 +305,7 @@ async function checkPOCReminders() {
             .select('*')
             .in('poc_type', ['free_poc', 'paid_poc'])
             .neq('status', 'closed')
-            .eq('approval_status', 'approved'); // Only check approved customers
+            .eq('approval_status', 'approved'); // Only approved customers
 
         if (error) {
             console.error('Error checking POC reminders:', error);
@@ -768,10 +769,10 @@ function setupRealtimeListeners() {
         .subscribe();
 }
 
-// Load data from Supabase
+// UPDATED: Load data from Supabase with proper approval filtering
 async function loadData() {
     try {
-        // Load customers
+        // Load all customers
         const { data: customerData, error: customerError } = await supabase
             .from('customers')
             .select('*')
@@ -781,7 +782,10 @@ async function loadData() {
             console.error('Error loading customers:', customerError);
         } else {
             customers = customerData || [];
-            filteredCustomers = [...customers];
+            
+            // Separate approved and pending customers
+            approvedCustomers = customers.filter(customer => customer.approval_status === 'approved');
+            filteredCustomers = [...approvedCustomers]; // Only show approved customers in overview
         }
 
         // Load leads
@@ -797,7 +801,7 @@ async function loadData() {
             filteredLeads = [...leads];
         }
 
-        // Load pending approvals
+        // Load pending approvals (only pending customers)
         const { data: approvalData, error: approvalError } = await supabase
             .from('customers')
             .select('*')
@@ -953,22 +957,20 @@ async function onboardCustomer() {
     }
 }
 
-// Update customer counts with tab counts - MODIFIED to only count approved customers
+// UPDATED: Update customer counts - only count approved customers
 function updateCustomerCounts() {
-    const totalCustomers = customers.length;
+    const totalCustomers = approvedCustomers.length; // Only approved customers
     
-    // Count different categories - Only include approved customers for POC and onboarded tabs
+    // Count different categories from approved customers only
     const leadsCount = leads.filter(lead => lead.status !== 'Closed').length;
-    const pocCount = customers.filter(customer => 
+    const pocCount = approvedCustomers.filter(customer => 
         (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
-        customer.status !== 'closed' &&
-        customer.approval_status === 'approved' // Only approved customers
+        customer.status !== 'closed'
     ).length;
-    const onboardedCount = customers.filter(customer => 
-        (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
-        customer.approval_status === 'approved' // Only approved customers
+    const onboardedCount = approvedCustomers.filter(customer => 
+        customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
     ).length;
-    const closedCount = customers.filter(customer => customer.status === 'closed').length;
+    const closedCount = approvedCustomers.filter(customer => customer.status === 'closed').length;
     
     // Update main display
     document.getElementById('totalCustomersDisplay').textContent = totalCustomers;
@@ -1062,11 +1064,45 @@ function createLeadCard(lead) {
     `;
 }
 
-// Convert lead to customer - Redirect to Add New Customer
+// UPDATED: Convert lead to customer - Now creates customer directly with pending approval
 async function convertLeadToCustomer(leadId) {
     try {
         const lead = leads.find(l => l.id === leadId);
         if (!lead) return;
+
+        // Create customer from lead data with pending approval status
+        const customerData = {
+            account_manager_name: 'Lead Converter',
+            account_manager_id: 'LC001',
+            customer_name: lead.customer_name,
+            customer_mobile: lead.contact.includes('@') ? '' : lead.contact,
+            customer_email: lead.contact.includes('@') ? lead.contact : `${lead.customer_name.toLowerCase().replace(/\s+/g, '.')}@example.com`,
+            lead_sources: ['lead_conversion'],
+            requirements: [],
+            poc_type: 'free_poc', // Default to free POC
+            poc_duration: 30,
+            poc_start_date: new Date().toISOString().split('T')[0],
+            poc_end_date: null, // Will be set after approval
+            status: 'active',
+            onboard_source: 'lead_conversion',
+            approval_status: 'pending', // IMPORTANT: Set to pending
+            extension_count: 0,
+            poc_extended_days: 0,
+            email_notifications_sent: 0,
+            created_at: new Date().toISOString()
+        };
+
+        const { data: newCustomer, error: customerError } = await supabase
+            .from('customers')
+            .insert([customerData])
+            .select()
+            .single();
+
+        if (customerError) {
+            console.error('Error creating customer:', customerError);
+            alert('Error creating customer: ' + customerError.message);
+            return;
+        }
 
         // Mark lead as converted
         const { error: leadError } = await supabase
@@ -1078,23 +1114,12 @@ async function convertLeadToCustomer(leadId) {
             console.error('Error updating lead:', leadError);
         }
 
-        // Show Add tab and open Add Customer form
-        showAddTab();
-        showAddCustomerForm();
-        
-        // Pre-fill customer form with lead data
-        document.querySelector('input[name="customerName"]').value = lead.customer_name;
-        document.querySelector('input[name="customerMobile"]').value = lead.contact;
-        
-        // If contact looks like email, fill email field
-        if (lead.contact.includes('@')) {
-            document.querySelector('input[name="customerEmail"]').value = lead.contact;
-        } else {
-            document.querySelector('input[name="customerEmail"]').value = `${lead.customer_name.toLowerCase().replace(/\s+/g, '.')}@example.com`;
-        }
-
         loadData();
-        showEmailToast(`Lead converted: ${lead.customer_name}. Please complete customer details.`);
+        
+        // Navigate to Finance tab to show the pending approval
+        showFinance();
+        
+        showEmailToast(`Lead converted to customer: ${lead.customer_name}. Awaiting finance approval.`);
         
     } catch (error) {
         console.error('Error converting lead:', error);
@@ -1134,12 +1159,12 @@ async function closeLeadAction(leadId) {
     }
 }
 
-// Update POC tab - MODIFIED to only show approved customers
+// UPDATED: Update POC tab - Only show approved customers
 function updatePOCTab() {
     const pocCustomers = filteredCustomers.filter(customer => 
         (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
         customer.status !== 'closed' &&
-        customer.approval_status === 'approved' // Only show approved customers
+        customer.approval_status === 'approved' // Only approved customers
     );
 
     const pocList = document.getElementById('pocCustomersList');
@@ -1154,11 +1179,11 @@ function updatePOCTab() {
     }
 }
 
-// Update onboarded tab - MODIFIED to only show approved customers
+// UPDATED: Update onboarded tab - Only show approved customers
 function updateOnboardedTab() {
     const onboardedCustomers = filteredCustomers.filter(customer => 
         (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
-        customer.approval_status === 'approved' // Only show approved customers
+        customer.approval_status === 'approved' // Only approved customers
     );
 
     const onboardedList = document.getElementById('onboardedCustomersList');
@@ -1173,9 +1198,12 @@ function updateOnboardedTab() {
     }
 }
 
-// Update closed leads tab - Include both closed customers and closed leads
+// UPDATED: Update closed leads tab - Only show approved closed customers
 function updateClosedLeadsTab() {
-    const closedCustomers = filteredCustomers.filter(customer => customer.status === 'closed');
+    const closedCustomers = filteredCustomers.filter(customer => 
+        customer.status === 'closed' &&
+        customer.approval_status === 'approved' // Only approved customers
+    );
     const closedLeads = filteredLeads.filter(lead => lead.status === 'Closed');
 
     const closedList = document.getElementById('closedLeadsList');
@@ -1379,7 +1407,7 @@ function createApprovalCard(customer) {
     `;
 }
 
-// Approve customer from finance
+// UPDATED: Approve customer from finance - Now calculates POC end date properly
 async function approveCustomer(customerId) {
     try {
         const customer = pendingApprovals.find(c => c.id === customerId);
@@ -1460,7 +1488,7 @@ async function rejectCustomer(customerId) {
     }
 }
 
-// Check and move expired POCs to closed leads - MODIFIED to only check approved customers
+// UPDATED: Check expired POCs - Only check approved customers
 async function checkExpiredPOCs() {
     const today = new Date().toISOString().split('T')[0];
     
@@ -1615,18 +1643,18 @@ function handleSidebarMouseLeave() {
     }
 }
 
-// Enhanced Search functionality for both customers and leads
+// UPDATED: Enhanced Search functionality - Only search approved customers
 function handleSearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     currentFilter = searchTerm;
     
     if (!searchTerm) {
-        // If search is empty, show all data
-        filteredCustomers = [...customers];
+        // If search is empty, show all approved data
+        filteredCustomers = [...approvedCustomers]; // Only approved customers
         filteredLeads = [...leads];
     } else {
-        // Filter customers
-        filteredCustomers = customers.filter(customer => {
+        // Filter approved customers only
+        filteredCustomers = approvedCustomers.filter(customer => {
             return (
                 customer.customer_name.toLowerCase().includes(searchTerm) ||
                 customer.customer_email.toLowerCase().includes(searchTerm) ||
@@ -1671,36 +1699,27 @@ function handleSearch(e) {
 function clearSearch() {
     document.getElementById('searchInput').value = '';
     currentFilter = '';
-    filteredCustomers = [...customers];
+    filteredCustomers = [...approvedCustomers]; // Only approved customers
     filteredLeads = [...leads];
     updateTabsContent();
     showEmailToast('Search cleared - showing all data');
 }
 
-// Apply current filter after data loads
-function applyCurrentFilter() {
-    if (currentFilter) {
-        // Reapply the current search filter
-        document.getElementById('searchInput').value = currentFilter;
-        handleSearch({ target: { value: currentFilter } });
-    }
-}
-
-// FIXED: Show all customers - When "Total Customers" is clicked
+// UPDATED: Show all customers - Only show approved customers
 function showAllCustomers() {
     showCustomersOverview();
     
     // Clear any existing search filter
     currentFilter = '';
     document.getElementById('searchInput').value = '';
-    filteredCustomers = [...customers];
+    filteredCustomers = [...approvedCustomers]; // Only approved customers
     filteredLeads = [...leads];
     
     // Show special "All Customers" view
     showAllCustomersView();
 }
 
-// NEW: Function to show all customers in a comprehensive view
+// UPDATED: Function to show all approved customers in a comprehensive view
 function showAllCustomersView() {
     hideAllTabContent();
     
@@ -1718,16 +1737,16 @@ function showAllCustomersView() {
     allCustomersContent.id = 'allCustomersTabContent';
     allCustomersContent.innerHTML = `
         <div class="mb-4">
-            <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">All Customers</h3>
-            <p class="text-body-m-regular dark:text-dark-base-500">Complete overview of all customers in the system</p>
+            <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">All Approved Customers</h3>
+            <p class="text-body-m-regular dark:text-dark-base-500">Complete overview of all approved customers in the system</p>
         </div>
         <div id="allCustomersList" class="space-y-4">
-            ${customers.map(customer => createCustomerCard(customer, true, true)).join('')}
+            ${approvedCustomers.map(customer => createCustomerCard(customer, true, true)).join('')}
         </div>
-        ${customers.length === 0 ? `
+        ${approvedCustomers.length === 0 ? `
             <div class="text-center py-12">
-                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers Found</h3>
-                <p class="text-body-l-regular dark:text-dark-base-500">Start by adding your first customer</p>
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Approved Customers Found</h3>
+                <p class="text-body-l-regular dark:text-dark-base-500">All customers are pending finance approval</p>
             </div>
         ` : ''}
     `;
@@ -1736,7 +1755,16 @@ function showAllCustomersView() {
     
     // Update tab highlighting to show we're viewing all customers
     updateTabHighlight(''); // Clear all highlights
-    showEmailToast(`Showing all ${customers.length} customers`);
+    showEmailToast(`Showing all ${approvedCustomers.length} approved customers`);
+}
+
+// Apply current search filter
+function applyCurrentFilter() {
+    if (currentFilter) {
+        // Reapply current search filter
+        const searchEvent = { target: { value: currentFilter } };
+        handleSearch(searchEvent);
+    }
 }
 
 // Menu navigation functions
@@ -1942,6 +1970,7 @@ async function handleAddLead(e) {
     }
 }
 
+// UPDATED: Handle Add Customer - Always creates with pending approval
 async function handleAddCustomer(e) {
     e.preventDefault();
     
@@ -1967,16 +1996,6 @@ async function handleAddCustomer(e) {
         pocDuration = parseInt(formData.get('customDuration')) || 30;
     }
 
-    // Calculate POC end date from start date + duration
-    let pocEndDate = null;
-    const pocStartDate = formData.get('pocStartDate');
-    if (pocStartDate && pocDuration) {
-        const startDate = new Date(pocStartDate);
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + pocDuration);
-        pocEndDate = endDate.toISOString().split('T')[0];
-    }
-
     const customerData = {
         account_manager_name: formData.get('accountManagerName'),
         account_manager_id: formData.get('accountManagerId'),
@@ -1987,11 +2006,11 @@ async function handleAddCustomer(e) {
         requirements: requirements,
         poc_type: formData.get('pocType'),
         poc_duration: pocDuration,
-        poc_start_date: pocStartDate || null,
-        poc_end_date: pocEndDate,
+        poc_start_date: formData.get('pocStartDate') || null,
+        poc_end_date: null, // Will be set after approval
         status: formData.get('pocType') === 'direct_onboarding' ? 'onboarded' : 'active',
         onboard_source: formData.get('pocType') === 'direct_onboarding' ? 'direct' : 'poc_conversion',
-        approval_status: 'pending', // Always pending for finance approval
+        approval_status: 'pending', // IMPORTANT: Always set to pending
         extension_count: 0,
         poc_extended_days: 0,
         email_notifications_sent: 0,
@@ -2008,7 +2027,7 @@ async function handleAddCustomer(e) {
             console.error('Error saving customer:', error);
             alert('Error saving customer: ' + error.message);
         } else {
-            alert('Customer saved successfully! Pending finance approval.');
+            alert('Customer submitted successfully! Awaiting finance approval.');
             closeAddCustomerForm();
             loadData();
             
@@ -2042,6 +2061,7 @@ function logout() {
     credentials = [];
     scheduledEmails = [];
     pendingApprovals = [];
+    approvedCustomers = [];
     filteredCustomers = [];
     filteredLeads = [];
     currentFilter = '';
