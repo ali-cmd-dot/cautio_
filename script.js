@@ -303,7 +303,8 @@ async function checkPOCReminders() {
             .from('customers')
             .select('*')
             .in('poc_type', ['free_poc', 'paid_poc'])
-            .neq('status', 'closed');
+            .neq('status', 'closed')
+            .eq('approval_status', 'approved'); // Only check approved customers
 
         if (error) {
             console.error('Error checking POC reminders:', error);
@@ -952,18 +953,20 @@ async function onboardCustomer() {
     }
 }
 
-// Update customer counts with tab counts
+// Update customer counts with tab counts - MODIFIED to only count approved customers
 function updateCustomerCounts() {
     const totalCustomers = customers.length;
     
-    // Count different categories
+    // Count different categories - Only include approved customers for POC and onboarded tabs
     const leadsCount = leads.filter(lead => lead.status !== 'Closed').length;
     const pocCount = customers.filter(customer => 
         (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
-        customer.status !== 'closed'
+        customer.status !== 'closed' &&
+        customer.approval_status === 'approved' // Only approved customers
     ).length;
     const onboardedCount = customers.filter(customer => 
-        customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
+        (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
+        customer.approval_status === 'approved' // Only approved customers
     ).length;
     const closedCount = customers.filter(customer => customer.status === 'closed').length;
     
@@ -1131,11 +1134,12 @@ async function closeLeadAction(leadId) {
     }
 }
 
-// Update POC tab
+// Update POC tab - MODIFIED to only show approved customers
 function updatePOCTab() {
     const pocCustomers = filteredCustomers.filter(customer => 
         (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
-        customer.status !== 'closed'
+        customer.status !== 'closed' &&
+        customer.approval_status === 'approved' // Only show approved customers
     );
 
     const pocList = document.getElementById('pocCustomersList');
@@ -1150,10 +1154,11 @@ function updatePOCTab() {
     }
 }
 
-// Update onboarded tab
+// Update onboarded tab - MODIFIED to only show approved customers
 function updateOnboardedTab() {
     const onboardedCustomers = filteredCustomers.filter(customer => 
-        customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded'
+        (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
+        customer.approval_status === 'approved' // Only show approved customers
     );
 
     const onboardedList = document.getElementById('onboardedCustomersList');
@@ -1455,7 +1460,7 @@ async function rejectCustomer(customerId) {
     }
 }
 
-// Check and move expired POCs to closed leads
+// Check and move expired POCs to closed leads - MODIFIED to only check approved customers
 async function checkExpiredPOCs() {
     const today = new Date().toISOString().split('T')[0];
     
@@ -1465,7 +1470,8 @@ async function checkExpiredPOCs() {
             .select('*')
             .lt('poc_end_date', today)
             .neq('status', 'closed')
-            .in('poc_type', ['free_poc', 'paid_poc']);
+            .in('poc_type', ['free_poc', 'paid_poc'])
+            .eq('approval_status', 'approved'); // Only check approved customers
 
         if (error) {
             console.error('Error checking expired POCs:', error);
@@ -1669,6 +1675,15 @@ function clearSearch() {
     filteredLeads = [...leads];
     updateTabsContent();
     showEmailToast('Search cleared - showing all data');
+}
+
+// Apply current filter after data loads
+function applyCurrentFilter() {
+    if (currentFilter) {
+        // Reapply the current search filter
+        document.getElementById('searchInput').value = currentFilter;
+        handleSearch({ target: { value: currentFilter } });
+    }
 }
 
 // FIXED: Show all customers - When "Total Customers" is clicked
