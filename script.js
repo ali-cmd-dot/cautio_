@@ -1872,36 +1872,76 @@ function updateTabHighlight(activeTabId) {
     }
 }
 
-// Multi-step form functions - FIXED VALIDATION
+// FIXED: Multi-step form functions - PRACTICAL VALIDATION SOLUTION
 function goToStep2() {
-    // Get the form element
+    console.log('goToStep2 called - starting validation'); // Debug
+    
+    // Simple validation - just check if key fields have something
     const form = document.getElementById('addCustomerForm');
     
-    // Validate step 1 required fields
-    const requiredFields = [
-        { name: 'accountManagerName', label: 'Account Manager Name' },
-        { name: 'accountManagerId', label: 'Account Manager ID' },
-        { name: 'customerName', label: 'Customer Name' },
-        { name: 'customerMobile', label: 'Customer Mobile' },
-        { name: 'customerEmail', label: 'Customer Email' }
-    ];
+    // Get field values using a safer method
+    const managerNameField = form.querySelector('input[name="accountManagerName"]');
+    const managerIdField = form.querySelector('input[name="accountManagerId"]');
+    const custNameField = form.querySelector('input[name="customerName"]');
+    const custMobileField = form.querySelector('input[name="customerMobile"]');
+    const custEmailField = form.querySelector('input[name="customerEmail"]');
     
-    for (const fieldInfo of requiredFields) {
-        const field = form.querySelector(`input[name="${fieldInfo.name}"]`);
-        if (!field || !field.value.trim()) {
-            alert(`Please fill in ${fieldInfo.label}`);
-            if (field) field.focus();
+    console.log('Fields found:', {
+        managerName: !!managerNameField,
+        managerId: !!managerIdField,
+        custName: !!custNameField,
+        custMobile: !!custMobileField,
+        custEmail: !!custEmailField
+    }); // Debug
+    
+    // Get values safely
+    const managerName = managerNameField ? managerNameField.value.trim() : '';
+    const managerId = managerIdField ? managerIdField.value.trim() : '';
+    const custName = custNameField ? custNameField.value.trim() : '';
+    const custMobile = custMobileField ? custMobileField.value.trim() : '';
+    const custEmail = custEmailField ? custEmailField.value.trim() : '';
+    
+    console.log('Field values:', {
+        managerName: managerName,
+        managerId: managerId,
+        custName: custName,
+        custMobile: custMobile,
+        custEmail: custEmail
+    }); // Debug
+    
+    // Very basic validation - just check if major fields are not empty
+    if (managerName.length < 2) {
+        alert('Please enter Account Manager Name');
+        if (managerNameField) managerNameField.focus();
+        return;
+    }
+    
+    if (custName.length < 2) {
+        alert('Please enter Customer Name');
+        if (custNameField) custNameField.focus();
+        return;
+    }
+    
+    if (custEmail.length < 5) {
+        alert('Please enter Customer Email');
+        if (custEmailField) custEmailField.focus();
+        return;
+    }
+    
+    // Check lead source - but more forgiving
+    const leadSources = form.querySelectorAll('input[name="leadSource"]:checked');
+    console.log('Lead sources checked:', leadSources.length); // Debug
+    
+    if (leadSources.length === 0) {
+        // Don't block, just warn
+        if (!confirm('No lead source selected. Continue anyway?')) {
             return;
         }
     }
 
-    // Check if at least one lead source is selected
-    const leadSources = form.querySelectorAll('input[name="leadSource"]:checked');
-    if (leadSources.length === 0) {
-        alert('Please select at least one lead source');
-        return;
-    }
+    console.log('All validations passed, proceeding to step 2'); // Debug
 
+    // Proceed to step 2
     document.getElementById('step1Content').classList.add('hidden');
     document.getElementById('step2Content').classList.remove('hidden');
     
