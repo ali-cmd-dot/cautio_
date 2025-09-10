@@ -59,7 +59,7 @@
 .overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-.rounded{border-radius:.25rem}.rounded-lg{border-radius:.5rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}
+.rounded{border-radius:.25rem}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}
 
 .border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-r{border-right-width:1px}
 .border-t{border-top-width:1px}
@@ -104,6 +104,7 @@
 .duration-300{transition-duration:300ms}
 
 .shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05)}
+.shadow-2xl{box-shadow:0 25px 50px -12px rgba(0,0,0,.25)}
 
 .opacity-90:hover{opacity:.9}
 
@@ -209,51 +210,79 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     100% { width: 100%; }
 }
 
-/* Custom styles for sidebar */
+/* ENHANCED SIDEBAR SYSTEM */
 .sidebar {
-    transition: width 0.3s ease;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: width;
+    display: flex;
+    flex-direction: column;
 }
+
 .sidebar.collapsed {
     width: 4rem;
 }
+
 .sidebar.expanded {
     width: 16rem;
 }
+
+.sidebar-header {
+    flex-shrink: 0;
+}
+
+.sidebar-nav {
+    flex: 1;
+    min-height: 0;
+}
+
 .menu-text {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
-.collapsed .menu-text {
+
+.sidebar.collapsed .menu-text {
     opacity: 0;
-    pointer-events: none;
+    width: 0;
+    margin: 0;
 }
+
+.sidebar.expanded .menu-text {
+    opacity: 1;
+}
+
 .main-content {
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
+    min-height: 100vh;
 }
+
 .main-content.sidebar-collapsed {
     margin-left: 4rem;
 }
+
 .main-content.sidebar-expanded {
     margin-left: 16rem;
 }
 
-/* FIXED: Hamburger Menu - Perfect alignment and positioning */
+/* FIXED HAMBURGER MENU */
 .hamburger-button {
     position: relative;
-    z-index: 60;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 40px;
     height: 40px;
-    margin-left: auto;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 }
 
 .hamburger-menu-icon {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 20px;
-    height: 14px;
+    width: 18px;
+    height: 12px;
     cursor: pointer;
 }
 
@@ -263,13 +292,13 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     height: 2px;
     background-color: #dce2e5;
     border-radius: 1px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
 }
 
 /* Hamburger animation for expanded state */
 .sidebar.expanded .hamburger-line:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
+    transform: translateY(5px) rotate(45deg);
 }
 
 .sidebar.expanded .hamburger-line:nth-child(2) {
@@ -278,41 +307,45 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
 }
 
 .sidebar.expanded .hamburger-line:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
+    transform: translateY(-5px) rotate(-45deg);
 }
 
-/* FIXED: Tab Button Styling - Fully rounded and proper highlighting */
+/* ENHANCED TAB SYSTEM */
+.enhanced-tabs {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .tab-button {
     position: relative;
     display: inline-flex;
     align-items: center;
-    padding: 12px 20px;
-    background: #2d3748;
-    border: 2px solid transparent;
-    border-radius: 20px; /* Fully rounded instead of just top */
-    margin-right: 8px;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 16px;
+    margin: 0 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
     font-size: 0.875rem;
     color: #a0aec0;
-    min-height: 44px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 48px;
+    transform: translateY(0);
+    will-change: transform, background-color, color;
 }
 
 .tab-button:hover:not(.active) {
-    background: #3a4a5c;
+    background: rgba(255, 255, 255, 0.05);
     color: #cbd5e0;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .tab-button.active {
     background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
     color: #ffffff;
-    border-color: #0045ff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 69, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 69, 255, 0.4);
     font-weight: 700;
 }
 
@@ -327,27 +360,115 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     align-items: center;
     justify-content: center;
     margin-left: 8px;
-    padding: 2px 8px;
-    background: rgba(255, 255, 255, 0.2);
+    padding: 3px 8px;
+    background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 0.75rem;
     font-weight: 700;
-    min-width: 20px;
-    height: 20px;
+    min-width: 22px;
+    height: 22px;
     line-height: 1;
     backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
 }
 
 .tab-button.active .tab-count {
     background: rgba(255, 255, 255, 0.25);
     color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .tab-button:not(.active) .tab-count {
-    background: rgba(0, 69, 255, 0.6);
+    background: rgba(0, 69, 255, 0.7);
     color: #ffffff;
+}
+
+/* ENHANCED SEARCH SYSTEM */
+.search-section {
+    position: relative;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+}
+
+.search-input:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 69, 255, 0.15);
+    border-color: #0045ff;
+}
+
+.search-input:not(:placeholder-shown) + .search-icon + .clear-search-btn {
+    opacity: 1;
+}
+
+.search-icon {
+    transition: color 0.2s ease;
+}
+
+.search-input:focus + .search-icon {
+    color: #0045ff;
+}
+
+.clear-search-btn {
+    transition: opacity 0.2s ease;
+}
+
+.clear-search-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* ENHANCED CARD SYSTEM */
+.add-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.add-card:hover::before {
+    opacity: 1;
+}
+
+.add-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 69, 255, 0.15);
+}
+
+.icon-wrapper {
+    transition: transform 0.3s ease;
+}
+
+.add-card:hover .icon-wrapper {
+    transform: scale(1.1);
+}
+
+/* ENHANCED EMPTY STATES */
+.empty-state-icon {
+    transition: transform 0.3s ease;
+}
+
+.empty-state-icon:hover {
+    transform: scale(1.1);
 }
 
 /* Multi-step form styling */
@@ -370,12 +491,14 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .step-indicator.active .step-number {
     background: #0045ff;
     color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.4);
 }
 
 .step-indicator.completed .step-number {
@@ -431,7 +554,7 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
 
 /* Email Toast Animation */
 #emailToast {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(100%);
 }
 
@@ -565,7 +688,7 @@ input::placeholder{font-size:.875rem;color:rgba(220,226,229,.75)}
 .approval-card {
     background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
     border: 1px solid rgba(251, 191, 36, 0.2);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .approval-card:hover {
@@ -668,7 +791,7 @@ button:active {
 .lead-card {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
     border: 1px solid rgba(59, 130, 246, 0.2);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .lead-card:hover {
@@ -720,15 +843,19 @@ button:active {
     }
     
     .tab-button {
-        padding: 8px 16px;
+        padding: 10px 16px;
         font-size: 0.75rem;
-        margin-right: 4px;
+        margin: 0 1px;
     }
     
     .tab-count {
         margin-left: 4px;
-        padding: 1px 6px;
+        padding: 2px 6px;
         font-size: 0.625rem;
+    }
+
+    .search-input {
+        width: 240px;
     }
 }
 
@@ -756,7 +883,7 @@ button:active {
 .manual-email-btn {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     border: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .manual-email-btn:hover {
@@ -765,20 +892,10 @@ button:active {
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-/* Search Bar Enhancement */
-#searchInput {
-    transition: all 0.3s ease;
-}
-
-#searchInput:focus {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.15);
-}
-
 /* Enhanced card hover effects */
 .p-4.rounded-lg.dark\:bg-dark-fill-base-300:hover {
     transform: translateY(-2px);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 25px rgba(0, 69, 255, 0.1);
 }
 
@@ -791,34 +908,6 @@ button:active {
     text-shadow: 0 4px 8px rgba(0, 69, 255, 0.3);
 }
 
-/* Add Customer/Lead cards enhancement */
-.grid.grid-cols-2.gap-6 > div {
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.grid.grid-cols-2.gap-6 > div::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.grid.grid-cols-2.gap-6 > div:hover::before {
-    opacity: 1;
-}
-
-/* Fix for typo in HTML - "outline-ne" should be "outline-none" */
-input[placeholder="Enter fleet size"] {
-    outline: none !important;
-}
-
 /* Enhanced form styling */
 form input:focus,
 form select:focus,
@@ -826,15 +915,6 @@ form textarea:focus {
     box-shadow: 0 0 0 3px rgba(0, 69, 255, 0.1);
     border-color: #0045ff;
     outline: none;
-}
-
-/* Tab container styling */
-.flex.space-x-1 {
-    background: rgba(45, 55, 72, 0.5);
-    padding: 8px;
-    border-radius: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Enhanced loading animation */
@@ -845,4 +925,64 @@ form textarea:focus {
 
 .loading {
     animation: pulse 2s infinite;
+}
+
+/* Scale animations for buttons */
+@keyframes scaleUp {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+.hover\:scale-105:hover {
+    animation: scaleUp 0.2s ease forwards;
+}
+
+/* Menu item hover effect */
+.menu-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 69, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.menu-item:hover::before {
+    left: 100%;
+}
+
+/* Dashboard header enhancement */
+.dashboard-header {
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Performance optimizations */
+.sidebar,
+.main-content,
+.tab-button,
+.search-input,
+.add-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
