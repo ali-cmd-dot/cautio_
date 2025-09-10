@@ -1872,22 +1872,31 @@ function updateTabHighlight(activeTabId) {
     }
 }
 
-// Multi-step form functions
+// Multi-step form functions - FIXED VALIDATION
 function goToStep2() {
-    // Validate step 1 required fields
-    const requiredFields = ['accountManagerName', 'accountManagerId', 'customerName', 'customerMobile', 'customerEmail'];
+    // Get the form element
+    const form = document.getElementById('addCustomerForm');
     
-    for (const fieldName of requiredFields) {
-        const field = document.querySelector(`input[name="${fieldName}"]`);
+    // Validate step 1 required fields
+    const requiredFields = [
+        { name: 'accountManagerName', label: 'Account Manager Name' },
+        { name: 'accountManagerId', label: 'Account Manager ID' },
+        { name: 'customerName', label: 'Customer Name' },
+        { name: 'customerMobile', label: 'Customer Mobile' },
+        { name: 'customerEmail', label: 'Customer Email' }
+    ];
+    
+    for (const fieldInfo of requiredFields) {
+        const field = form.querySelector(`input[name="${fieldInfo.name}"]`);
         if (!field || !field.value.trim()) {
-            alert(`Please fill in ${field.previousElementSibling.textContent}`);
-            field.focus();
+            alert(`Please fill in ${fieldInfo.label}`);
+            if (field) field.focus();
             return;
         }
     }
 
     // Check if at least one lead source is selected
-    const leadSources = document.querySelectorAll('input[name="leadSource"]:checked');
+    const leadSources = form.querySelectorAll('input[name="leadSource"]:checked');
     if (leadSources.length === 0) {
         alert('Please select at least one lead source');
         return;
@@ -1970,7 +1979,7 @@ async function handleAddLead(e) {
     }
 }
 
-// UPDATED: Handle Add Customer - Always creates with pending approval
+// UPDATED: Handle Add Customer - Now creates customer with pending approval
 async function handleAddCustomer(e) {
     e.preventDefault();
     
@@ -2010,7 +2019,7 @@ async function handleAddCustomer(e) {
         poc_end_date: null, // Will be set after approval
         status: formData.get('pocType') === 'direct_onboarding' ? 'onboarded' : 'active',
         onboard_source: formData.get('pocType') === 'direct_onboarding' ? 'direct' : 'poc_conversion',
-        approval_status: 'pending', // IMPORTANT: Always set to pending
+        approval_status: 'pending', // IMPORTANT: Set to pending
         extension_count: 0,
         poc_extended_days: 0,
         email_notifications_sent: 0,
