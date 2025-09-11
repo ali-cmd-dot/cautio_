@@ -1,186 +1,37 @@
 /* Inventory Management Specific Styles */
 
-/* Stock Management Styles */
-.stock-header {
-    position: relative;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
-    border-radius: 1rem;
-    border: 1px solid rgba(0, 69, 255, 0.1);
-    margin-bottom: 2rem;
-}
-
-.stock-stats {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.5rem;
-    backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
-}
-
-.stat-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.1);
-}
-
-/* Stock Filters */
-.stock-filters {
-    padding: 1rem;
-    background: rgba(18, 19, 22, 0.8);
-    border-radius: 0.75rem;
-    border: 1px solid rgba(74, 76, 89, 0.3);
-    backdrop-filter: blur(10px);
-}
-
-.filter-section select {
-    min-width: 160px;
-    transition: all 0.2s ease;
-}
-
-.filter-section select:focus {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.15);
-}
-
-/* Stock Table Styles */
-.stock-table-container {
-    background: rgba(18, 19, 22, 0.8);
-    border-radius: 1rem;
-    overflow: hidden;
-    border: 1px solid rgba(74, 76, 89, 0.3);
-    backdrop-filter: blur(10px);
-}
-
-.stock-table {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.stock-table th {
-    background: rgba(64, 67, 78, 0.8);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    border-bottom: 2px solid rgba(74, 76, 89, 0.5);
-}
-
-.stock-table td {
-    border-bottom: 1px solid rgba(74, 76, 89, 0.2);
-    padding: 1rem;
-    vertical-align: middle;
-    transition: background-color 0.2s ease;
-}
-
-.stock-table tbody tr:hover {
-    background: rgba(0, 69, 255, 0.05);
-}
-
-.stock-table tbody tr:hover td {
-    border-color: rgba(0, 69, 255, 0.2);
-}
-
-/* Device Status Badges */
-.device-status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-}
-
-.device-status-available {
-    background-color: #10b981;
-    color: #fff;
-}
-
-.device-status-allocated {
-    background-color: #f59e0b;
-    color: #fff;
-}
-
-.device-status-returned {
-    background-color: #6b7280;
-    color: #fff;
-}
-
-/* Device Condition Badges */
-.device-condition-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-}
-
-.device-condition-new {
-    background-color: #3b82f6;
-    color: #fff;
-}
-
-.device-condition-used {
-    background-color: #8b5cf6;
-    color: #fff;
-}
-
-.device-condition-refurbished {
-    background-color: #06b6d4;
-    color: #fff;
-}
-
-.device-condition-damaged {
-    background-color: #ef4444;
-    color: #fff;
-}
-
-/* Inventory Tabs */
-.inventory-tabs {
-    display: flex;
-    justify-content: flex-start;
-}
-
+/* Inventory Tab Buttons - Distinct from main dashboard tabs */
 .inventory-tab-button {
     position: relative;
     display: inline-flex;
     align-items: center;
-    padding: 14px 24px;
-    background: transparent;
-    border: none;
-    border-radius: 16px;
-    margin: 0 2px;
+    padding: 12px 20px;
+    background: #2d3748;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    margin-right: 8px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     font-weight: 600;
     font-size: 0.875rem;
     color: #a0aec0;
-    min-height: 48px;
-    transform: translateY(0);
-    will-change: transform, background-color, color;
+    min-height: 44px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .inventory-tab-button:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
+    background: #3a4a5c;
     color: #cbd5e0;
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .inventory-tab-button.active {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     color: #ffffff;
+    border-color: #059669;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
     font-weight: 700;
 }
 
@@ -195,182 +46,220 @@
     align-items: center;
     justify-content: center;
     margin-left: 8px;
-    padding: 3px 8px;
-    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 700;
-    min-width: 22px;
-    height: 22px;
+    min-width: 20px;
+    height: 20px;
     line-height: 1;
     backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
 }
 
 .inventory-tab-button.active .tab-count {
     background: rgba(255, 255, 255, 0.25);
     color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .inventory-tab-button:not(.active) .tab-count {
-    background: rgba(16, 185, 129, 0.7);
+    background: rgba(5, 150, 105, 0.6);
     color: #ffffff;
 }
 
-/* CSV Import Modal Styles */
-.csv-import-content {
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.csv-upload-area {
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.csv-upload-area:hover {
-    border-color: rgba(0, 69, 255, 0.5);
-    background: rgba(0, 69, 255, 0.02);
-}
-
-.csv-upload-area.dragover {
-    border-color: #0045ff;
-    background: rgba(0, 69, 255, 0.05);
-    transform: scale(1.02);
-}
-
-.csv-placeholder {
-    transition: all 0.3s ease;
-}
-
-.csv-selected {
-    animation: fadeIn 0.3s ease;
-}
-
-.csv-upload-area:hover .csv-placeholder svg {
-    transform: scale(1.1);
-    color: #0045ff;
-}
-
-/* Progress Bar Styles */
-.progress-bar {
-    background: rgba(74, 76, 89, 0.3);
-    overflow: hidden;
-}
-
-.progress-bar div {
-    background: linear-gradient(90deg, #0045ff 0%, #1a5aff 100%);
-    height: 100%;
-    transition: width 0.3s ease;
-    position: relative;
-}
-
-.progress-bar div::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* Inward/Outward Cards */
-.inventory-card {
-    background: linear-gradient(135deg, rgba(74, 76, 89, 0.1) 0%, rgba(109, 112, 126, 0.1) 100%);
+/* Device Cards */
+.device-card {
+    background: linear-gradient(135deg, rgba(45, 55, 72, 0.1) 0%, rgba(74, 85, 104, 0.1) 100%);
     border: 1px solid rgba(74, 76, 89, 0.3);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
-.inventory-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.inventory-card:hover::before {
-    opacity: 1;
-}
-
-.inventory-card:hover {
+.device-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.15);
+    border-color: rgba(5, 150, 105, 0.3);
 }
 
-.inventory-card.outward-card::before {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%);
+.device-card.outward-card {
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
+    border-color: rgba(198, 52, 42, 0.3);
 }
 
-.inventory-card.outward-card:hover {
-    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
-    border-color: rgba(245, 158, 11, 0.3);
+.device-card.outward-card:hover {
+    box-shadow: 0 8px 25px rgba(198, 52, 42, 0.15);
+    border-color: rgba(198, 52, 42, 0.5);
 }
 
-/* Form Styles */
-.inventory-form-group {
-    margin-bottom: 1.5rem;
-}
-
-.inventory-form-label {
-    display: block;
-    font-weight: 600;
-    color: #dce2e5;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-}
-
-.inventory-form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid rgba(74, 76, 89, 1);
-    border-radius: 0.5rem;
-    background: rgba(18, 19, 22, 1);
-    color: #dce2e5;
-    transition: all 0.2s ease;
-}
-
-.inventory-form-input:focus {
-    outline: none;
-    border-color: #0045ff;
-    box-shadow: 0 0 0 3px rgba(0, 69, 255, 0.1);
-    transform: translateY(-1px);
-}
-
-.inventory-form-input.error {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-.inventory-form-error {
-    color: #ef4444;
+/* Status Badges for Devices */
+.device-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
     font-size: 0.75rem;
-    margin-top: 0.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.device-status-badge.available {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.device-status-badge.allocated {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.device-status-badge.returned {
+    background-color: #6b7280;
+    color: #fff;
+}
+
+/* Condition Badges */
+.condition-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.condition-badge.new {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.condition-badge.used {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.condition-badge.refurbished {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.condition-badge.damaged {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+/* Inventory Search Bar Enhancement */
+#inventorySearchInput {
+    transition: all 0.3s ease;
+}
+
+#inventorySearchInput:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    border-color: #059669;
+}
+
+/* Loading Spinner for Inventory */
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-icon {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: solid 3px transparent;
+    border-top-color: #059669;
+    border-left-color: #059669;
+    border-radius: 50%;
+    animation: inventory-spinner 1s linear infinite;
+}
+
+@keyframes inventory-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Stock Summary Cards */
+.stock-summary-card {
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
+    border: 1px solid rgba(0, 69, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stock-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 69, 255, 0.15);
+    border-color: rgba(0, 69, 255, 0.3);
+}
+
+/* Form Enhancements */
+.inventory-form input:focus,
+.inventory-form select:focus,
+.inventory-form textarea:focus {
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    border-color: #059669;
+    outline: none;
+}
+
+/* Toast Notifications */
+#inventoryToast {
+    transition: all 0.3s ease;
+    transform: translateX(100%);
+}
+
+#inventoryToast.show {
+    transform: translateX(0);
+}
+
+#inventoryToast.success {
+    background-color: #10b981;
+    color: white;
+}
+
+#inventoryToast.error {
+    background-color: #ef4444;
+    color: white;
+}
+
+#inventoryToast.warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+/* Device Info Grid */
+.device-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.device-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.device-info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(220, 226, 229, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.device-info-value {
+    font-size: 0.875rem;
+    color: rgba(220, 226, 229, 1);
+    font-weight: 500;
 }
 
 /* Action Buttons */
-.inventory-action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+.device-action-btn {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.75rem;
@@ -380,229 +269,236 @@
     cursor: pointer;
 }
 
-.inventory-action-btn:hover {
+.device-action-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.inventory-action-btn.view {
-    background: #3b82f6;
+.device-action-btn.view {
+    background-color: #3b82f6;
     color: white;
 }
 
-.inventory-action-btn.edit {
-    background: #f59e0b;
+.device-action-btn.edit {
+    background-color: #059669;
     color: white;
 }
 
-.inventory-action-btn.delete {
-    background: #ef4444;
+.device-action-btn.delete {
+    background-color: #ef4444;
     color: white;
 }
 
-.inventory-action-btn.return {
-    background: #10b981;
+.device-action-btn.return {
+    background-color: #6b7280;
     color: white;
 }
 
-/* Toast Notifications */
-#inventoryToast {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Empty State Enhancements */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
 }
 
-#inventoryToast.show {
-    transform: translateX(0);
+.empty-state svg {
+    opacity: 0.6;
+    margin-bottom: 1rem;
 }
 
-#inventoryToast.success {
-    background: #10b981;
-    color: white;
+/* Modal Enhancements */
+.inventory-modal {
+    backdrop-filter: blur(8px);
 }
 
-#inventoryToast.error {
-    background: #ef4444;
-    color: white;
+.inventory-modal .modal-content {
+    animation: modalSlideIn 0.3s ease-out;
 }
 
-#inventoryToast.warning {
-    background: #f59e0b;
-    color: white;
-}
-
-#inventoryToast.info {
-    background: #3b82f6;
-    color: white;
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .stock-stats {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .stock-filters .flex {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .filter-section {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .stock-table-container {
-        overflow-x: auto;
-    }
-    
-    .stock-table {
-        min-width: 800px;
-    }
-    
     .inventory-tab-button {
-        padding: 10px 16px;
+        padding: 8px 16px;
         font-size: 0.75rem;
+        margin-right: 4px;
     }
     
-    .inventory-card {
-        padding: 1rem;
+    .inventory-tab-button .tab-count {
+        margin-left: 4px;
+        padding: 1px 6px;
+        font-size: 0.625rem;
+    }
+    
+    .device-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #inventorySearchInput {
+        width: 100%;
     }
 }
 
-/* Loading States */
-.loading-skeleton {
-    background: linear-gradient(90deg, rgba(74, 76, 89, 0.1) 0%, rgba(109, 112, 126, 0.2) 50%, rgba(74, 76, 89, 0.1) 100%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
+/* CSV Import Area */
+.csv-import-area {
+    border: 2px dashed rgba(74, 76, 89, 0.5);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
 }
 
-@keyframes loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-.skeleton-row {
-    height: 60px;
-    margin-bottom: 1px;
-}
-
-.skeleton-header {
-    height: 40px;
-    margin-bottom: 10px;
-}
-
-/* Search Enhancements */
-.search-section input:focus {
-    box-shadow: 0 0 0 3px rgba(0, 69, 255, 0.1);
+.csv-import-area:hover {
     border-color: #0045ff;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
 }
 
-/* Drag and Drop Enhancement */
-.csv-upload-area.dragover {
-    animation: dragPulse 0.5s ease-in-out infinite alternate;
+.csv-import-area.drag-over {
+    border-color: #059669;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
 }
 
-@keyframes dragPulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.02); }
-}
-
-/* Custom Scrollbar for Tables */
-.stock-table-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.stock-table-container::-webkit-scrollbar-track {
-    background: rgba(74, 76, 89, 0.2);
-    border-radius: 4px;
-}
-
-.stock-table-container::-webkit-scrollbar-thumb {
-    background: rgba(0, 69, 255, 0.5);
-    border-radius: 4px;
-}
-
-.stock-table-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 69, 255, 0.7);
-}
-
-/* Animation Classes */
-.fadeIn {
-    animation: fadeIn 0.3s ease-in;
-}
-
-.fadeOut {
-    animation: fadeOut 0.3s ease-out;
-}
-
-.slideIn {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Success/Error States */
-.form-success {
-    border-color: #10b981 !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-}
-
-.form-error {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-}
-
-/* Device Actions Menu */
-.device-actions {
-    position: relative;
-    display: inline-block;
-}
-
-.device-actions-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: rgba(18, 19, 22, 0.95);
-    border: 1px solid rgba(74, 76, 89, 0.5);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    min-width: 150px;
-    z-index: 50;
-    backdrop-filter: blur(10px);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.2s ease;
-}
-
-.device-actions:hover .device-actions-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.device-actions-menu button {
-    display: block;
+/* Import Progress Bar */
+.import-progress {
     width: 100%;
-    text-align: left;
-    padding: 0.5rem;
-    border: none;
-    background: transparent;
-    color: #dce2e5;
-    border-radius: 0.25rem;
-    transition: background-color 0.2s ease;
-    font-size: 0.875rem;
+    height: 8px;
+    background-color: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
 }
 
-.device-actions-menu button:hover {
-    background: rgba(0, 69, 255, 0.1);
+.import-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* Import Results */
+.import-results {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.import-results.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* File Upload Button */
+.file-upload-btn {
+    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-btn:hover {
+    background: linear-gradient(135deg, #1a5aff 0%, #3366ff 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.3);
+}
+
+/* Device Timeline */
+.device-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.device-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #059669 0%, #10b981 100%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.75rem;
+    top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    background: #059669;
+    border-radius: 50%;
+    border: 2px solid #1a1a1a;
+}
+
+/* Quick Stats */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: rgba(45, 55, 72, 0.5);
+    border: 1px solid rgba(74, 76, 89, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0045ff;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: rgba(220, 226, 229, 0.7);
+    margin-top: 0.25rem;
+}
+
+/* Enhanced Scrollbar for Inventory */
+.inventory-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.inventory-content::-webkit-scrollbar-track {
+    background: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+}
+
+.inventory-content::-webkit-scrollbar-thumb {
+    background: rgba(5, 150, 105, 0.5);
+    border-radius: 4px;
+}
+
+.inventory-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(5, 150, 105, 0.7);
 }
