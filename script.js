@@ -17,7 +17,6 @@ let currentFilter = '';
 let currentPOCAction = null;
 let currentEmailTarget = null;
 let userSession = null;
-let searchTimeout = null;
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
@@ -285,131 +284,17 @@ function setupEventListeners() {
     sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
     
     // Enhanced Search functionality
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', handleSearchInput);
-    searchInput.addEventListener('keypress', function(e) {
+    document.getElementById('searchInput').addEventListener('input', handleSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            performSearch(e.target.value);
-        }
-    });
-    
-    // Clear search button functionality
-    searchInput.addEventListener('input', function(e) {
-        const clearBtn = document.querySelector('.clear-search-btn');
-        if (e.target.value.length > 0) {
-            clearBtn.style.opacity = '1';
-        } else {
-            clearBtn.style.opacity = '0';
+            handleSearch(e);
         }
     });
     
     // Form submissions
     document.getElementById('addLeadForm').addEventListener('submit', handleAddLead);
     document.getElementById('addCustomerForm').addEventListener('submit', handleAddCustomer);
-}
-
-// Enhanced Search Input Handler
-function handleSearchInput(e) {
-    const searchTerm = e.target.value.toLowerCase().trim();
-    
-    // Clear existing timeout
-    if (searchTimeout) {
-        clearTimeout(searchTimeout);
-    }
-    
-    // Debounce search for 300ms
-    searchTimeout = setTimeout(() => {
-        performSearch(searchTerm);
-    }, 300);
-}
-
-// Enhanced Search Function
-function performSearch(searchTerm) {
-    currentFilter = searchTerm;
-    
-    if (!searchTerm) {
-        // If search is empty, show all approved data
-        filteredCustomers = [...approvedCustomers];
-        filteredLeads = [...leads];
-        hideSearchResults();
-    } else {
-        // Filter approved customers only
-        filteredCustomers = approvedCustomers.filter(customer => {
-            return (
-                customer.customer_name.toLowerCase().includes(searchTerm) ||
-                customer.customer_email.toLowerCase().includes(searchTerm) ||
-                customer.customer_mobile.includes(searchTerm) ||
-                customer.account_manager_name.toLowerCase().includes(searchTerm) ||
-                customer.account_manager_id.toLowerCase().includes(searchTerm) ||
-                (customer.lead_sources && customer.lead_sources.some(source => 
-                    source.toLowerCase().includes(searchTerm)
-                )) ||
-                (customer.requirements && customer.requirements.some(req => 
-                    req.toLowerCase().includes(searchTerm)
-                )) ||
-                customer.poc_type.toLowerCase().includes(searchTerm) ||
-                (customer.status && customer.status.toLowerCase().includes(searchTerm))
-            );
-        });
-
-        // Filter leads
-        filteredLeads = leads.filter(lead => {
-            return (
-                lead.customer_name.toLowerCase().includes(searchTerm) ||
-                lead.contact.toLowerCase().includes(searchTerm) ||
-                lead.status.toLowerCase().includes(searchTerm) ||
-                lead.type.toLowerCase().includes(searchTerm) ||
-                (lead.fleet_size && lead.fleet_size.toString().includes(searchTerm))
-            );
-        });
-
-        showSearchResults(searchTerm);
-    }
-    
-    // Update all tabs content
-    updateTabsContent();
-}
-
-// Show Search Results
-function showSearchResults(searchTerm) {
-    const totalResults = filteredCustomers.length + filteredLeads.length;
-    
-    if (totalResults === 0) {
-        showEmailToast(`No results found for "${searchTerm}"`);
-    } else {
-        showEmailToast(`Found ${totalResults} result(s) for "${searchTerm}"`);
-    }
-    
-    // Add visual feedback to search input
-    const searchInput = document.getElementById('searchInput');
-    searchInput.style.borderColor = totalResults > 0 ? '#10b981' : '#ef4444';
-    
-    setTimeout(() => {
-        searchInput.style.borderColor = '';
-    }, 2000);
-}
-
-// Hide Search Results
-function hideSearchResults() {
-    const searchInput = document.getElementById('searchInput');
-    searchInput.style.borderColor = '';
-}
-
-// Clear Search Function
-function clearSearch() {
-    const searchInput = document.getElementById('searchInput');
-    searchInput.value = '';
-    currentFilter = '';
-    filteredCustomers = [...approvedCustomers];
-    filteredLeads = [...leads];
-    hideSearchResults();
-    updateTabsContent();
-    showEmailToast('Search cleared - showing all data');
-    
-    // Hide clear button
-    const clearBtn = document.querySelector('.clear-search-btn');
-    clearBtn.style.opacity = '0';
 }
 
 // Automatic 7-day Email System
@@ -1089,46 +974,13 @@ function updateCustomerCounts() {
     
     // Update main display
     document.getElementById('totalCustomersDisplay').textContent = totalCustomers;
+    document.getElementById('totalCustomersHeaderCount').textContent = totalCustomers;
     
-    // Update tab counts with animation
-    updateTabCount('leadsCount', leadsCount);
-    updateTabCount('pocCount', pocCount);
-    updateTabCount('onboardedCount', onboardedCount);
-    updateTabCount('closedCount', closedCount);
-    
-    // Update finance stats
-    updateFinanceStats();
-}
-
-// Animated tab count update
-function updateTabCount(elementId, newCount) {
-    const element = document.getElementById(elementId);
-    const currentCount = parseInt(element.textContent) || 0;
-    
-    if (currentCount !== newCount) {
-        element.style.transform = 'scale(1.2)';
-        element.style.transition = 'transform 0.2s ease';
-        
-        setTimeout(() => {
-            element.textContent = newCount;
-            element.style.transform = 'scale(1)';
-        }, 100);
-    }
-}
-
-// Update finance stats
-function updateFinanceStats() {
-    const pendingCount = pendingApprovals.length;
-    const approvedCount = approvedCustomers.length;
-    const rejectedCount = customers.filter(c => c.approval_status === 'rejected').length;
-    
-    const pendingElement = document.getElementById('pendingApprovalsCount');
-    const approvedElement = document.getElementById('totalApprovedCount');
-    const rejectedElement = document.getElementById('totalRejectedCount');
-    
-    if (pendingElement) pendingElement.textContent = pendingCount;
-    if (approvedElement) approvedElement.textContent = approvedCount;
-    if (rejectedElement) rejectedElement.textContent = rejectedCount;
+    // Update tab counts
+    document.getElementById('leadsCount').textContent = leadsCount;
+    document.getElementById('pocCount').textContent = pocCount;
+    document.getElementById('onboardedCount').textContent = onboardedCount;
+    document.getElementById('closedCount').textContent = closedCount;
 }
 
 // Update tabs content
@@ -1746,27 +1598,27 @@ function togglePasswordVisibility() {
     passwordField.setAttribute('type', type);
 }
 
-// Enhanced Sidebar toggle functionality
+// Sidebar toggle functionality
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     
-    sidebarExpanded = !sidebarExpanded;
-    
     if (sidebarExpanded) {
-        sidebar.classList.remove('collapsed');
-        sidebar.classList.add('expanded');
-        mainContent.classList.remove('sidebar-collapsed');
-        mainContent.classList.add('sidebar-expanded');
-    } else {
         sidebar.classList.remove('expanded');
         sidebar.classList.add('collapsed');
         mainContent.classList.remove('sidebar-expanded');
         mainContent.classList.add('sidebar-collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+        sidebar.classList.add('expanded');
+        mainContent.classList.remove('sidebar-collapsed');
+        mainContent.classList.add('sidebar-expanded');
     }
+    
+    sidebarExpanded = !sidebarExpanded;
 }
 
-// Enhanced Sidebar hover functionality
+// Sidebar hover functionality
 function handleSidebarMouseEnter() {
     if (!sidebarExpanded) {
         const sidebar = document.getElementById('sidebar');
@@ -1789,6 +1641,68 @@ function handleSidebarMouseLeave() {
         mainContent.classList.remove('sidebar-expanded');
         mainContent.classList.add('sidebar-collapsed');
     }
+}
+
+// UPDATED: Enhanced Search functionality - Only search approved customers
+function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    currentFilter = searchTerm;
+    
+    if (!searchTerm) {
+        // If search is empty, show all approved data
+        filteredCustomers = [...approvedCustomers]; // Only approved customers
+        filteredLeads = [...leads];
+    } else {
+        // Filter approved customers only
+        filteredCustomers = approvedCustomers.filter(customer => {
+            return (
+                customer.customer_name.toLowerCase().includes(searchTerm) ||
+                customer.customer_email.toLowerCase().includes(searchTerm) ||
+                customer.customer_mobile.includes(searchTerm) ||
+                customer.account_manager_name.toLowerCase().includes(searchTerm) ||
+                customer.account_manager_id.toLowerCase().includes(searchTerm) ||
+                (customer.lead_sources && customer.lead_sources.some(source => 
+                    source.toLowerCase().includes(searchTerm)
+                )) ||
+                (customer.requirements && customer.requirements.some(req => 
+                    req.toLowerCase().includes(searchTerm)
+                )) ||
+                customer.poc_type.toLowerCase().includes(searchTerm) ||
+                (customer.status && customer.status.toLowerCase().includes(searchTerm))
+            );
+        });
+
+        // Filter leads
+        filteredLeads = leads.filter(lead => {
+            return (
+                lead.customer_name.toLowerCase().includes(searchTerm) ||
+                lead.contact.toLowerCase().includes(searchTerm) ||
+                lead.status.toLowerCase().includes(searchTerm) ||
+                lead.type.toLowerCase().includes(searchTerm) ||
+                (lead.fleet_size && lead.fleet_size.toString().includes(searchTerm))
+            );
+        });
+    }
+    
+    // Update all tabs content
+    updateTabsContent();
+    
+    // Show search results message
+    if (searchTerm && (filteredCustomers.length === 0 && filteredLeads.length === 0)) {
+        showEmailToast(`No results found for "${searchTerm}"`);
+    } else if (searchTerm) {
+        const totalResults = filteredCustomers.length + filteredLeads.length;
+        showEmailToast(`Found ${totalResults} result(s) for "${searchTerm}"`);
+    }
+}
+
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    currentFilter = '';
+    filteredCustomers = [...approvedCustomers]; // Only approved customers
+    filteredLeads = [...leads];
+    updateTabsContent();
+    showEmailToast('Search cleared - showing all data');
 }
 
 // UPDATED: Show all customers - Only show approved customers
@@ -1848,7 +1762,8 @@ function showAllCustomersView() {
 function applyCurrentFilter() {
     if (currentFilter) {
         // Reapply current search filter
-        performSearch(currentFilter);
+        const searchEvent = { target: { value: currentFilter } };
+        handleSearch(searchEvent);
     }
 }
 
@@ -1859,23 +1774,26 @@ function showCustomersOverview() {
     updateMenuHighlight('customers');
 }
 
+// NEW: Stock navigation function
+function showStock() {
+    window.location.href = 'stock.html';
+}
+
+// NEW: Inventory Management navigation function
+function showInventoryManagement() {
+    window.location.href = 'inventory.html';
+}
+
 function showGroundOperations() {
     hideAllContent();
     document.getElementById('groundOperationsContent').classList.remove('hidden');
     updateMenuHighlight('ground');
 }
 
-function showInventoryManagement() {
-    hideAllContent();
-    document.getElementById('inventoryManagementContent').classList.remove('hidden');
-    updateMenuHighlight('inventory');
-}
-
 function hideAllContent() {
     document.getElementById('customersOverviewContent').classList.add('hidden');
     document.getElementById('financeContent').classList.add('hidden');
     document.getElementById('groundOperationsContent').classList.add('hidden');
-    document.getElementById('inventoryManagementContent').classList.add('hidden');
     document.getElementById('addCredentialsContent').classList.add('hidden');
 }
 
@@ -1890,8 +1808,9 @@ function updateMenuHighlight(activeMenu) {
         const onclick = item.getAttribute('onclick');
         if ((activeMenu === 'customers' && onclick && onclick.includes('showCustomersOverview')) ||
             (activeMenu === 'finance' && onclick && onclick.includes('showFinance')) ||
-            (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
+            (activeMenu === 'stock' && onclick && onclick.includes('showStock')) ||
             (activeMenu === 'inventory' && onclick && onclick.includes('showInventoryManagement')) ||
+            (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
             (activeMenu === 'credentials' && onclick && onclick.includes('showAddCredentials'))) {
             item.classList.add('dark:bg-brand-blue-600', 'dark:text-utility-white');
             item.classList.remove('hover:dark:bg-dark-fill-base-600');
@@ -2176,7 +2095,7 @@ async function handleAddCustomer(e) {
     }
 }
 
-// Enhanced Logout function with session cleanup
+// Logout function with session cleanup
 function logout() {
     // Clear session
     clearUserSession();
@@ -2201,15 +2120,6 @@ function logout() {
     currentFilter = '';
     currentPOCAction = null;
     currentEmailTarget = null;
-    
-    // Reset sidebar state
-    sidebarExpanded = false;
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    sidebar.classList.remove('expanded');
-    sidebar.classList.add('collapsed');
-    mainContent.classList.remove('sidebar-expanded');
-    mainContent.classList.add('sidebar-collapsed');
     
     showEmailToast('Logged out successfully');
 }
