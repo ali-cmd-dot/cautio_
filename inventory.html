@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock & Inventory Management - Cautio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="inventory.css">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Papa Parse for CSV handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="__variable_3c557b dark font-sans dark:bg-dark-fill-base-400">
+
+    <!-- Stock Management Content -->
+    <div id="stockContent" class="hidden">
+        <div class="stock-header mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Stock Management</h2>
+                    <p class="text-body-l-regular dark:text-dark-base-500">Import and manage device inventory</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="stock-stats flex items-center gap-6">
+                        <div class="stat-item">
+                            <span class="text-body-s-semibold dark:text-dark-base-500">Total Devices</span>
+                            <span id="totalDevicesCount" class="text-heading-6 dark:text-brand-blue-600 ml-2">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="text-body-s-semibold dark:text-dark-base-500">Available</span>
+                            <span id="availableDevicesCount" class="text-heading-6 dark:text-dark-success-600 ml-2">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="text-body-s-semibold dark:text-dark-base-500">Allocated</span>
+                            <span id="allocatedDevicesCount" class="text-heading-6 dark:text-dark-warning-600 ml-2">0</span>
+                        </div>
+                    </div>
+                    <button onclick="showImportCSVModal()" class="px-6 py-3 rounded-xl dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold transition-all duration-200 hover:scale-105">
+                        📥 Import CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Filters and Search -->
+        <div class="stock-filters mb-6">
+            <div class="flex items-center justify-between">
+                <div class="filter-section flex items-center gap-4">
+                    <select id="stockStatusFilter" class="rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="allocated">Allocated</option>
+                        <option value="returned">Returned</option>
+                    </select>
+                    <select id="stockConditionFilter" class="rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600">
+                        <option value="">All Conditions</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                        <option value="refurbished">Refurbished</option>
+                        <option value="damaged">Damaged</option>
+                    </select>
+                </div>
+                
+                <div class="search-section">
+                    <div class="relative">
+                        <input type="text" id="stockSearchInput" placeholder="Search devices..." class="w-80 rounded-xl border p-3 pl-12 pr-4 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-4 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Table -->
+        <div class="stock-table-container">
+            <div class="overflow-x-auto">
+                <table class="stock-table w-full rounded-lg dark:bg-dark-fill-base-300">
+                    <thead class="dark:bg-dark-fill-base-600">
+                        <tr>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Sl. No.</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">PO No.</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Device Model</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Registration No.</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">IMEI</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Status</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Condition</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Customer</th>
+                            <th class="p-4 text-left text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody">
+                        <!-- Stock data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="stockEmptyState" class="text-center py-16 hidden">
+                <div class="empty-state-icon mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto dark:text-dark-base-500">
+                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                        <path d="M12 3v6"/>
+                    </svg>
+                </div>
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Stock Data</h3>
+                <p class="text-body-l-regular dark:text-dark-base-500 mb-6">Import your first CSV file to get started</p>
+                <button onclick="showImportCSVModal()" class="px-6 py-3 rounded-xl dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
+                    Import CSV File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Management Content -->
+    <div id="inventoryManagementContent" class="hidden">
+        <div class="inventory-header mb-8">
+            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Inventory Management</h2>
+            <p class="text-body-l-regular dark:text-dark-base-500">Track device inward and outward movements</p>
+        </div>
+
+        <!-- Inventory Tabs -->
+        <div class="inventory-tabs mb-6">
+            <div class="flex space-x-1 p-1 rounded-2xl dark:bg-dark-fill-base-300/50 backdrop-blur-sm border dark:border-dark-stroke-contrast-400/30 w-fit">
+                <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
+                    <span class="tab-label">📥 Inward</span>
+                    <span class="tab-count" id="inwardCount">0</span>
+                </button>
+                <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
+                    <span class="tab-label">📤 Outward</span>
+                    <span class="tab-count" id="outwardCount">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Inward Tab Content -->
+        <div id="inwardTabContent">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-heading-6 dark:text-dark-base-600">Device Inward</h3>
+                    <p class="text-body-m-regular dark:text-dark-base-500 mt-1">Add devices to inventory</p>
+                </div>
+                <button onclick="showInwardForm()" class="px-6 py-3 rounded-xl dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold transition-all duration-200 hover:scale-105">
+                    📥 Add Inward
+                </button>
+            </div>
+            
+            <div id="inwardDevicesList" class="space-y-4">
+                <!-- Inward devices will be populated here -->
+            </div>
+            
+            <div id="inwardEmptyState" class="text-center py-16 hidden">
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Records</h3>
+                <p class="text-body-l-regular dark:text-dark-base-500">No devices have been added to inventory yet</p>
+            </div>
+        </div>
+
+        <!-- Outward Tab Content -->
+        <div id="outwardTabContent" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-heading-6 dark:text-dark-base-600">Device Outward</h3>
+                    <p class="text-body-m-regular dark:text-dark-base-500 mt-1">Allocate devices to customers</p>
+                </div>
+                <button onclick="showOutwardForm()" class="px-6 py-3 rounded-xl dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-600/90 text-body-s-semibold transition-all duration-200 hover:scale-105">
+                    📤 Add Outward
+                </button>
+            </div>
+            
+            <div id="outwardDevicesList" class="space-y-4">
+                <!-- Outward devices will be populated here -->
+            </div>
+            
+            <div id="outwardEmptyState" class="text-center py-16 hidden">
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Records</h3>
+                <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated to customers yet</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Import Modal -->
+    <div id="csvImportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Import Stock CSV</h2>
+                <button onclick="closeCSVImportModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="csv-import-content">
+                <!-- CSV Format Guide -->
+                <div class="mb-6 p-4 rounded-lg dark:bg-dark-info-600/20 dark:border dark:border-dark-info-600/30">
+                    <h4 class="text-body-l-semibold dark:text-dark-info-600 mb-2">CSV Format Required</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500 mb-3">Your CSV file must contain exactly these columns in order:</p>
+                    <div class="grid grid-cols-2 gap-2 text-body-s-regular dark:text-dark-base-500">
+                        <div>• Sl. No.</div>
+                        <div>• PO No</div>
+                        <div>• Batch No.</div>
+                        <div>• Inward Date</div>
+                        <div>• Device Model No.</div>
+                        <div>• Device Registration Number</div>
+                        <div>• Device IMEI</div>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <form id="csvImportForm">
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Select CSV File</label>
+                        <div class="csv-upload-area border-2 border-dashed dark:border-dark-stroke-contrast-400 rounded-lg p-8 text-center transition-colors hover:dark:border-brand-blue-600">
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVFileSelect(event)">
+                            <div id="csvUploadPlaceholder" class="csv-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7,10 12,15 17,10"/>
+                                    <line x1="12" x2="12" y1="15" y2="3"/>
+                                </svg>
+                                <p class="text-body-l-semibold dark:text-dark-base-600 mb-2">Drop CSV file here or click to browse</p>
+                                <p class="text-body-m-regular dark:text-dark-base-500">Supports .csv files only</p>
+                                <button type="button" onclick="document.getElementById('csvFileInput').click()" class="mt-4 px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
+                                    Choose File
+                                </button>
+                            </div>
+                            <div id="csvFileSelected" class="csv-selected hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-success-600">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" x2="8" y1="13" y2="13"/>
+                                    <line x1="16" x2="8" y1="17" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                                <p id="csvFileName" class="text-body-l-semibold dark:text-dark-success-600 mb-2"></p>
+                                <p id="csvFileSize" class="text-body-m-regular dark:text-dark-base-500"></p>
+                                <button type="button" onclick="document.getElementById('csvFileInput').click()" class="mt-4 px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600">
+                                    Change File
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Import Progress -->
+                    <div id="csvImportProgress" class="hidden mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-body-m-semibold dark:text-dark-base-600">Importing...</span>
+                            <span id="csvImportPercentage" class="text-body-m-semibold dark:text-brand-blue-600">0%</span>
+                        </div>
+                        <div class="progress-bar w-full bg-dark-stroke-base-400 rounded-full h-2">
+                            <div id="csvImportProgressBar" class="bg-brand-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <div id="csvImportStatus" class="text-body-s-regular dark:text-dark-base-500 mt-2"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button type="submit" id="csvImportButton" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+                            Import Stock Data
+                        </button>
+                        <button type="button" onclick="closeCSVImportModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inward Device Form Modal -->
+    <div id="inwardDeviceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add Inward Device</h2>
+                <button onclick="closeInwardDeviceModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="inwardDeviceForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number *</label>
+                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter registration number" required>
+                    <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Must exist in stock database</p>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI *</label>
+                    <input type="text" name="deviceIMEI" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter IMEI number" required>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Condition *</label>
+                    <select name="deviceCondition" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select condition</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                        <option value="refurbished">Refurbished</option>
+                        <option value="damaged">Damaged</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
+                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
+                        Add to Inward
+                    </button>
+                    <button type="button" onclick="closeInwardDeviceModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Outward Device Form Modal -->
+    <div id="outwardDeviceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add Outward Device</h2>
+                <button onclick="closeOutwardDeviceModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="outwardDeviceForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number *</label>
+                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter registration number" required>
+                    <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Must be available in stock</p>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI *</label>
+                    <input type="text" name="deviceIMEI" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter IMEI number" required>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer *</label>
+                    <select name="customerId" id="customerDropdown" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select customer</option>
+                        <!-- Will be populated from approved customers -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Location *</label>
+                    <input type="text" name="location" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter location" required>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Outward Date *</label>
+                    <input type="date" name="outwardDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">SIM No (Optional)</label>
+                    <input type="text" name="simNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter SIM number">
+                </div>
+
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-606 mb-2">Notes (Optional)</label>
+                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-600/90 text-body-s-semibold">
+                        Allocate Device
+                    </button>
+                    <button type="button" onclick="closeOutwardDeviceModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success/Error Toast -->
+    <div id="inventoryToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full">
+        <div class="flex items-center">
+            <svg id="inventoryToastIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+            </svg>
+            <span id="inventoryToastMessage">Success!</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="inventory.js"></script>
+</body>
+</html>
