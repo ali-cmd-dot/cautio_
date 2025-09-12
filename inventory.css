@@ -120,7 +120,7 @@
     color: #fff;
 }
 
-/* Condition Badges */
+/* Condition Badges - UPDATED with new conditions */
 .condition-badge {
     display: inline-flex;
     align-items: center;
@@ -130,11 +130,37 @@
     font-weight: 600;
 }
 
-.condition-badge.new {
+.condition-badge.good {
     background-color: #10b981;
     color: #fff;
 }
 
+.condition-badge.new {
+    background-color: #0045ff;
+    color: #fff;
+}
+
+.condition-badge.lense_issue {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.condition-badge.sim_module_fail {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+.condition-badge.auto_restart {
+    background-color: #8b5cf6;
+    color: #fff;
+}
+
+.condition-badge.device_tampered {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+/* Legacy condition badges for backward compatibility */
 .condition-badge.used {
     background-color: #3b82f6;
     color: #fff;
@@ -148,6 +174,122 @@
 .condition-badge.damaged {
     background-color: #ef4444;
     color: #fff;
+}
+
+/* CSV Import Areas */
+.csv-import-area {
+    border: 2px dashed rgba(74, 76, 89, 0.5);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
+    cursor: pointer;
+}
+
+.csv-import-area:hover {
+    border-color: #0045ff;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
+    transform: translateY(-1px);
+}
+
+.csv-import-area.drag-over {
+    border-color: #059669;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+    transform: scale(1.02);
+}
+
+/* Outward CSV Import Area */
+.csv-import-area.outward-import {
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.05) 0%, rgba(245, 101, 101, 0.05) 100%);
+}
+
+.csv-import-area.outward-import:hover {
+    border-color: #c6342a;
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
+}
+
+.csv-import-area.outward-import.drag-over {
+    border-color: #c6342a;
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.15) 0%, rgba(245, 101, 101, 0.15) 100%);
+}
+
+/* Import Progress Bars */
+.import-progress {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.import-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    transition: width 0.3s ease;
+    width: 0%;
+    border-radius: 4px;
+}
+
+.import-progress-bar.outward-progress {
+    background: linear-gradient(90deg, #c6342a 0%, #f56565 100%);
+}
+
+/* Import Results */
+.import-results {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+.import-results.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* File Upload Buttons */
+.file-upload-btn {
+    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-upload-btn:hover {
+    background: linear-gradient(135deg, #1a5aff 0%, #3366ff 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.3);
+}
+
+.file-upload-btn.outward-btn {
+    background: linear-gradient(135deg, #c6342a 0%, #f56565 100%);
+}
+
+.file-upload-btn.outward-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(198, 52, 42, 0.3);
 }
 
 /* Inventory Search Bar Enhancement */
@@ -217,18 +359,21 @@
 }
 
 #inventoryToast.success {
-    background-color: #10b981;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 #inventoryToast.error {
-    background-color: #ef4444;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 #inventoryToast.warning {
-    background-color: #f59e0b;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     color: white;
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 /* Device Info Grid */
@@ -267,6 +412,9 @@
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .device-action-btn:hover {
@@ -275,22 +423,22 @@
 }
 
 .device-action-btn.view {
-    background-color: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
 }
 
 .device-action-btn.edit {
-    background-color: #059669;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
     color: white;
 }
 
 .device-action-btn.delete {
-    background-color: #ef4444;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .device-action-btn.return {
-    background-color: #6b7280;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
     color: white;
 }
 
@@ -303,6 +451,7 @@
 .empty-state svg {
     opacity: 0.6;
     margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 /* Modal Enhancements */
@@ -323,98 +472,6 @@
         transform: translateY(0);
         opacity: 1;
     }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .inventory-tab-button {
-        padding: 8px 16px;
-        font-size: 0.75rem;
-        margin-right: 4px;
-    }
-    
-    .inventory-tab-button .tab-count {
-        margin-left: 4px;
-        padding: 1px 6px;
-        font-size: 0.625rem;
-    }
-    
-    .device-info-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    #inventorySearchInput {
-        width: 100%;
-    }
-}
-
-/* CSV Import Area */
-.csv-import-area {
-    border: 2px dashed rgba(74, 76, 89, 0.5);
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
-}
-
-.csv-import-area:hover {
-    border-color: #0045ff;
-    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
-}
-
-.csv-import-area.drag-over {
-    border-color: #059669;
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-}
-
-/* Import Progress Bar */
-.import-progress {
-    width: 100%;
-    height: 8px;
-    background-color: rgba(74, 76, 89, 0.3);
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 1rem 0;
-}
-
-.import-progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
-    transition: width 0.3s ease;
-    width: 0%;
-}
-
-/* Import Results */
-.import-results {
-    background: rgba(5, 150, 105, 0.1);
-    border: 1px solid rgba(5, 150, 105, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1rem;
-}
-
-.import-results.error {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.3);
-}
-
-/* File Upload Button */
-.file-upload-btn {
-    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.file-upload-btn:hover {
-    background: linear-gradient(135deg, #1a5aff 0%, #3366ff 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.3);
 }
 
 /* Device Timeline */
@@ -501,4 +558,181 @@
 
 .inventory-content::-webkit-scrollbar-thumb:hover {
     background: rgba(5, 150, 105, 0.7);
+}
+
+/* Bulk Import Section Styling */
+.bulk-import-section {
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border: 1px solid rgba(0, 69, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.bulk-import-section:hover {
+    border-color: rgba(0, 69, 255, 0.2);
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+}
+
+/* Progress Animation */
+@keyframes progressPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.import-progress-bar {
+    animation: progressPulse 1.5s ease-in-out infinite;
+}
+
+/* Success/Error Message Animations */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(0.9);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.import-results {
+    animation: bounceIn 0.6s ease-out;
+}
+
+/* Enhanced CSV Drag Area Icons */
+.csv-import-area svg {
+    transition: all 0.3s ease;
+}
+
+.csv-import-area:hover svg {
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.csv-import-area.drag-over svg {
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .inventory-tab-button {
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
+    
+    .inventory-tab-button .tab-count {
+        margin-left: 4px;
+        padding: 1px 6px;
+        font-size: 0.625rem;
+    }
+    
+    .device-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #inventorySearchInput {
+        width: 100%;
+    }
+    
+    .csv-import-area {
+        padding: 1rem;
+    }
+    
+    .csv-import-area svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .bulk-import-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .device-action-btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.625rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .inventory-tab-button {
+        padding: 6px 12px;
+        font-size: 0.625rem;
+        margin-right: 2px;
+    }
+    
+    .device-card {
+        padding: 0.75rem;
+    }
+    
+    .csv-import-area {
+        padding: 0.75rem;
+    }
+}
+
+/* Performance optimizations */
+.device-card,
+.csv-import-area,
+.file-upload-btn,
+.device-action-btn {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .condition-badge {
+        border: 2px solid currentColor;
+        font-weight: 700;
+    }
+    
+    .device-action-btn {
+        border: 2px solid currentColor;
+    }
+    
+    .csv-import-area {
+        border-width: 3px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .csv-import-area,
+    .file-upload-btn,
+    .device-action-btn,
+    #inventoryToast,
+    #inventoryLoadingOverlay {
+        display: none !important;
+    }
+    
+    .device-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
 }
