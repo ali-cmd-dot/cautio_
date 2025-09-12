@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="inventory.css">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="__variable_3c557b dark font-sans dark:bg-dark-fill-base-400 locale-en" style="--primary-font:'__Inter_e8ce0c', '__Inter_Fallback_e8ce0c'">
     
@@ -89,6 +90,41 @@
             <div id="inventoryTabContent">
                 <!-- Inward Tab Content -->
                 <div id="inwardTabContent">
+                    <!-- CSV Upload Section for Inward -->
+                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Inward Import</h4>
+                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Device Condition, Notes</p>
+                        
+                        <div class="csv-import-area" id="inwardCSVImportArea">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-brand-blue-600">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                <path d="M12 3v6"/>
+                            </svg>
+                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                            <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
+                            <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
+                                Choose CSV File
+                            </button>
+                        </div>
+
+                        <!-- Import Progress -->
+                        <div id="inwardImportProgressSection" class="hidden mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                            </div>
+                            <div class="import-progress">
+                                <div id="inwardImportProgressBar" class="import-progress-bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Import Results -->
+                        <div id="inwardImportResults" class="hidden mt-4">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
                         <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
@@ -113,6 +149,39 @@
 
                 <!-- Outward Tab Content -->
                 <div id="outwardTabContent" class="hidden">
+                    <!-- CSV Upload Section for Outward -->
+                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Outward Import</h4>
+                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Customer Name, Location, Outward Date, SIM No, Notes</p>
+                        
+                        <div class="csv-import-area outward-import" id="outwardCSVImportArea">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-dark-semantic-danger-300">
+                                <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                            </svg>
+                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                            <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
+                            <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn outward-btn">
+                                Choose CSV File
+                            </button>
+                        </div>
+
+                        <!-- Import Progress -->
+                        <div id="outwardImportProgressSection" class="hidden mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                            </div>
+                            <div class="import-progress">
+                                <div id="outwardImportProgressBar" class="import-progress-bar outward-progress"></div>
+                            </div>
+                        </div>
+
+                        <!-- Import Results -->
+                        <div id="outwardImportResults" class="hidden mt-4">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
                         <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
@@ -164,10 +233,11 @@
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Condition</label>
                     <select name="deviceCondition" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
                         <option value="">Select condition</option>
-                        <option value="new">New</option>
-                        <option value="used">Used</option>
-                        <option value="refurbished">Refurbished</option>
-                        <option value="damaged">Damaged</option>
+                        <option value="good">Good</option>
+                        <option value="lense_issue">Lense issue</option>
+                        <option value="sim_module_fail">SIM module fail</option>
+                        <option value="auto_restart">Auto restart</option>
+                        <option value="device_tampered">Device tampered</option>
                     </select>
                 </div>
                 
