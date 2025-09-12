@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="inventory.css">
     <title>Cautio</title>
     <link rel="icon" href="favicon.ico">
     
@@ -275,11 +274,15 @@
                         </svg>
                         <span class="menu-text ml-3 truncate">Finance</span>
                     </a>
-                    <a href="#" onclick="showGroundOperations()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                    <a href="#" onclick="showStock()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10,9 9,9 8,9"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Ground Operations</span>
+                        <span class="menu-text ml-3 truncate">Stock</span>
                     </a>
                     <a href="#" onclick="showInventoryManagement()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
@@ -288,6 +291,12 @@
                             <path d="M12 3v6"/>
                         </svg>
                         <span class="menu-text ml-3 truncate">Inventory Management</span>
+                    </a>
+                    <a href="#" onclick="showGroundOperations()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                        <span class="menu-text ml-3 truncate">Ground Operations</span>
                     </a>
                     <a href="#" onclick="showAddCredentials()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
@@ -593,129 +602,11 @@
                     </div>
                 </div>
 
-                <!-- Ground Operations Content -->
+                <!-- Other page contents -->
                 <div id="groundOperationsContent" class="hidden">
                     <div class="text-center py-12">
                         <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
                         <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
-                    </div>
-                </div>
-
-                <!-- Inventory Management Content -->
-                <div id="inventoryManagementContent" class="hidden">
-                    <!-- Inventory Header -->
-                    <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4 mb-6 rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-heading-5 dark:text-dark-base-600">Inventory Management</h2>
-                            <div class="flex items-center gap-4">
-                                <span class="text-body-l-regular dark:text-dark-base-600">Total Stock: <span id="totalStockCount" class="text-brand-blue-600 font-semibold">0</span></span>
-                                <span class="text-body-l-regular dark:text-dark-base-600">Inward: <span id="totalInwardCount" class="text-green-600 font-semibold">0</span></span>
-                                <span class="text-body-l-regular dark:text-dark-base-600">Outward: <span id="totalOutwardCount" class="text-red-600 font-semibold">0</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Inventory Tabs -->
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex space-x-1">
-                                <button onclick="showStockTab()" class="inventory-tab-button active" id="stockTab">
-                                    <span class="tab-label">Stock</span>
-                                    <span class="tab-count" id="stockTabCount">0</span>
-                                </button>
-                                <button onclick="showInwardTab()" class="inventory-tab-button" id="inwardTab">
-                                    <span class="tab-label">Inward</span>
-                                    <span class="tab-count" id="inwardTabCount">0</span>
-                                </button>
-                                <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
-                                    <span class="tab-label">Outward</span>
-                                    <span class="tab-count" id="outwardTabCount">0</span>
-                                </button>
-                            </div>
-                            
-                            <!-- Search and Clear for Inventory -->
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <input type="text" id="inventorySearchInput" placeholder="Search devices..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
-                                        <circle cx="11" cy="11" r="8"/>
-                                        <path d="m21 21-4.35-4.35"/>
-                                    </svg>
-                                </div>
-                                <button onclick="clearInventorySearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Inventory Tab Content -->
-                    <div id="inventoryTabContent">
-                        <!-- Stock Tab Content -->
-                        <div id="stockTabContent">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Device Stock</h3>
-                                <div class="flex gap-3">
-                                    <button onclick="showAddStockForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                        Add Device
-                                    </button>
-                                    <button onclick="showBulkStockUpload()" class="px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
-                                        📊 Bulk Upload CSV
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="stockList" class="space-y-4">
-                                <!-- Stock devices will be populated here -->
-                            </div>
-                            <div id="stockEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Devices in Stock</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">Add devices to your stock inventory</p>
-                            </div>
-                        </div>
-
-                        <!-- Inward Tab Content -->
-                        <div id="inwardTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
-                                <div class="flex gap-3">
-                                    <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                        Add Inward Device
-                                    </button>
-                                    <button onclick="showBulkInwardUpload()" class="px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
-                                        📊 Bulk Upload CSV
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="inwardList" class="space-y-4">
-                                <!-- Inward devices will be populated here -->
-                            </div>
-                            <div id="inwardEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No devices currently in inward status</p>
-                            </div>
-                        </div>
-
-                        <!-- Outward Tab Content -->
-                        <div id="outwardTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
-                                <div class="flex gap-3">
-                                    <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                        Move to Outward
-                                    </button>
-                                    <button onclick="showBulkOutwardUpload()" class="px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
-                                        📊 Bulk Upload CSV
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="outwardList" class="space-y-4">
-                                <!-- Outward devices will be populated here -->
-                            </div>
-                            <div id="outwardEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No devices currently in outward status</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1117,272 +1008,6 @@
         </div>
     </div>
 
-    <!-- Add Stock Form Modal -->
-    <div id="addStockModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Add Device to Stock</h2>
-                <button onclick="closeAddStockForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="addStockForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device ID</label>
-                    <input type="text" name="deviceId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device ID" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Model</label>
-                    <input type="text" name="deviceModel" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device model" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">SIM Number</label>
-                    <input type="text" name="simNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter SIM number">
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">IMEI Number</label>
-                    <input type="text" name="imeiNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter IMEI number">
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Add to Stock
-                    </button>
-                    <button type="button" onclick="closeAddStockForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Inward Device Form Modal -->
-    <div id="addInwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Add Inward Device</h2>
-                <button onclick="closeAddInwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="addInwardForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device ID</label>
-                    <input type="text" name="deviceId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device ID from stock" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Condition</label>
-                    <select name="deviceCondition" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select condition</option>
-                        <option value="Good">Good</option>
-                        <option value="Lense issue">Lense issue</option>
-                        <option value="SIM module fail">SIM module fail</option>
-                        <option value="Auto restart">Auto restart</option>
-                        <option value="Device tampered">Device tampered</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Add to Inward
-                    </button>
-                    <button type="button" onclick="closeAddInwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Outward Device Form Modal -->
-    <div id="addOutwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Move Device to Outward</h2>
-                <button onclick="closeAddOutwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="addOutwardForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device ID</label>
-                    <input type="text" name="deviceId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device ID from inward" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer/Destination</label>
-                    <input type="text" name="destination" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer or destination" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Move to Outward
-                    </button>
-                    <button type="button" onclick="closeAddOutwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Bulk Upload Modals -->
-    <!-- Bulk Stock Upload Modal -->
-    <div id="bulkStockUploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Bulk Stock Upload</h2>
-                <button onclick="closeBulkStockUpload()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="p-4 rounded-lg dark:bg-dark-info-600/20 dark:border dark:border-dark-info-600/30">
-                    <h4 class="text-body-l-semibold dark:text-dark-info-600 mb-2">CSV Format Required:</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">device_id, device_model, sim_number, imei_number</p>
-                    <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Example: DEV001, Model-X1, 9876543210, 123456789012345</p>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Upload CSV File</label>
-                    <input type="file" id="stockCsvFile" accept=".csv" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600">
-                </div>
-                
-                <div id="stockUploadResults" class="hidden p-4 rounded-lg dark:bg-dark-fill-base-400">
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Upload Results:</h4>
-                    <div id="stockUploadSummary"></div>
-                    <div id="stockUploadErrors" class="mt-2"></div>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button onclick="processBulkStockUpload()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Upload & Process
-                    </button>
-                    <button onclick="closeBulkStockUpload()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bulk Inward Upload Modal -->
-    <div id="bulkInwardUploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Bulk Inward Upload</h2>
-                <button onclick="closeBulkInwardUpload()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="p-4 rounded-lg dark:bg-dark-info-600/20 dark:border dark:border-dark-info-600/30">
-                    <h4 class="text-body-l-semibold dark:text-dark-info-600 mb-2">CSV Format Required:</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">device_id, device_condition, notes</p>
-                    <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Conditions: Good, Lense issue, SIM module fail, Auto restart, Device tampered</p>
-                    <p class="text-body-s-regular dark:text-dark-base-500">Example: DEV001, Good, Working properly</p>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Upload CSV File</label>
-                    <input type="file" id="inwardCsvFile" accept=".csv" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600">
-                </div>
-                
-                <div id="inwardUploadResults" class="hidden p-4 rounded-lg dark:bg-dark-fill-base-400">
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Upload Results:</h4>
-                    <div id="inwardUploadSummary"></div>
-                    <div id="inwardUploadErrors" class="mt-2"></div>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button onclick="processBulkInwardUpload()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Upload & Process
-                    </button>
-                    <button onclick="closeBulkInwardUpload()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bulk Outward Upload Modal -->
-    <div id="bulkOutwardUploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Bulk Outward Upload</h2>
-                <button onclick="closeBulkOutwardUpload()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="p-4 rounded-lg dark:bg-dark-info-600/20 dark:border dark:border-dark-info-600/30">
-                    <h4 class="text-body-l-semibold dark:text-dark-info-600 mb-2">CSV Format Required:</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">device_id, destination, notes</p>
-                    <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Example: DEV001, Customer ABC, Shipped for installation</p>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Upload CSV File</label>
-                    <input type="file" id="outwardCsvFile" accept=".csv" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600">
-                </div>
-                
-                <div id="outwardUploadResults" class="hidden p-4 rounded-lg dark:bg-dark-fill-base-400">
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Upload Results:</h4>
-                    <div id="outwardUploadSummary"></div>
-                    <div id="outwardUploadErrors" class="mt-2"></div>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button onclick="processBulkOutwardUpload()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Upload & Process
-                    </button>
-                    <button onclick="closeBulkOutwardUpload()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Email Status Toast -->
     <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm bg-green-600 text-white p-4 rounded-lg shadow-lg">
         <div class="flex items-center">
@@ -1394,7 +1019,5 @@
     </div>
 
     <script src="script.js"></script>
-    <script src="stock.js"></script>
-    <script src="inventory.js"></script>
 </body>
 </html>
