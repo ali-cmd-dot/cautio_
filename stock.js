@@ -108,6 +108,25 @@ function setupStockRealtimeListeners() {
             }
         )
         .subscribe();
+
+    // NEW: Listen for inventory changes to update stock status
+    supabase
+        .channel('inventory_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'inward_devices' }, 
+            (payload) => {
+                console.log('Inward device change received!', payload);
+                // Refresh stock data to show updated status
+                setTimeout(loadStockData, 1000); // Small delay to ensure consistency
+            }
+        )
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'outward_devices' }, 
+            (payload) => {
+                console.log('Outward device change received!', payload);
+                // Refresh stock data to show updated status
+                setTimeout(loadStockData, 1000); // Small delay to ensure consistency
+            }
+        )
+        .subscribe();
 }
 
 // Load all stock data
@@ -205,7 +224,7 @@ function updateStockTable() {
     }
 }
 
-// Create stock table row HTML
+// UPDATED: Create stock table row HTML with better inventory integration indicators
 function createStockTableRow(item) {
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -213,23 +232,98 @@ function createStockTableRow(item) {
     };
 
     const getStatusBadge = (status) => {
-        const badgeClass = `device-status-badge ${status}`;
-        return `<span class="${badgeClass}">${status}</span>`;
+        let badgeClass, statusText, icon;
+        
+        switch (status) {
+            case 'available':
+                badgeClass = `px-2 py-1 text-xs rounded-full bg-green-600 text-white`;
+                statusText = 'Available';
+                icon = '✓';
+                break;
+            case 'allocated':
+                badgeClass = `px-2 py-1 text-xs rounded-full bg-yellow-600 text-white`;
+                statusText = 'Allocated';
+                icon = '📤';
+                break;
+            default:
+                badgeClass = `px-2 py-1 text-xs rounded-full bg-gray-600 text-white`;
+                statusText = status;
+                icon = '?';
+        }
+        
+        return `<span class="${badgeClass}">${icon} ${statusText}</span>`;
     };
 
     const getConditionBadge = (condition) => {
-        const badgeClass = `condition-badge ${condition}`;
-        return `<span class="${badgeClass}">${condition}</span>`;
+        let badgeClass, conditionText;
+        
+        switch (condition) {
+            case 'new':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-blue-600 text-white';
+                conditionText = 'New Device';
+                break;
+            case 'good':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-green-600 text-white';
+                conditionText = 'Good';
+                break;
+            case 'lense_issue':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-yellow-600 text-white';
+                conditionText = 'Lense Issue';
+                break;
+            case 'sim_module_fail':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-red-600 text-white';
+                conditionText = 'SIM Module Fail';
+                break;
+            case 'auto_restart':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-purple-600 text-white';
+                conditionText = 'Auto Restart';
+                break;
+            case 'device_tampered':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-red-700 text-white';
+                conditionText = 'Device Tampered';
+                break;
+            case 'used':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-blue-500 text-white';
+                conditionText = 'Used';
+                break;
+            case 'refurbished':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-yellow-500 text-white';
+                conditionText = 'Refurbished';
+                break;
+            case 'damaged':
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-red-500 text-white';
+                conditionText = 'Damaged';
+                break;
+            default:
+                badgeClass = 'px-2 py-1 text-xs rounded-full bg-gray-500 text-white';
+                conditionText = condition;
+        }
+        
+        return `<span class="${badgeClass}">${conditionText}</span>`;
+    };
+
+    // NEW: Add inventory status indicator
+    const getInventoryStatusBadge = (item) => {
+        // This would be determined by checking if device exists in inward/outward
+        // For now, we'll show a simple indicator based on status
+        if (item.current_status === 'available') {
+            return `<span class="px-2 py-1 text-xs rounded-full bg-green-500 text-white">📥 Ready</span>`;
+        } else if (item.current_status === 'allocated') {
+            return `<span class="px-2 py-1 text-xs rounded-full bg-orange-500 text-white">📤 Out</span>`;
+        } else {
+            return `<span class="px-2 py-1 text-xs rounded-full bg-gray-500 text-white">⚪ Unknown</span>`;
+        }
     };
 
     return `
         <tr class="dark:border-b dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400">
             <td class="p-4 text-body-m-regular dark:text-dark-base-600">${item.sl_no || 'N/A'}</td>
-            <td class="p-4 text-body-m-regular dark:text-dark-base-600">${item.device_registration_number}</td>
-            <td class="p-4 text-body-m-regular dark:text-dark-base-600">${item.device_imei}</td>
+            <td class="p-4 text-body-m-regular dark:text-dark-base-600 font-mono">${item.device_registration_number}</td>
+            <td class="p-4 text-body-m-regular dark:text-dark-base-600 font-mono">${item.device_imei}</td>
             <td class="p-4 text-body-m-regular dark:text-dark-base-600">${item.device_model_no}</td>
             <td class="p-4">${getStatusBadge(item.current_status)}</td>
             <td class="p-4">${getConditionBadge(item.device_condition)}</td>
+            <td class="p-4">${getInventoryStatusBadge(item)}</td>
             <td class="p-4 text-body-m-regular dark:text-dark-base-600">${item.batch_no || 'N/A'}</td>
             <td class="p-4 text-body-m-regular dark:text-dark-base-600">${formatDate(item.inward_date)}</td>
             <td class="p-4">
@@ -240,10 +334,21 @@ function createStockTableRow(item) {
                     <button onclick="editStockDevice('${item.id}')" class="device-action-btn edit text-xs">
                         Edit
                     </button>
+                    <button onclick="manageInventory('${item.device_registration_number}')" class="px-2 py-1 text-xs rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors">
+                        📦 Manage
+                    </button>
                 </div>
             </td>
         </tr>
     `;
+}
+
+// NEW: Manage inventory function - Quick link to inventory management
+function manageInventory(deviceRegistrationNumber) {
+    // Store device info in localStorage for inventory management
+    localStorage.setItem('inventory_focus_device', deviceRegistrationNumber);
+    // Redirect to inventory management
+    window.location.href = 'inventory.html';
 }
 
 // Handle drag over event
@@ -318,7 +423,7 @@ function processCSVFile(file) {
     reader.readAsText(file);
 }
 
-// Validate and import CSV data
+// UPDATED: Validate and import CSV data with improved inventory integration
 async function validateAndImportCSV(results, filename) {
     try {
         const data = results.data;
@@ -382,7 +487,7 @@ async function validateAndImportCSV(results, filename) {
                 }
             }
             
-            // Create stock item
+            // Create stock item - NEW: Set default condition as "new" for inventory integration
             const stockItem = {
                 sl_no: row['Sl. No.'] || null,
                 po_no: row['PO No'] || null,
@@ -392,7 +497,7 @@ async function validateAndImportCSV(results, filename) {
                 device_registration_number: deviceRegNumber,
                 device_imei: deviceImei,
                 current_status: 'available',
-                device_condition: 'new',
+                device_condition: 'new', // NEW: Default condition for automatic inventory integration
                 imported_by: userSession?.email || 'unknown'
             };
             
@@ -441,6 +546,7 @@ async function validateAndImportCSV(results, filename) {
                     errors.push(`Failed to import device ${newDevices[i].device_registration_number}: ${error.message}`);
                 } else {
                     successfulImports++;
+                    console.log(`✅ Stock imported: ${newDevices[i].device_registration_number} (will auto-add to inward)`);
                 }
             }
         }
@@ -461,13 +567,20 @@ async function validateAndImportCSV(results, filename) {
         
         // Hide progress and show results
         hideImportProgress();
-        showImportResults(successfulImports, data.length - successfulImports, errors);
+        showImportResults(successfulImports, data.length - successfulImports, errors, newDevices.length);
         
         // Reload data
         await loadStockData();
         
         // Clear file input
         document.getElementById('csvFileInput').value = '';
+        
+        // NEW: Show inventory integration info
+        if (successfulImports > 0) {
+            setTimeout(() => {
+                showStockToast(`✅ ${successfulImports} devices imported and will be auto-added to inventory inward`, 'success');
+            }, 2000);
+        }
         
     } catch (error) {
         console.error('Error importing CSV:', error);
@@ -496,8 +609,8 @@ function hideImportProgress() {
     document.getElementById('importProgressSection').classList.add('hidden');
 }
 
-// Show import results
-function showImportResults(successful, failed, errors) {
+// UPDATED: Show import results with inventory integration info
+function showImportResults(successful, failed, errors, newDevicesCount) {
     const resultsDiv = document.getElementById('importResults');
     const isSuccess = failed === 0;
     
@@ -513,11 +626,16 @@ function showImportResults(successful, failed, errors) {
             </svg>
             <div>
                 <h4 class="text-body-l-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'}">
-                    Import ${isSuccess ? 'Completed' : 'Completed with Errors'}
+                    Stock Import ${isSuccess ? 'Completed' : 'Completed with Errors'}
                 </h4>
                 <p class="text-body-m-regular dark:text-dark-base-500">
                     ${successful} successful, ${failed} failed
                 </p>
+                ${newDevicesCount > 0 ? `
+                    <p class="text-body-s-regular text-blue-600 mt-1">
+                        📦 ${newDevicesCount} new devices will be auto-added to inventory inward
+                    </p>
+                ` : ''}
             </div>
         </div>
     `;
@@ -536,17 +654,37 @@ function showImportResults(successful, failed, errors) {
         `;
     }
     
+    // NEW: Add inventory integration info
+    if (newDevicesCount > 0) {
+        resultHTML += `
+            <div class="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                        <path d="M12 3v6"/>
+                    </svg>
+                    <span class="text-body-s-semibold text-blue-600">Inventory Integration</span>
+                </div>
+                <p class="text-body-s-regular text-blue-600 mt-1">
+                    New devices are automatically added to inventory inward with "New Device" condition.
+                    <a href="inventory.html" class="underline hover:no-underline">Manage inventory →</a>
+                </p>
+            </div>
+        `;
+    }
+    
     resultsDiv.innerHTML = resultHTML;
     resultsDiv.classList.remove('hidden');
     
-    // Auto-hide after 10 seconds
+    // Auto-hide after 15 seconds (longer to read inventory info)
     setTimeout(() => {
         resultsDiv.classList.add('hidden');
-    }, 10000);
+    }, 15000);
     
     // Show toast
     if (isSuccess) {
-        showStockToast(`Successfully imported ${successful} devices`, 'success');
+        showStockToast(`✅ Successfully imported ${successful} devices`, 'success');
     } else {
         showStockToast(`Import completed: ${successful} successful, ${failed} failed`, 'warning');
     }
@@ -600,22 +738,37 @@ function createImportHistoryCard(record) {
                         </p>
                         <div class="flex gap-4 mt-2">
                             <span class="text-body-s-regular text-green-600">
-                                ${record.successful_imports} successful
+                                ✅ ${record.successful_imports} successful
                             </span>
                             <span class="text-body-s-regular text-red-600">
-                                ${record.failed_imports} failed
+                                ❌ ${record.failed_imports} failed
                             </span>
                             <span class="text-body-s-regular dark:text-dark-base-500">
-                                ${record.total_rows} total
+                                📊 ${record.total_rows} total
                             </span>
                         </div>
+                        ${record.successful_imports > 0 ? `
+                            <div class="flex items-center gap-1 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                    <path d="M12 3v6"/>
+                                </svg>
+                                <span class="text-body-xs-regular text-blue-600">Auto-added to inventory</span>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
-                ${record.error_details ? `
-                    <button onclick="showImportErrors(${record.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
-                        View Errors
+                <div class="flex gap-2">
+                    ${record.error_details ? `
+                        <button onclick="showImportErrors(${record.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                            View Errors
+                        </button>
+                    ` : ''}
+                    <button onclick="viewImportDetails(${record.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-info-600 dark:text-utility-white hover:dark:bg-dark-info-600/90">
+                        Details
                     </button>
-                ` : ''}
+                </div>
             </div>
         </div>
     `;
@@ -632,7 +785,8 @@ function handleStockSearch() {
             item.device_imei.toLowerCase().includes(searchTerm) ||
             item.device_model_no.toLowerCase().includes(searchTerm) ||
             (item.batch_no && item.batch_no.toLowerCase().includes(searchTerm)) ||
-            (item.po_no && item.po_no.toLowerCase().includes(searchTerm))
+            (item.po_no && item.po_no.toLowerCase().includes(searchTerm)) ||
+            (item.device_condition && item.device_condition.toLowerCase().includes(searchTerm))
         );
         
         const matchesStatus = !statusFilter || item.current_status === statusFilter;
@@ -655,7 +809,7 @@ function clearStockSearch() {
     showStockToast('Search cleared', 'success');
 }
 
-// View stock device details
+// UPDATED: View stock device details with inventory status
 function viewStockDeviceDetails(deviceRegistrationNumber) {
     const device = stockData.find(item => item.device_registration_number === deviceRegistrationNumber);
     
@@ -668,17 +822,32 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleString();
     };
+
+    const getConditionDisplayName = (condition) => {
+        const conditionMap = {
+            'new': 'New Device',
+            'good': 'Good',
+            'lense_issue': 'Lense Issue',
+            'sim_module_fail': 'SIM Module Fail',
+            'auto_restart': 'Auto Restart',
+            'device_tampered': 'Device Tampered',
+            'used': 'Used',
+            'refurbished': 'Refurbished',
+            'damaged': 'Damaged'
+        };
+        return conditionMap[condition] || condition;
+    };
     
     const content = `
         <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="device-info-label">Registration Number</label>
-                    <div class="device-info-value">${device.device_registration_number}</div>
+                    <div class="device-info-value font-mono">${device.device_registration_number}</div>
                 </div>
                 <div>
                     <label class="device-info-label">Device IMEI</label>
-                    <div class="device-info-value">${device.device_imei}</div>
+                    <div class="device-info-value font-mono">${device.device_imei}</div>
                 </div>
                 <div>
                     <label class="device-info-label">Model</label>
@@ -689,16 +858,15 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
                     <div class="device-info-value">${device.sl_no || 'N/A'}</div>
                 </div>
                 <div>
-                    <label class="device-info-label">Status</label>
+                    <label class="device-info-label">Current Status</label>
                     <div class="device-info-value">
-                        <span class="device-status-badge ${device.current_status}">${device.current_status}</span>
+                        ${device.current_status === 'available' ? '✅ Available' : 
+                          device.current_status === 'allocated' ? '📤 Allocated' : device.current_status}
                     </div>
                 </div>
                 <div>
                     <label class="device-info-label">Condition</label>
-                    <div class="device-info-value">
-                        <span class="condition-badge ${device.device_condition}">${device.device_condition}</span>
-                    </div>
+                    <div class="device-info-value">${getConditionDisplayName(device.device_condition)}</div>
                 </div>
                 <div>
                     <label class="device-info-label">PO Number</label>
@@ -709,7 +877,7 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
                     <div class="device-info-value">${device.batch_no || 'N/A'}</div>
                 </div>
                 <div>
-                    <label class="device-info-label">Inward Date</label>
+                    <label class="device-info-label">Stock Inward Date</label>
                     <div class="device-info-value">${formatDate(device.inward_date)}</div>
                 </div>
                 <div>
@@ -725,13 +893,41 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
                     <div class="device-info-value">${device.imported_by || 'N/A'}</div>
                 </div>
             </div>
-            <div>
-                <label class="device-info-label">Created At</label>
-                <div class="device-info-value">${formatDate(device.created_at)}</div>
+            
+            <div class="border-t pt-4 dark:border-dark-stroke-contrast-400">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="device-info-label">Created At</label>
+                        <div class="device-info-value">${formatDate(device.created_at)}</div>
+                    </div>
+                    <div>
+                        <label class="device-info-label">Last Updated</label>
+                        <div class="device-info-value">${formatDate(device.updated_at)}</div>
+                    </div>
+                    ${device.allocated_date ? `
+                        <div>
+                            <label class="device-info-label">Allocated Date</label>
+                            <div class="device-info-value">${formatDate(device.allocated_date)}</div>
+                        </div>
+                    ` : ''}
+                    ${device.allocated_to_customer_id ? `
+                        <div>
+                            <label class="device-info-label">Allocated To Customer ID</label>
+                            <div class="device-info-value">${device.allocated_to_customer_id}</div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
-            <div>
-                <label class="device-info-label">Last Updated</label>
-                <div class="device-info-value">${formatDate(device.updated_at)}</div>
+            
+            <div class="border-t pt-4 dark:border-dark-stroke-contrast-400">
+                <div class="flex gap-2">
+                    <button onclick="manageInventory('${device.device_registration_number}')" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors text-sm">
+                        📦 Manage in Inventory
+                    </button>
+                    <button onclick="closeDeviceDetailsModal()" class="px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-sm">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -750,12 +946,35 @@ function editStockDevice(deviceId) {
     showStockToast('Edit functionality coming soon', 'warning');
 }
 
-// Show import errors (placeholder for future implementation)
+// Show import errors
 function showImportErrors(importId) {
     const importRecord = importHistory.find(record => record.id === importId);
     if (importRecord && importRecord.error_details) {
         const errors = importRecord.error_details.errors || [];
         alert(`Import Errors:\n\n${errors.slice(0, 10).join('\n')}\n${errors.length > 10 ? `\n... and ${errors.length - 10} more errors` : ''}`);
+    }
+}
+
+// NEW: View import details
+function viewImportDetails(importId) {
+    const importRecord = importHistory.find(record => record.id === importId);
+    if (importRecord) {
+        const details = `
+            Import Details:
+            
+            Filename: ${importRecord.filename}
+            Date: ${new Date(importRecord.import_date).toLocaleString()}
+            Imported By: ${importRecord.imported_by}
+            
+            Results:
+            - Total Rows: ${importRecord.total_rows}
+            - Successful: ${importRecord.successful_imports}
+            - Failed: ${importRecord.failed_imports}
+            
+            ${importRecord.successful_imports > 0 ? `✅ ${importRecord.successful_imports} devices were auto-added to inventory inward\n` : ''}
+            ${importRecord.error_details ? `❌ ${importRecord.error_details.errors.length} errors occurred` : '✅ No errors'}
+        `;
+        alert(details);
     }
 }
 
@@ -823,5 +1042,7 @@ window.stockFunctions = {
     viewStockDeviceDetails,
     editStockDevice,
     showImportErrors,
-    closeDeviceDetailsModal
+    viewImportDetails,
+    closeDeviceDetailsModal,
+    manageInventory
 };
