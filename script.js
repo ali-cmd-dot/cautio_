@@ -1774,14 +1774,34 @@ function showCustomersOverview() {
     updateMenuHighlight('customers');
 }
 
-// NEW: Stock navigation function
+// UPDATED: Stock navigation function - Now shows content instead of redirecting
 function showStock() {
-    window.location.href = 'stock.html';
+    hideAllContent();
+    document.getElementById('stockContent').classList.remove('hidden');
+    updateMenuHighlight('stock');
+    
+    // Initialize stock management if not already initialized
+    if (typeof window.stockFunctions !== 'undefined') {
+        // Stock management is available, reload data
+        if (typeof loadStockData === 'function') {
+            loadStockData();
+        }
+    }
 }
 
-// NEW: Inventory Management navigation function
+// UPDATED: Inventory Management navigation function - Now shows content instead of redirecting
 function showInventoryManagement() {
-    window.location.href = 'inventory.html';
+    hideAllContent();
+    document.getElementById('inventoryContent').classList.remove('hidden');
+    updateMenuHighlight('inventory');
+    
+    // Initialize inventory management if not already initialized
+    if (typeof window.inventoryFunctions !== 'undefined') {
+        // Inventory management is available, reload data
+        if (typeof loadInventoryData === 'function') {
+            loadInventoryData();
+        }
+    }
 }
 
 function showGroundOperations() {
@@ -1793,6 +1813,8 @@ function showGroundOperations() {
 function hideAllContent() {
     document.getElementById('customersOverviewContent').classList.add('hidden');
     document.getElementById('financeContent').classList.add('hidden');
+    document.getElementById('stockContent').classList.add('hidden');
+    document.getElementById('inventoryContent').classList.add('hidden');
     document.getElementById('groundOperationsContent').classList.add('hidden');
     document.getElementById('addCredentialsContent').classList.add('hidden');
 }
