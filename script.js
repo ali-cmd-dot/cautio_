@@ -767,37 +767,6 @@ function setupRealtimeListeners() {
             }
         )
         .subscribe();
-
-    // Listen for inventory changes
-    supabase
-        .channel('inventory_stock')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_stock' }, 
-            (payload) => {
-                console.log('Inventory stock change received!', payload);
-                if (window.loadInventoryData) window.loadInventoryData();
-            }
-        )
-        .subscribe();
-
-    supabase
-        .channel('inventory_inward')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_inward' }, 
-            (payload) => {
-                console.log('Inventory inward change received!', payload);
-                if (window.loadInventoryData) window.loadInventoryData();
-            }
-        )
-        .subscribe();
-
-    supabase
-        .channel('inventory_outward')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_outward' }, 
-            (payload) => {
-                console.log('Inventory outward change received!', payload);
-                if (window.loadInventoryData) window.loadInventoryData();
-            }
-        )
-        .subscribe();
 }
 
 // UPDATED: Load data from Supabase with proper approval filtering
@@ -1805,29 +1774,26 @@ function showCustomersOverview() {
     updateMenuHighlight('customers');
 }
 
+// NEW: Stock navigation function
+function showStock() {
+    window.location.href = 'stock.html';
+}
+
+// NEW: Inventory Management navigation function
+function showInventoryManagement() {
+    window.location.href = 'inventory.html';
+}
+
 function showGroundOperations() {
     hideAllContent();
     document.getElementById('groundOperationsContent').classList.remove('hidden');
     updateMenuHighlight('ground');
 }
 
-// NEW: Show Inventory Management with proper sidebar
-function showInventoryManagement() {
-    hideAllContent();
-    document.getElementById('inventoryManagementContent').classList.remove('hidden');
-    updateMenuHighlight('inventory');
-    
-    // Load inventory data if the function exists
-    if (window.loadInventoryData) {
-        window.loadInventoryData();
-    }
-}
-
 function hideAllContent() {
     document.getElementById('customersOverviewContent').classList.add('hidden');
     document.getElementById('financeContent').classList.add('hidden');
     document.getElementById('groundOperationsContent').classList.add('hidden');
-    document.getElementById('inventoryManagementContent').classList.add('hidden');
     document.getElementById('addCredentialsContent').classList.add('hidden');
 }
 
@@ -1842,8 +1808,9 @@ function updateMenuHighlight(activeMenu) {
         const onclick = item.getAttribute('onclick');
         if ((activeMenu === 'customers' && onclick && onclick.includes('showCustomersOverview')) ||
             (activeMenu === 'finance' && onclick && onclick.includes('showFinance')) ||
-            (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
+            (activeMenu === 'stock' && onclick && onclick.includes('showStock')) ||
             (activeMenu === 'inventory' && onclick && onclick.includes('showInventoryManagement')) ||
+            (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
             (activeMenu === 'credentials' && onclick && onclick.includes('showAddCredentials'))) {
             item.classList.add('dark:bg-brand-blue-600', 'dark:text-utility-white');
             item.classList.remove('hover:dark:bg-dark-fill-base-600');
