@@ -317,33 +317,16 @@
                 <div class="flex items-center justify-between">
                     <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
                     <div class="flex items-center gap-4">
-                        <!-- Customer Dropdown Button -->
-                        <div class="relative">
-                            <div class="flex items-center gap-2">
-                                <button id="customerDropdownBtn" onclick="toggleCustomerDropdown()" class="flex items-center gap-2 px-3 py-2 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-600 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="9" cy="7" r="4"/>
-                                        <path d="m22 21-3-3"/>
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="m6 9 6 6 6-6"/>
-                                    </svg>
-                                </button>
-                                
-                                <!-- Dropdown Menu -->
-                                <div id="customerDropdown" class="hidden absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 rounded-lg shadow-lg z-50">
-                                    <div class="p-2">
-                                        <div class="text-body-s-semibold dark:text-dark-base-600 p-2 border-b dark:border-dark-stroke-contrast-400">Approved Customers</div>
-                                        <div id="customerDropdownList" class="py-2">
-                                            <!-- Customer names will be populated here -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <span onclick="showAllCustomers()" class="text-body-l-regular dark:text-dark-base-600 cursor-pointer hover:dark:text-brand-blue-600 transition-colors">Total Approved Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
+                        <button onclick="showAllCustomersNames()" class="text-body-l-regular dark:text-dark-base-600 cursor-pointer hover:dark:text-brand-blue-600 transition-colors flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="m22 21-3-3"/>
+                                <path d="M22 11a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z"/>
+                                <path d="M19 14v-1a2 2 0 1 0-2-2h1"/>
+                            </svg>
+                            Total Approved Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span>
+                        </button>
                         <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -362,7 +345,7 @@
                 <div id="customersOverviewContent">
                     <!-- Total Customers Count -->
                     <div class="text-center mb-8">
-                        <div onclick="showAllCustomers()" class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-colors">
+                        <div onclick="showAllCustomersNames()" class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-colors">
                             <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Approved Customers</h2>
                             <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
                             <p class="text-body-s-regular dark:text-dark-base-500 mt-2">Click to view all approved customers</p>
@@ -385,20 +368,20 @@
                                     <span class="tab-label">Onboarded</span>
                                     <span class="tab-count" id="onboardedCount">0</span>
                                 </button>
-                                <button onclick="showClosedLeadsTab()" class="tab-button" id="closedLeadsTab">
+                                <button onclick="showClosedTab()" class="tab-button" id="closedTab">
                                     <span class="tab-label">Closed</span>
                                     <span class="tab-count" id="closedCount">0</span>
                                 </button>
-                                <button onclick="showLeadsTab()" class="tab-button" id="leadsTab">
+                                <button onclick="showOngoingLeadsTab()" class="tab-button" id="ongoingLeadsTab">
                                     <span class="tab-label">Ongoing Leads</span>
-                                    <span class="tab-count" id="leadsCount">0</span>
+                                    <span class="tab-count" id="ongoingLeadsCount">0</span>
                                 </button>
                             </div>
                             
                             <!-- Search and Clear -->
                             <div class="flex items-center gap-3">
                                 <div class="relative">
-                                    <input type="text" id="searchInput" placeholder="Search approved customers..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                    <input type="text" id="searchInput" placeholder="Search customers..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
                                         <circle cx="11" cy="11" r="8"/>
                                         <path d="m21 21-4.35-4.35"/>
@@ -415,30 +398,30 @@
                     <div id="tabContent">
                         <!-- All Tab Content -->
                         <div id="allTabContent">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">All Customers & Leads</h3>
-                                <p class="text-body-m-regular dark:text-dark-base-500">Showing all approved customers and active leads</p>
+                            <div class="mb-4">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">All Approved Customers</h3>
+                                <p class="text-body-m-regular dark:text-dark-base-500">Complete overview of all approved customers</p>
                             </div>
-                            <div id="allList" class="space-y-4">
-                                <!-- All customers and leads will be populated here -->
+                            
+                            <!-- Table Header -->
+                            <div class="customer-table-header rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 p-4 mb-2">
+                                <div class="grid grid-cols-12 gap-4 text-body-s-semibold dark:text-dark-base-600">
+                                    <div class="col-span-2">Customer Name</div>
+                                    <div class="col-span-2">Email</div>
+                                    <div class="col-span-1">Mobile</div>
+                                    <div class="col-span-2">Account Manager</div>
+                                    <div class="col-span-1">Status</div>
+                                    <div class="col-span-2">POC Dates</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
                             </div>
-                            <div id="allEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">All Customers & Leads</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No customers or leads found</p>
+                            
+                            <div id="allCustomersList" class="space-y-2">
+                                <!-- All customers will be populated here -->
                             </div>
-                        </div>
-
-                        <!-- Ongoing Leads Tab Content -->
-                        <div id="leadsTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Ongoing Leads</h3>
-                            </div>
-                            <div id="leadsList" class="space-y-4">
-                                <!-- Leads will be populated here -->
-                            </div>
-                            <div id="leadsEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Ongoing Leads</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No leads found</p>
+                            <div id="allEmptyState" class="text-center py-12 hidden">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Approved Customers Found</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">All customers are pending finance approval</p>
                             </div>
                         </div>
 
@@ -448,10 +431,24 @@
                                 <h3 class="text-heading-6 dark:text-dark-base-600">POC Customers</h3>
                                 <p class="text-body-m-regular dark:text-dark-base-500">Only approved customers are shown here</p>
                             </div>
-                            <div id="pocCustomersList" class="space-y-4">
+                            
+                            <!-- Table Header -->
+                            <div class="customer-table-header rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 p-4 mb-2">
+                                <div class="grid grid-cols-12 gap-4 text-body-s-semibold dark:text-dark-base-600">
+                                    <div class="col-span-2">Customer Name</div>
+                                    <div class="col-span-2">Email</div>
+                                    <div class="col-span-1">Mobile</div>
+                                    <div class="col-span-2">Account Manager</div>
+                                    <div class="col-span-1">Status</div>
+                                    <div class="col-span-2">POC Dates</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
+                            </div>
+                            
+                            <div id="pocCustomersList" class="space-y-2">
                                 <!-- POC customers will be populated here -->
                             </div>
-                            <div id="pocEmptyState" class="text-center py-12">
+                            <div id="pocEmptyState" class="text-center py-12 hidden">
                                 <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">POC Customers</h3>
                                 <p class="text-body-l-regular dark:text-dark-base-500">No approved POC customers found</p>
                             </div>
@@ -463,27 +460,84 @@
                                 <h3 class="text-heading-6 dark:text-dark-base-600">Onboarded Customers</h3>
                                 <p class="text-body-m-regular dark:text-dark-base-500">Only approved customers are shown here</p>
                             </div>
-                            <div id="onboardedCustomersList" class="space-y-4">
+                            
+                            <!-- Table Header -->
+                            <div class="customer-table-header rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 p-4 mb-2">
+                                <div class="grid grid-cols-12 gap-4 text-body-s-semibold dark:text-dark-base-600">
+                                    <div class="col-span-2">Customer Name</div>
+                                    <div class="col-span-2">Email</div>
+                                    <div class="col-span-1">Mobile</div>
+                                    <div class="col-span-2">Account Manager</div>
+                                    <div class="col-span-1">Status</div>
+                                    <div class="col-span-2">Onboard Info</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
+                            </div>
+                            
+                            <div id="onboardedCustomersList" class="space-y-2">
                                 <!-- Onboarded customers will be populated here -->
                             </div>
-                            <div id="onboardedEmptyState" class="text-center py-12">
+                            <div id="onboardedEmptyState" class="text-center py-12 hidden">
                                 <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Onboarded Customers</h3>
                                 <p class="text-body-l-regular dark:text-dark-base-500">No approved onboarded customers found</p>
                             </div>
                         </div>
 
-                        <!-- Closed Leads Tab Content -->
-                        <div id="closedLeadsTabContent" class="hidden">
+                        <!-- Closed Tab Content -->
+                        <div id="closedTabContent" class="hidden">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Closed Leads & Customers</h3>
-                                <p class="text-body-m-regular dark:text-dark-base-500">Closed leads and approved closed customers</p>
+                                <h3 class="text-heading-6 dark:text-dark-base-600">Closed Customers</h3>
+                                <p class="text-body-m-regular dark:text-dark-base-500">Closed approved customers</p>
                             </div>
-                            <div id="closedLeadsList" class="space-y-4">
-                                <!-- Closed leads will be populated here -->
+                            
+                            <!-- Table Header -->
+                            <div class="customer-table-header rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 p-4 mb-2">
+                                <div class="grid grid-cols-12 gap-4 text-body-s-semibold dark:text-dark-base-600">
+                                    <div class="col-span-2">Customer Name</div>
+                                    <div class="col-span-2">Email</div>
+                                    <div class="col-span-1">Mobile</div>
+                                    <div class="col-span-2">Account Manager</div>
+                                    <div class="col-span-1">Status</div>
+                                    <div class="col-span-2">Closed Info</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
                             </div>
-                            <div id="closedLeadsEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Closed Leads & Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No closed leads or customers found</p>
+                            
+                            <div id="closedCustomersList" class="space-y-2">
+                                <!-- Closed customers will be populated here -->
+                            </div>
+                            <div id="closedEmptyState" class="text-center py-12 hidden">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Closed Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No closed customers found</p>
+                            </div>
+                        </div>
+
+                        <!-- Ongoing Leads Tab Content -->
+                        <div id="ongoingLeadsTabContent" class="hidden">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">Ongoing Leads</h3>
+                                <p class="text-body-m-regular dark:text-dark-base-500">All active leads</p>
+                            </div>
+                            
+                            <!-- Table Header -->
+                            <div class="customer-table-header rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 p-4 mb-2">
+                                <div class="grid grid-cols-12 gap-4 text-body-s-semibold dark:text-dark-base-600">
+                                    <div class="col-span-2">Customer Name</div>
+                                    <div class="col-span-2">Contact</div>
+                                    <div class="col-span-1">Type</div>
+                                    <div class="col-span-2">Fleet Size</div>
+                                    <div class="col-span-1">Status</div>
+                                    <div class="col-span-2">Created</div>
+                                    <div class="col-span-2">Actions</div>
+                                </div>
+                            </div>
+                            
+                            <div id="ongoingLeadsList" class="space-y-2">
+                                <!-- Ongoing leads will be populated here -->
+                            </div>
+                            <div id="ongoingLeadsEmptyState" class="text-center py-12 hidden">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Ongoing Leads</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No ongoing leads found</p>
                             </div>
                         </div>
                     </div>
@@ -523,30 +577,6 @@
                         </svg>
                         <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
                         <p class="text-body-l-regular dark:text-dark-base-500">All customer onboardings have been processed</p>
-                    </div>
-                </div>
-
-                <!-- Stock Content -->
-                <div id="stockContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Stock Management</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Device inventory and stock tracking</p>
-                    </div>
-                </div>
-
-                <!-- Inventory Management Content -->
-                <div id="inventoryManagementContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Inventory Management</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Device tracking and inventory operations</p>
-                    </div>
-                </div>
-
-                <!-- Ground Operations Content -->
-                <div id="groundOperationsContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
                     </div>
                 </div>
 
@@ -619,38 +649,105 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Other page contents -->
+                <div id="groundOperationsContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
+                    </div>
+                </div>
+
+                <!-- Stock Content -->
+                <div id="stockContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Stock Management</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Inventory and stock management system</p>
+                    </div>
+                </div>
+
+                <!-- Inventory Management Content -->
+                <div id="inventoryManagementContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Inventory Management</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Advanced inventory management system</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Floating Add Button -->
-    <div id="floatingAddButton" class="fixed bottom-6 right-6 z-40 hidden">
-        <button onclick="showAddOptions()" class="floating-add-btn flex items-center justify-center w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white shadow-lg hover:dark:bg-brand-blue-500 transition-all transform hover:scale-110">
+    <!-- Floating Plus Button -->
+    <div id="floatingPlusBtn" class="fixed bottom-6 right-6 z-50 hidden">
+        <button onclick="showFloatingAddMenu()" class="floating-plus-button w-16 h-16 bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center text-white">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 5v14"/>
-                <path d="M5 12h14"/>
+                <path d="M12 5v14m-7-7h14"/>
             </svg>
         </button>
-        
-        <!-- Add Options Menu -->
-        <div id="addOptionsMenu" class="hidden absolute bottom-16 right-0 mb-2 bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-lg border dark:border-dark-stroke-contrast-400 py-2 min-w-48">
-            <button onclick="showAddLeadForm(); hideAddOptions();" class="w-full text-left px-4 py-2 hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="m22 21-3-3"/>
-                </svg>
-                Add New Lead
-            </button>
-            <button onclick="showAddCustomerForm(); hideAddOptions();" class="w-full text-left px-4 py-2 hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <circle cx="22" cy="11" r="3"/>
-                    <path d="m16 11 2 2 4-4"/>
-                </svg>
-                Add New Customer
-            </button>
+    </div>
+
+    <!-- Floating Add Menu Modal -->
+    <div id="floatingAddModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add New</h2>
+                <button onclick="closeFloatingAddMenu()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="showAddLeadFormFromPlus()" class="w-full p-4 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-600 transition-colors flex items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="m22 21-3-3"/>
+                    </svg>
+                    <div class="text-left">
+                        <h3 class="text-body-l-semibold dark:text-dark-base-600">Add New Lead</h3>
+                        <p class="text-body-m-regular dark:text-dark-base-500">Create a potential customer lead</p>
+                    </div>
+                </button>
+
+                <button onclick="showAddCustomerFormFromPlus()" class="w-full p-4 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-600 transition-colors flex items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <circle cx="22" cy="11" r="3"/>
+                        <path d="m16 11 2 2 4-4"/>
+                    </svg>
+                    <div class="text-left">
+                        <h3 class="text-body-l-semibold dark:text-dark-base-600">Add New Customer</h3>
+                        <p class="text-body-m-regular dark:text-dark-base-500">Submit customer for finance approval</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Names Modal -->
+    <div id="customerNamesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">All Approved Customers</h2>
+                <button onclick="closeCustomerNamesModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <input type="text" id="customerSearchInput" placeholder="Search customers..." class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+            </div>
+            
+            <div id="customerNamesList" class="flex-1 overflow-y-auto space-y-2">
+                <!-- Customer names will be populated here -->
+            </div>
         </div>
     </div>
 
