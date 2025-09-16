@@ -20,7 +20,7 @@ let userSession = null;
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
-    updateTabHighlight('addTab');
+    updateTabHighlight('allTab'); // Changed from 'addTab' to 'allTab'
     
     // Check for existing session
     checkUserSession();
@@ -36,7 +36,130 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-save session every 30 seconds
     setInterval(saveUserSession, 30000);
+
+    // Show floating plus button when dashboard is visible
+    showFloatingButton();
 });
+
+// Show/Hide floating plus button
+function showFloatingButton() {
+    const dashboardPage = document.getElementById('dashboardPage');
+    const floatingBtn = document.getElementById('floatingPlusBtn');
+    
+    if (!dashboardPage.classList.contains('hidden')) {
+        floatingBtn.classList.remove('hidden');
+    } else {
+        floatingBtn.classList.add('hidden');
+    }
+}
+
+// Floating Plus Button Functions
+function showFloatingAddMenu() {
+    document.getElementById('floatingAddModal').classList.remove('hidden');
+}
+
+function closeFloatingAddMenu() {
+    document.getElementById('floatingAddModal').classList.add('hidden');
+}
+
+function showAddLeadFormFromPlus() {
+    closeFloatingAddMenu();
+    showAddLeadForm();
+}
+
+function showAddCustomerFormFromPlus() {
+    closeFloatingAddMenu();
+    showAddCustomerForm();
+}
+
+// Customer Names Modal Functions
+function showAllCustomersNames() {
+    const modal = document.getElementById('customerNamesModal');
+    const namesList = document.getElementById('customerNamesList');
+    
+    // Populate customer names
+    namesList.innerHTML = approvedCustomers.map(customer => `
+        <div class="p-3 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-600 cursor-pointer transition-colors" onclick="selectCustomerFromModal('${customer.id}')">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-body-s-regular dark:text-dark-base-500">${customer.account_manager_name}</p>
+                    <span class="px-2 py-1 text-xs rounded-full ${getStatusBadgeClass(customer.status, customer.poc_type)} dark:text-utility-white">
+                        ${getStatusText(customer.status, customer.poc_type)}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    modal.classList.remove('hidden');
+    
+    // Setup search functionality
+    const searchInput = document.getElementById('customerSearchInput');
+    searchInput.addEventListener('input', filterCustomerNames);
+}
+
+function closeCustomerNamesModal() {
+    document.getElementById('customerNamesModal').classList.add('hidden');
+    document.getElementById('customerSearchInput').value = '';
+}
+
+function filterCustomerNames() {
+    const searchTerm = document.getElementById('customerSearchInput').value.toLowerCase();
+    const namesList = document.getElementById('customerNamesList');
+    
+    const filteredCustomers = approvedCustomers.filter(customer => 
+        customer.customer_name.toLowerCase().includes(searchTerm) ||
+        customer.customer_email.toLowerCase().includes(searchTerm) ||
+        customer.account_manager_name.toLowerCase().includes(searchTerm)
+    );
+    
+    namesList.innerHTML = filteredCustomers.map(customer => `
+        <div class="p-3 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-600 cursor-pointer transition-colors" onclick="selectCustomerFromModal('${customer.id}')">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
+                    <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-body-s-regular dark:text-dark-base-500">${customer.account_manager_name}</p>
+                    <span class="px-2 py-1 text-xs rounded-full ${getStatusBadgeClass(customer.status, customer.poc_type)} dark:text-utility-white">
+                        ${getStatusText(customer.status, customer.poc_type)}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectCustomerFromModal(customerId) {
+    // Close modal and navigate to customer details or perform action
+    closeCustomerNamesModal();
+    
+    // Find customer and show all tab with that customer highlighted
+    showAllTab();
+    showEmailToast(`Customer selected: ${approvedCustomers.find(c => c.id == customerId)?.customer_name}`);
+}
+
+// Helper functions for status badges
+function getStatusBadgeClass(status, pocType) {
+    if (status === 'closed') return 'dark:bg-dark-semantic-danger-300';
+    if (pocType === 'direct_onboarding') return 'dark:bg-dark-success-600';
+    if (pocType === 'free_poc') return 'dark:bg-dark-info-600';
+    if (pocType === 'paid_poc') return 'dark:bg-dark-warning-600';
+    return 'dark:bg-dark-stroke-base-400';
+}
+
+function getStatusText(status, pocType) {
+    if (status === 'closed') return 'Closed';
+    if (pocType === 'direct_onboarding') return 'Onboarded';
+    if (pocType === 'free_poc') return 'Free POC';
+    if (pocType === 'paid_poc') return 'Paid POC';
+    return 'Unknown';
+}
 
 // Session Management - Prevents logout on refresh
 function saveUserSession() {
@@ -767,6 +890,37 @@ function setupRealtimeListeners() {
             }
         )
         .subscribe();
+
+    // Listen for inventory changes
+    supabase
+        .channel('inventory_stock')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_stock' }, 
+            (payload) => {
+                console.log('Inventory stock change received!', payload);
+                if (window.loadInventoryData) window.loadInventoryData();
+            }
+        )
+        .subscribe();
+
+    supabase
+        .channel('inventory_inward')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_inward' }, 
+            (payload) => {
+                console.log('Inventory inward change received!', payload);
+                if (window.loadInventoryData) window.loadInventoryData();
+            }
+        )
+        .subscribe();
+
+    supabase
+        .channel('inventory_outward')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_outward' }, 
+            (payload) => {
+                console.log('Inventory outward change received!', payload);
+                if (window.loadInventoryData) window.loadInventoryData();
+            }
+        )
+        .subscribe();
 }
 
 // UPDATED: Load data from Supabase with proper approval filtering
@@ -962,7 +1116,7 @@ function updateCustomerCounts() {
     const totalCustomers = approvedCustomers.length; // Only approved customers
     
     // Count different categories from approved customers only
-    const leadsCount = leads.filter(lead => lead.status !== 'Closed').length;
+    const ongoingLeadsCount = leads.filter(lead => lead.status !== 'Closed').length;
     const pocCount = approvedCustomers.filter(customer => 
         (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
         customer.status !== 'closed'
@@ -977,37 +1131,201 @@ function updateCustomerCounts() {
     document.getElementById('totalCustomersHeaderCount').textContent = totalCustomers;
     
     // Update tab counts
-    document.getElementById('leadsCount').textContent = leadsCount;
+    document.getElementById('allCount').textContent = totalCustomers;
     document.getElementById('pocCount').textContent = pocCount;
     document.getElementById('onboardedCount').textContent = onboardedCount;
     document.getElementById('closedCount').textContent = closedCount;
+    document.getElementById('ongoingLeadsCount').textContent = ongoingLeadsCount;
+    
+    // Update finance stats
+    document.getElementById('pendingApprovalsCount').textContent = pendingApprovals.length;
+    document.getElementById('totalApprovedCount').textContent = totalCustomers;
+    const rejectedCount = customers.filter(c => c.approval_status === 'rejected').length;
+    document.getElementById('totalRejectedCount').textContent = rejectedCount;
 }
 
 // Update tabs content
 function updateTabsContent() {
-    updateLeadsTab();
+    updateAllTab();
     updatePOCTab();
     updateOnboardedTab();
-    updateClosedLeadsTab();
+    updateClosedTab();
+    updateOngoingLeadsTab();
 }
 
-// Update leads tab
-function updateLeadsTab() {
-    const activeLeads = filteredLeads.filter(lead => lead.status !== 'Closed');
-    const leadsList = document.getElementById('leadsList');
-    const leadsEmpty = document.getElementById('leadsEmptyState');
+// NEW: Update all tab - shows all approved customers
+function updateAllTab() {
+    const allCustomersList = document.getElementById('allCustomersList');
+    const allEmpty = document.getElementById('allEmptyState');
 
-    if (activeLeads.length === 0) {
-        leadsList.innerHTML = '';
-        leadsEmpty.style.display = 'block';
+    if (filteredCustomers.length === 0) {
+        allCustomersList.innerHTML = '';
+        allEmpty.classList.remove('hidden');
     } else {
-        leadsEmpty.style.display = 'none';
-        leadsList.innerHTML = activeLeads.map(lead => createLeadCard(lead)).join('');
+        allEmpty.classList.add('hidden');
+        allCustomersList.innerHTML = filteredCustomers.map(customer => createCustomerRow(customer, true, true)).join('');
     }
 }
 
-// Create lead card HTML - Updated with only 2 actions
-function createLeadCard(lead) {
+// UPDATED: Update POC tab - Only show approved customers
+function updatePOCTab() {
+    const pocCustomers = filteredCustomers.filter(customer => 
+        (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
+        customer.status !== 'closed' &&
+        customer.approval_status === 'approved' // Only approved customers
+    );
+
+    const pocList = document.getElementById('pocCustomersList');
+    const pocEmpty = document.getElementById('pocEmptyState');
+
+    if (pocCustomers.length === 0) {
+        pocList.innerHTML = '';
+        pocEmpty.classList.remove('hidden');
+    } else {
+        pocEmpty.classList.add('hidden');
+        pocList.innerHTML = pocCustomers.map(customer => createCustomerRow(customer, true)).join('');
+    }
+}
+
+// UPDATED: Update onboarded tab - Only show approved customers
+function updateOnboardedTab() {
+    const onboardedCustomers = filteredCustomers.filter(customer => 
+        (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
+        customer.approval_status === 'approved' // Only approved customers
+    );
+
+    const onboardedList = document.getElementById('onboardedCustomersList');
+    const onboardedEmpty = document.getElementById('onboardedEmptyState');
+
+    if (onboardedCustomers.length === 0) {
+        onboardedList.innerHTML = '';
+        onboardedEmpty.classList.remove('hidden');
+    } else {
+        onboardedEmpty.classList.add('hidden');
+        onboardedList.innerHTML = onboardedCustomers.map(customer => createCustomerRow(customer, false, true)).join('');
+    }
+}
+
+// UPDATED: Update closed tab - Only show approved closed customers  
+function updateClosedTab() {
+    const closedCustomers = filteredCustomers.filter(customer => 
+        customer.status === 'closed' &&
+        customer.approval_status === 'approved' // Only approved customers
+    );
+
+    const closedList = document.getElementById('closedCustomersList');
+    const closedEmpty = document.getElementById('closedEmptyState');
+
+    if (closedCustomers.length === 0) {
+        closedList.innerHTML = '';
+        closedEmpty.classList.remove('hidden');
+    } else {
+        closedEmpty.classList.add('hidden');
+        closedList.innerHTML = closedCustomers.map(customer => createCustomerRow(customer)).join('');
+    }
+}
+
+// NEW: Update ongoing leads tab
+function updateOngoingLeadsTab() {
+    const activeLeads = filteredLeads.filter(lead => lead.status !== 'Closed');
+    const leadsList = document.getElementById('ongoingLeadsList');
+    const leadsEmpty = document.getElementById('ongoingLeadsEmptyState');
+
+    if (activeLeads.length === 0) {
+        leadsList.innerHTML = '';
+        leadsEmpty.classList.remove('hidden');
+    } else {
+        leadsEmpty.classList.add('hidden');
+        leadsList.innerHTML = activeLeads.map(lead => createLeadRow(lead)).join('');
+    }
+}
+
+// NEW: Create customer row HTML - Single row format instead of cards
+function createCustomerRow(customer, showTimeRemaining = false, showOnboardSource = false) {
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Not set';
+        return new Date(dateString).toLocaleDateString();
+    };
+
+    const getStatusBadge = (status, pocType) => {
+        if (status === 'closed') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Closed</span>';
+        if (pocType === 'direct_onboarding') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">Onboarded</span>';
+        if (pocType === 'free_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Free POC</span>';
+        if (pocType === 'paid_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Paid POC</span>';
+        return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
+    };
+
+    const getTimeRemainingBadge = (endDate) => {
+        if (!endDate) return '';
+        const daysRemaining = calculateDaysRemaining(endDate);
+        if (daysRemaining === null) return '';
+        
+        let badgeClass = 'dark:bg-dark-info-600 days-remaining-safe';
+        let text = `${daysRemaining} days left`;
+        
+        if (daysRemaining <= 0) {
+            badgeClass = 'dark:bg-dark-semantic-danger-300 days-remaining-expired';
+            text = 'Expired';
+        } else if (daysRemaining <= 3) {
+            badgeClass = 'dark:bg-dark-warning-600 days-remaining-warning';
+            text = `${daysRemaining} days left`;
+        }
+        
+        return `<div><span class="px-2 py-1 text-xs rounded-full ${badgeClass} dark:text-utility-white">${text}</span></div>`;
+    };
+
+    const manageButtons = (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && customer.status !== 'closed' ? 
+        `<button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 mr-2">
+            Manage POC
+        </button>` : '';
+
+    const emailButton = customer.status !== 'closed' ? `
+        <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="px-3 py-1 text-xs rounded-lg manual-email-btn dark:text-utility-white">
+            📧 Email
+        </button>` : '';
+
+    const pocDatesInfo = showOnboardSource && customer.onboard_source ? 
+        `<div class="text-body-s-regular dark:text-dark-base-600">Source: ${customer.onboard_source}</div>
+         <div class="text-body-s-regular dark:text-dark-base-500">Created: ${formatDate(customer.created_at)}</div>` :
+        `<div class="text-body-s-regular dark:text-dark-base-600">Start: ${formatDate(customer.poc_start_date)}</div>
+         <div class="text-body-s-regular dark:text-dark-base-500">End: ${formatDate(customer.poc_end_date)}</div>
+         ${showTimeRemaining ? getTimeRemainingBadge(customer.poc_end_date) : ''}`;
+
+    return `
+        <div class="customer-row p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400 transition-colors">
+            <div class="grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-2">
+                    <div class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</div>
+                </div>
+                <div class="col-span-2">
+                    <div class="text-body-m-regular dark:text-dark-base-500 truncate">${customer.customer_email}</div>
+                </div>
+                <div class="col-span-1">
+                    <div class="text-body-s-regular dark:text-dark-base-500">${customer.customer_mobile}</div>
+                </div>
+                <div class="col-span-2">
+                    <div class="text-body-s-regular dark:text-dark-base-600">${customer.account_manager_name}</div>
+                    <div class="text-body-s-regular dark:text-dark-base-500">ID: ${customer.account_manager_id}</div>
+                </div>
+                <div class="col-span-1">
+                    ${getStatusBadge(customer.status, customer.poc_type)}
+                </div>
+                <div class="col-span-2">
+                    ${pocDatesInfo}
+                </div>
+                <div class="col-span-2">
+                    <div class="flex items-center gap-1">
+                        ${manageButtons}
+                        ${emailButton}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// NEW: Create lead row HTML - Single row format instead of cards
+function createLeadRow(lead) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
         return new Date(dateString).toLocaleDateString();
@@ -1015,15 +1333,15 @@ function createLeadCard(lead) {
 
     const getLeadStatusBadge = (status) => {
         const statusClasses = {
-            'New': 'status-badge lead-new',
-            'In Progress': 'status-badge lead-progress',
-            'Qualified': 'status-badge lead-qualified',
-            'Not Qualified': 'status-badge lead-not-qualified',
-            'Converted': 'status-badge lead-converted',
-            'Closed': 'status-badge lead-closed'
+            'New': 'dark:bg-brand-blue-600',
+            'In Progress': 'dark:bg-dark-warning-600',
+            'Qualified': 'dark:bg-dark-success-600',
+            'Not Qualified': 'dark:bg-dark-semantic-danger-300',
+            'Converted': 'dark:bg-dark-info-600',
+            'Closed': 'dark:bg-dark-stroke-base-400'
         };
         
-        return `<span class="${statusClasses[status] || 'status-badge'}">${status}</span>`;
+        return `<span class="px-2 py-1 text-xs rounded-full ${statusClasses[status] || 'dark:bg-dark-stroke-base-400'} dark:text-utility-white">${status}</span>`;
     };
 
     const getTypeColor = (type) => {
@@ -1031,34 +1349,38 @@ function createLeadCard(lead) {
     };
 
     return `
-        <div class="lead-card p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${lead.customer_name}</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">${lead.contact}</p>
+        <div class="lead-row p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400 transition-colors">
+            <div class="grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-2">
+                    <div class="text-body-l-semibold dark:text-dark-base-600">${lead.customer_name}</div>
                 </div>
-                <div class="flex flex-col gap-2 items-end">
-                    ${getLeadStatusBadge(lead.status)}
+                <div class="col-span-2">
+                    <div class="text-body-m-regular dark:text-dark-base-500 truncate">${lead.contact}</div>
+                </div>
+                <div class="col-span-1">
                     <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600 ${getTypeColor(lead.type)}">
                         ${lead.type}
                     </span>
                 </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
-                <div>
-                    <span class="font-semibold">Fleet Size:</span> ${lead.fleet_size || 'N/A'}
+                <div class="col-span-2">
+                    <div class="text-body-s-regular dark:text-dark-base-600">${lead.fleet_size || 'N/A'} vehicles</div>
                 </div>
-                <div>
-                    <span class="font-semibold">Created:</span> ${formatDate(lead.created_at)}
+                <div class="col-span-1">
+                    ${getLeadStatusBadge(lead.status)}
                 </div>
-            </div>
-            <div class="mt-3 flex gap-2">
-                <button onclick="convertLeadToCustomer(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
-                    Add to Customer
-                </button>
-                <button onclick="closeLeadAction(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
-                    Close Lead
-                </button>
+                <div class="col-span-2">
+                    <div class="text-body-s-regular dark:text-dark-base-500">${formatDate(lead.created_at)}</div>
+                </div>
+                <div class="col-span-2">
+                    <div class="flex items-center gap-1">
+                        <button onclick="convertLeadToCustomer(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
+                            Convert
+                        </button>
+                        <button onclick="closeLeadAction(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
+                            Close
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -1151,195 +1473,10 @@ async function closeLeadAction(leadId) {
         loadData();
         showEmailToast(`Lead closed: ${lead.customer_name}`);
         
-        // Show Closed Leads tab
-        showClosedLeadsTab();
     } catch (error) {
         console.error('Error closing lead:', error);
         alert('Error closing lead');
     }
-}
-
-// UPDATED: Update POC tab - Only show approved customers
-function updatePOCTab() {
-    const pocCustomers = filteredCustomers.filter(customer => 
-        (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && 
-        customer.status !== 'closed' &&
-        customer.approval_status === 'approved' // Only approved customers
-    );
-
-    const pocList = document.getElementById('pocCustomersList');
-    const pocEmpty = document.getElementById('pocEmptyState');
-
-    if (pocCustomers.length === 0) {
-        pocList.innerHTML = '';
-        pocEmpty.style.display = 'block';
-    } else {
-        pocEmpty.style.display = 'none';
-        pocList.innerHTML = pocCustomers.map(customer => createCustomerCard(customer, true)).join('');
-    }
-}
-
-// UPDATED: Update onboarded tab - Only show approved customers
-function updateOnboardedTab() {
-    const onboardedCustomers = filteredCustomers.filter(customer => 
-        (customer.poc_type === 'direct_onboarding' || customer.status === 'onboarded') &&
-        customer.approval_status === 'approved' // Only approved customers
-    );
-
-    const onboardedList = document.getElementById('onboardedCustomersList');
-    const onboardedEmpty = document.getElementById('onboardedEmptyState');
-
-    if (onboardedCustomers.length === 0) {
-        onboardedList.innerHTML = '';
-        onboardedEmpty.style.display = 'block';
-    } else {
-        onboardedEmpty.style.display = 'none';
-        onboardedList.innerHTML = onboardedCustomers.map(customer => createCustomerCard(customer, false, true)).join('');
-    }
-}
-
-// UPDATED: Update closed leads tab - Only show approved closed customers
-function updateClosedLeadsTab() {
-    const closedCustomers = filteredCustomers.filter(customer => 
-        customer.status === 'closed' &&
-        customer.approval_status === 'approved' // Only approved customers
-    );
-    const closedLeads = filteredLeads.filter(lead => lead.status === 'Closed');
-
-    const closedList = document.getElementById('closedLeadsList');
-    const closedEmpty = document.getElementById('closedLeadsEmptyState');
-
-    if (closedCustomers.length === 0 && closedLeads.length === 0) {
-        closedList.innerHTML = '';
-        closedEmpty.style.display = 'block';
-    } else {
-        closedEmpty.style.display = 'none';
-        
-        let closedHTML = '';
-        
-        // Add closed customers
-        if (closedCustomers.length > 0) {
-            closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4">Closed Customers</h4>';
-            closedHTML += closedCustomers.map(customer => createCustomerCard(customer)).join('');
-        }
-        
-        // Add closed leads
-        if (closedLeads.length > 0) {
-            if (closedCustomers.length > 0) {
-                closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4 mt-8">Closed Leads</h4>';
-            } else {
-                closedHTML += '<h4 class="text-body-l-semibold dark:text-dark-base-600 mb-4">Closed Leads</h4>';
-            }
-            closedHTML += closedLeads.map(lead => createLeadCard(lead)).join('');
-        }
-        
-        closedList.innerHTML = closedHTML;
-    }
-}
-
-// Create customer card HTML with enhanced features
-function createCustomerCard(customer, showTimeRemaining = false, showOnboardSource = false) {
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Not set';
-        return new Date(dateString).toLocaleDateString();
-    };
-
-    const getStatusBadge = (status, pocType) => {
-        if (status === 'closed') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Closed</span>';
-        if (pocType === 'direct_onboarding') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">Onboarded</span>';
-        if (pocType === 'free_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Free POC</span>';
-        if (pocType === 'paid_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Paid POC</span>';
-        return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
-    };
-
-    const getOnboardSourceBadge = (onboardSource) => {
-        if (!showOnboardSource) return '';
-        
-        if (onboardSource === 'direct') {
-            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-brand-blue-600 dark:text-utility-white">Direct Onboarded</span>';
-        } else if (onboardSource === 'poc_conversion') {
-            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">POC Converted</span>';
-        } else if (onboardSource === 'lead_conversion') {
-            return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Lead Converted</span>';
-        }
-        return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown Source</span>';
-    };
-
-    const getTimeRemainingBadge = (endDate) => {
-        if (!endDate) return '';
-        const daysRemaining = calculateDaysRemaining(endDate);
-        if (daysRemaining === null) return '';
-        
-        let badgeClass = 'dark:bg-dark-info-600 days-remaining-safe';
-        let text = `${daysRemaining} days left`;
-        
-        if (daysRemaining <= 0) {
-            badgeClass = 'dark:bg-dark-semantic-danger-300 days-remaining-expired';
-            text = 'Expired';
-        } else if (daysRemaining <= 3) {
-            badgeClass = 'dark:bg-dark-warning-600 days-remaining-warning';
-            text = `${daysRemaining} days left`;
-        }
-        
-        return `<span class="px-2 py-1 text-xs rounded-full ${badgeClass} dark:text-utility-white">${text}</span>`;
-    };
-
-    const manageButtons = (customer.poc_type === 'free_poc' || customer.poc_type === 'paid_poc') && customer.status !== 'closed' ? 
-        `<button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
-            Manage POC
-        </button>` : '';
-
-    const emailButton = customer.status !== 'closed' ? `
-        <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="mt-2 ml-2 px-3 py-1 text-xs rounded-lg manual-email-btn dark:text-utility-white">
-            📧 Schedule Email
-        </button>` : '';
-
-    const extensionInfo = customer.extension_count > 0 ? 
-        `<div class="text-body-s-regular dark:text-dark-base-500">
-            <span class="font-semibold">Extensions:</span> ${customer.extension_count} (${customer.poc_extended_days || 0} days)
-        </div>` : '';
-
-    const emailInfo = customer.email_notifications_sent > 0 ? 
-        `<div class="text-body-s-regular dark:text-dark-base-500">
-            <span class="font-semibold">Emails Sent:</span> ${customer.email_notifications_sent}
-            ${customer.last_email_sent ? `(Last: ${formatDate(customer.last_email_sent)})` : ''}
-        </div>` : '';
-
-    return `
-        <div class="p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${customer.customer_name}</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">${customer.customer_email}</p>
-                </div>
-                <div class="flex flex-col gap-2 items-end">
-                    ${getStatusBadge(customer.status, customer.poc_type)}
-                    ${getOnboardSourceBadge(customer.onboard_source)}
-                    ${showTimeRemaining ? getTimeRemainingBadge(customer.poc_end_date) : ''}
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 text-body-s-regular dark:text-dark-base-500">
-                <div>
-                    <span class="font-semibold">Mobile:</span> ${customer.customer_mobile}
-                </div>
-                <div>
-                    <span class="font-semibold">Account Manager:</span> ${customer.account_manager_name}
-                </div>
-                <div>
-                    <span class="font-semibold">POC Start:</span> ${formatDate(customer.poc_start_date)}
-                </div>
-                <div>
-                    <span class="font-semibold">POC End:</span> ${formatDate(customer.poc_end_date)}
-                </div>
-                ${extensionInfo}
-                ${emailInfo}
-            </div>
-            <div class="flex items-center">
-                ${manageButtons}
-                ${emailButton}
-            </div>
-        </div>
-    `;
 }
 
 // Finance Tab Content
@@ -1588,6 +1725,7 @@ function navigateToDashboard() {
     document.getElementById('dashboardPage').classList.remove('hidden');
     
     showCustomersOverview();
+    showFloatingButton(); // Show floating button
     loadData();
 }
 
@@ -1705,59 +1843,6 @@ function clearSearch() {
     showEmailToast('Search cleared - showing all data');
 }
 
-// UPDATED: Show all customers - Only show approved customers
-function showAllCustomers() {
-    showCustomersOverview();
-    
-    // Clear any existing search filter
-    currentFilter = '';
-    document.getElementById('searchInput').value = '';
-    filteredCustomers = [...approvedCustomers]; // Only approved customers
-    filteredLeads = [...leads];
-    
-    // Show special "All Customers" view
-    showAllCustomersView();
-}
-
-// UPDATED: Function to show all approved customers in a comprehensive view
-function showAllCustomersView() {
-    hideAllTabContent();
-    
-    // Create a new tab content for showing all customers
-    const tabContent = document.getElementById('tabContent');
-    
-    // Remove any existing "All Customers" content
-    const existingAllCustomersContent = document.getElementById('allCustomersTabContent');
-    if (existingAllCustomersContent) {
-        existingAllCustomersContent.remove();
-    }
-    
-    // Create new content div
-    const allCustomersContent = document.createElement('div');
-    allCustomersContent.id = 'allCustomersTabContent';
-    allCustomersContent.innerHTML = `
-        <div class="mb-4">
-            <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">All Approved Customers</h3>
-            <p class="text-body-m-regular dark:text-dark-base-500">Complete overview of all approved customers in the system</p>
-        </div>
-        <div id="allCustomersList" class="space-y-4">
-            ${approvedCustomers.map(customer => createCustomerCard(customer, true, true)).join('')}
-        </div>
-        ${approvedCustomers.length === 0 ? `
-            <div class="text-center py-12">
-                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Approved Customers Found</h3>
-                <p class="text-body-l-regular dark:text-dark-base-500">All customers are pending finance approval</p>
-            </div>
-        ` : ''}
-    `;
-    
-    tabContent.appendChild(allCustomersContent);
-    
-    // Update tab highlighting to show we're viewing all customers
-    updateTabHighlight(''); // Clear all highlights
-    showEmailToast(`Showing all ${approvedCustomers.length} approved customers`);
-}
-
 // Apply current search filter
 function applyCurrentFilter() {
     if (currentFilter) {
@@ -1774,14 +1859,10 @@ function showCustomersOverview() {
     updateMenuHighlight('customers');
 }
 
-// NEW: Stock navigation function
 function showStock() {
-    window.location.href = 'stock.html';
-}
-
-// NEW: Inventory Management navigation function
-function showInventoryManagement() {
-    window.location.href = 'inventory.html';
+    hideAllContent();
+    document.getElementById('stockContent').classList.remove('hidden');
+    updateMenuHighlight('stock');
 }
 
 function showGroundOperations() {
@@ -1790,10 +1871,24 @@ function showGroundOperations() {
     updateMenuHighlight('ground');
 }
 
+// NEW: Show Inventory Management with proper sidebar
+function showInventoryManagement() {
+    hideAllContent();
+    document.getElementById('inventoryManagementContent').classList.remove('hidden');
+    updateMenuHighlight('inventory');
+    
+    // Load inventory data if the function exists
+    if (window.loadInventoryData) {
+        window.loadInventoryData();
+    }
+}
+
 function hideAllContent() {
     document.getElementById('customersOverviewContent').classList.add('hidden');
     document.getElementById('financeContent').classList.add('hidden');
     document.getElementById('groundOperationsContent').classList.add('hidden');
+    document.getElementById('stockContent').classList.add('hidden');
+    document.getElementById('inventoryManagementContent').classList.add('hidden');
     document.getElementById('addCredentialsContent').classList.add('hidden');
 }
 
@@ -1809,8 +1904,8 @@ function updateMenuHighlight(activeMenu) {
         if ((activeMenu === 'customers' && onclick && onclick.includes('showCustomersOverview')) ||
             (activeMenu === 'finance' && onclick && onclick.includes('showFinance')) ||
             (activeMenu === 'stock' && onclick && onclick.includes('showStock')) ||
-            (activeMenu === 'inventory' && onclick && onclick.includes('showInventoryManagement')) ||
             (activeMenu === 'ground' && onclick && onclick.includes('showGroundOperations')) ||
+            (activeMenu === 'inventory' && onclick && onclick.includes('showInventoryManagement')) ||
             (activeMenu === 'credentials' && onclick && onclick.includes('showAddCredentials'))) {
             item.classList.add('dark:bg-brand-blue-600', 'dark:text-utility-white');
             item.classList.remove('hover:dark:bg-dark-fill-base-600');
@@ -1818,17 +1913,11 @@ function updateMenuHighlight(activeMenu) {
     });
 }
 
-// Dashboard tab functions
-function showAddTab() {
+// Dashboard tab functions - UPDATED with new tab names
+function showAllTab() {
     hideAllTabContent();
-    document.getElementById('addTabContent').classList.remove('hidden');
-    updateTabHighlight('addTab');
-}
-
-function showLeadsTab() {
-    hideAllTabContent();
-    document.getElementById('leadsTabContent').classList.remove('hidden');
-    updateTabHighlight('leadsTab');
+    document.getElementById('allTabContent').classList.remove('hidden');
+    updateTabHighlight('allTab');
 }
 
 function showPOCTab() {
@@ -1843,24 +1932,24 @@ function showOnboardedTab() {
     updateTabHighlight('onboardedTab');
 }
 
-function showClosedLeadsTab() {
+function showClosedTab() {
     hideAllTabContent();
-    document.getElementById('closedLeadsTabContent').classList.remove('hidden');
-    updateTabHighlight('closedLeadsTab');
+    document.getElementById('closedTabContent').classList.remove('hidden');
+    updateTabHighlight('closedTab');
+}
+
+function showOngoingLeadsTab() {
+    hideAllTabContent();
+    document.getElementById('ongoingLeadsTabContent').classList.remove('hidden');
+    updateTabHighlight('ongoingLeadsTab');
 }
 
 function hideAllTabContent() {
-    document.getElementById('addTabContent').classList.add('hidden');
-    document.getElementById('leadsTabContent').classList.add('hidden');
+    document.getElementById('allTabContent').classList.add('hidden');
     document.getElementById('pocTabContent').classList.add('hidden');
     document.getElementById('onboardedTabContent').classList.add('hidden');
-    document.getElementById('closedLeadsTabContent').classList.add('hidden');
-    
-    // Also hide the "All Customers" view if it exists
-    const allCustomersContent = document.getElementById('allCustomersTabContent');
-    if (allCustomersContent) {
-        allCustomersContent.remove();
-    }
+    document.getElementById('closedTabContent').classList.add('hidden');
+    document.getElementById('ongoingLeadsTabContent').classList.add('hidden');
 }
 
 function updateTabHighlight(activeTabId) {
@@ -2104,6 +2193,9 @@ function logout() {
     document.getElementById('dashboardPage').classList.add('hidden');
     document.getElementById('forgotPasswordPage').classList.add('hidden');
     document.getElementById('loginPage').classList.remove('hidden');
+    
+    // Hide floating button
+    document.getElementById('floatingPlusBtn').classList.add('hidden');
     
     document.getElementById('loginEmail').value = '';
     document.getElementById('loginPassword').value = '';
