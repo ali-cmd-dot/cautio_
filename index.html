@@ -99,237 +99,176 @@
                 100% { transform: rotate(360deg); }
             }
         </style>
-        
-        <div>
-            <div class="grid grid-cols-2">
-                <div class="relative flex items-center justify-center sm:mt-0">
-                    <div class="absolute inset-0 h-full px-[3.5rem]">
-                        <div class="lines hidden sm:flex sm:h-full sm:w-full sm:justify-between">
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                        </div>
-                    </div>
-                    <div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen">
-                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png">
-                    </div>
-                </div>
-                <div class="flex justify-center self-center">
-                    <div class="flex w-[27.18rem] flex-col p-4">
-                        <div class="flex justify-center">
-                            <svg class="h-[3.8rem] w-[3.8rem] rounded-2xl" width="60" height="60" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="1080" height="1080" fill="#0026A3"></rect>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
-                            </svg>
-                        </div>
-                        <div class="my-8 flex flex-col items-center gap-2">
-                            <span class="text-heading-6 text-dark-base-600">Sign in</span>
-                        </div>
-                        <form id="loginForm" class="gap-4" novalidate="">
-                            <div class="mb-5">
-                                <div class="flex flex-col items-start">
-                                    <label for="loginEmail" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email</label>
-                                    <div class="relative flex w-full items-center">
-                                        <input id="loginEmail" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="example@gmail.com" name="email" value="">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3 mt-5">
-                                <div class="flex flex-col items-start">
-                                    <label for="loginPassword" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Password</label>
-                                    <div class="relative flex w-full items-center">
-                                        <input id="loginPassword" style="padding-right: 44px;" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="password" placeholder="Password" name="password" value="">
-                                        <div class="absolute right-2 top-1/2 flex -translate-y-1/2 items-center space-x-2">
-                                            <span class="cursor-pointer" onclick="togglePasswordVisibility()">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-6 w-6 text-dark-stroke-base-600">
-                                                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
-                                                    <circle cx="12" cy="12" r="3"></circle>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a class="flex cursor-pointer justify-start text-body-m-medium dark:text-brand-blue-600" onclick="showForgotPasswordPage()">Forgot Password?</a>
-                            <div>
-                                <button class="flex items-center justify-center gap-x-2 rounded-full px-5 py-3 text-body-s-semibold disabled:cursor-not-allowed disabled:opacity-50 dark:text-utility-white dark:bg-brand-blue-600 dark:shadow-[0px_0.5px_1px_0px_rgba(255,255,255,0.50)inset] dark:hover:bg-brand-blue-500 disabled:dark:hover:bg-brand-blue-600 mt-4 w-full" type="submit">Login</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+
+        <div class="mx-auto max-w-md pt-24">
+            <div class="text-center mb-8">
+                <h1 class="text-heading-3 dark:text-dark-base-600 mb-4">Cautio Dashboard</h1>
+                <p class="text-body-l-regular dark:text-dark-base-500">Please sign in to continue</p>
             </div>
-        </div>
-    </div>
 
-    <!-- Forgot Password Page -->
-    <div id="forgotPasswordPage" class="hidden ml-5 min-h-screen flex-1 pr-6" style="padding-left:4.68rem;padding-top:0">
-        <div>
-            <div class="grid grid-cols-2">
-                <div class="relative flex items-center justify-center sm:mt-0">
-                    <div class="absolute inset-0 h-full px-[3.5rem]">
-                        <div class="lines hidden sm:flex sm:h-full sm:w-full sm:justify-between">
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                        </div>
-                    </div>
-                    <div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen">
-                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png">
-                    </div>
+            <form id="loginForm" class="space-y-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+                <div>
+                    <label for="username" class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Username</label>
+                    <input type="text" id="username" name="username" required 
+                           class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600 focus:outline-none focus:border-brand-blue-600">
                 </div>
-                <div class="flex justify-center self-center">
-                    <div class="flex w-[27.18rem] flex-col p-4">
-                        <div class="flex justify-center">
-                            <svg class="h-[3.8rem] w-[3.8rem] rounded-2xl" width="60" height="60" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="1080" height="1080" fill="#0026A3"></rect>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
-                            </svg>
-                        </div>
-                        <div class="my-8 flex flex-col items-center gap-2">
-                            <span class="text-heading-6 text-dark-base-600">Reset Password</span>
-                            <span class="text-body-m-regular dark:text-dark-base-500 text-center">Enter your email address and we'll send you a link to reset your password</span>
-                        </div>
-                        <form id="forgotPasswordForm" class="gap-4" novalidate="">
-                            <div class="mb-5">
-                                <div class="flex flex-col items-start">
-                                    <label for="resetEmail" class="mb-2 inline-block dark:text-body-l-semibold dark:text-dark-base-600">Email Address</label>
-                                    <div class="relative flex w-full items-center">
-                                        <input id="resetEmail" style="padding-right:16px" class="w-full rounded-lg border p-3 outline-none outline-offset-0 dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600 dark:focus:outline-brand-blue-600" type="email" placeholder="Enter your email address" name="resetEmail" value="" required>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="text-body-s-regular dark:text-dark-base-500 text-center p-3 rounded-lg dark:bg-dark-fill-base-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Check your email for the reset link. The link will expire in 1 hour.
-                                </div>
-                            </div>
 
-                            <div class="space-y-3">
-                                <button class="flex items-center justify-center gap-x-2 rounded-full px-5 py-3 text-body-s-semibold disabled:cursor-not-allowed disabled:opacity-50 dark:text-utility-white dark:bg-brand-blue-600 dark:shadow-[0px_0.5px_1px_0px_rgba(255,255,255,0.50)inset] dark:hover:bg-brand-blue-500 disabled:dark:hover:bg-brand-blue-600 w-full" type="submit">
-                                    Send Reset Link
-                                </button>
-                                
-                                <button type="button" onclick="backToLogin()" class="flex items-center justify-center gap-x-2 rounded-full px-5 py-3 text-body-s-semibold dark:text-dark-base-600 dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600 w-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                    </svg>
-                                    Back to Login
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                <div>
+                    <label for="password" class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Password</label>
+                    <input type="password" id="password" name="password" required 
+                           class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600 focus:outline-none focus:border-brand-blue-600">
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Dashboard Page -->
-    <div id="dashboardPage" class="hidden min-h-screen dark:bg-dark-fill-base-400">
-        <!-- Sidebar -->
-        <div id="sidebar" class="sidebar collapsed fixed left-0 top-0 h-full dark:bg-dark-fill-base-300 dark:border-r dark:border-dark-stroke-contrast-400 z-50">
-            <!-- Hamburger Menu Button - Fixed Position -->
-            <div class="flex items-center justify-between p-4 dark:border-b dark:border-dark-stroke-contrast-400">
-                <div class="flex items-center min-w-0">
-                    <svg class="h-8 w-8 rounded-lg flex-shrink-0" width="32" height="32" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="1080" height="1080" fill="#0026A3"></rect>
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M173 540.227C173 758.862 308.449 913 540.568 913C771.596 913 907.044 758.862 907.044 540.227C907.044 322.685 771.596 168 540.568 168C308.449 168.547 173 322.685 173 540.227ZM694.04 409.592C700.048 409.592 704.963 414.511 704.963 420.524C704.963 427.629 704.964 435.282 705.51 442.934C707.694 550.065 710.425 684.526 543.845 743.558C541.66 744.104 538.93 744.104 536.745 743.558C370.165 684.526 372.896 549.519 375.081 442.934C375.081 435.282 375.627 427.629 375.627 420.524C375.627 414.511 380.542 409.592 386.55 409.592C445.536 407.952 492.506 390.461 532.922 354.933C537.291 351.107 543.845 351.107 548.214 354.933C588.084 389.915 635.054 407.406 694.04 409.592Z" fill="white"></path>
-                    </svg>
-                    <span class="menu-text ml-3 text-body-l-semibold dark:text-dark-base-600 truncate">Cautio</span>
-                </div>
-                <button id="hamburgerBtn" class="hamburger-button p-2 rounded-lg hover:dark:bg-dark-fill-base-600 flex-shrink-0">
-                    <div class="hamburger-menu-icon">
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                    </div>
+                <button type="submit" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
+                    Sign In
                 </button>
-            </div>
+            </form>
+        </div>
+    </div>
 
-            <!-- Menu Items -->
-            <nav class="mt-4">
-                <div class="px-2 space-y-2">
-                    <a href="#" onclick="showCustomersOverview()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+    <!-- Main Dashboard -->
+    <div id="dashboardPage" class="min-h-screen hidden">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar collapsed fixed left-0 top-0 h-full dark:bg-dark-fill-base-300 dark:border-r dark:border-dark-stroke-contrast-400 z-40">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg dark:bg-brand-blue-600 flex items-center justify-center">
+                            <span class="text-utility-white text-body-s-semibold">C</span>
+                        </div>
+                        <span class="menu-text text-heading-6 dark:text-dark-base-600">Cautio</span>
+                    </div>
+                    
+                    <!-- Hamburger Button -->
+                    <button onclick="toggleSidebar()" class="hamburger-button dark:hover:bg-dark-fill-base-600">
+                        <div class="hamburger-menu-icon">
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sidebar Navigation -->
+            <div class="sidebar-nav px-4 pb-4">
+                <nav class="space-y-2">
+                    <div onclick="showCustomersOverview()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
-                            <path d="m22 21-3-3"/>
+                            <path d="m22 21-3-3m0 0a2 2 0 0 0 0-4 2 2 0 0 0 0 4"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Customers Overview</span>
-                    </a>
-                    <a href="#" onclick="showFinance()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <span class="menu-text text-body-m-semibold">Customers Overview</span>
+                    </div>
+                    
+                    <div onclick="showFinance()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Finance</span>
-                    </a>
-                    <a href="#" onclick="showStock()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                            <polyline points="14,2 14,8 20,8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                            <polyline points="10,9 9,9 8,9"/>
+                        <span class="menu-text text-body-m-semibold">Finance</span>
+                    </div>
+                    
+                    <div onclick="showStock()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6l2 13h7l4-8H9"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Stock</span>
-                    </a>
-                    <a href="#" onclick="showInventoryManagement()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                            <path d="M12 3v6"/>
+                        <span class="menu-text text-body-m-semibold">Stock</span>
+                    </div>
+                    
+                    <div onclick="showInventoryManagement()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2-2z"/>
+                            <path d="M8 5v4"/>
+                            <path d="M16 5v4"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Inventory Management</span>
-                    </a>
-                    <a href="#" onclick="showGroundOperations()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        <span class="menu-text text-body-m-semibold">Inventory Management</span>
+                    </div>
+                    
+                    <div onclick="showGroundOperations()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Ground Operations</span>
-                    </a>
-                    <a href="#" onclick="showAddCredentials()" class="menu-item flex items-center p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-body-m-semibold dark:text-dark-base-600 hover:dark:text-dark-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                            <circle cx="12" cy="16" r="1"/>
-                            <path d="m7 11V7a5 5 0 0 1 10 0v4"/>
+                        <span class="menu-text text-body-m-semibold">Ground Operations</span>
+                    </div>
+                    
+                    <div onclick="showAddCredentials()" class="menu-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4"/>
+                            <path d="M21 12c0 1.3-.6 2.5-1.5 3.3a5.07 5.07 0 0 1-3.5 1.4c-1.3 0-2.5-.6-3.3-1.5a5.07 5.07 0 0 1-1.4-3.5c0-1.3.6-2.5 1.5-3.3a5.07 5.07 0 0 1 3.5-1.4c1.3 0 2.5.6 3.3 1.5a5.07 5.07 0 0 1 1.4 3.5"/>
+                            <path d="M11.5 7.5a2.5 2.5 0 0 0 0 5"/>
                         </svg>
-                        <span class="menu-text ml-3 truncate">Add Credentials</span>
-                    </a>
+                        <span class="menu-text text-body-m-semibold">Add Credentials</span>
+                    </div>
+                </nav>
+                
+                <!-- Logout button at bottom -->
+                <div class="mt-auto pt-4">
+                    <button onclick="logout()" class="w-full flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:dark:bg-red-600/20 dark:text-red-400 text-body-m-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span class="menu-text">Logout</span>
+                    </button>
                 </div>
-            </nav>
+            </div>
         </div>
-
+        
         <!-- Main Content -->
         <div id="mainContent" class="main-content sidebar-collapsed">
             <!-- Header -->
             <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
                 <div class="flex items-center justify-between">
-                    <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
+                    <div>
+                        <h1 class="text-heading-5 dark:text-dark-base-600">Dashboard</h1>
+                        <p class="text-body-m-regular dark:text-dark-base-500">Welcome to Cautio Management System</p>
+                    </div>
+                    
+                    <!-- User Info -->
                     <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4">
+                            <!-- Customer Names Dropdown -->
+                            <div class="relative">
+                                <button onclick="toggleCustomerDropdown()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="m22 21-3-3m0 0a2 2 0 0 0 0-4 2 2 0 0 0 0 4"/>
+                                    </svg>
+                                    <span>All Customer Names</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m6 9 6 6 6-6"/>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div id="customerDropdown" class="hidden absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 rounded-lg shadow-lg z-50">
+                                    <div class="p-2">
+                                        <div class="text-body-s-semibold dark:text-dark-base-600 p-2 border-b dark:border-dark-stroke-contrast-400">Approved Customers</div>
+                                        <div id="customerDropdownList" class="py-2">
+                                            <!-- Customer names will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <span onclick="showAllCustomers()" class="text-body-l-regular dark:text-dark-base-600 cursor-pointer hover:dark:text-brand-blue-600 transition-colors">Total Approved Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
-                        <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <polyline points="16,17 21,12 16,7"/>
-                                <line x1="21" x2="9" y1="12" y2="12"/>
-                            </svg>
-                            Logout
-                        </button>
+                        <div class="text-right">
+                            <div class="text-body-m-semibold dark:text-dark-base-600" id="userDisplayName">User</div>
+                            <div class="text-body-s-regular dark:text-dark-base-500" id="userRole">Role</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full dark:bg-brand-blue-600 flex items-center justify-center">
+                            <span class="text-utility-white text-body-s-semibold" id="userAvatar">U</span>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Content Area -->
             <div id="contentArea" class="p-6">
                 <!-- Customers Overview Content -->
@@ -343,16 +282,32 @@
                         </div>
                     </div>
 
+                    <!-- Search Bar -->
+                    <div class="flex items-center justify-end mb-6">
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="Search customers and leads..." 
+                                   onkeyup="handleSearch(event)" 
+                                   class="pl-10 pr-4 py-2 w-80 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600 focus:outline-none focus:border-brand-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <button onclick="clearSearch()" class="absolute right-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500 hover:dark:text-dark-base-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 6-12 12"/>
+                                    <path d="m6 6 12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Dashboard Tabs -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex space-x-1">
-                                <button onclick="showAddTab()" class="tab-button active" id="addTab">
-                                    <span class="tab-label">Add</span>
-                                </button>
-                                <button onclick="showLeadsTab()" class="tab-button" id="leadsTab">
-                                    <span class="tab-label">Leads</span>
-                                    <span class="tab-count" id="leadsCount">0</span>
+                                <button onclick="showAllTab()" class="tab-button active" id="allTab">
+                                    <span class="tab-label">All</span>
+                                    <span class="tab-count" id="allCount">0</span>
                                 </button>
                                 <button onclick="showPOCTab()" class="tab-button" id="pocTab">
                                     <span class="tab-label">POC</span>
@@ -366,130 +321,90 @@
                                     <span class="tab-label">Closed</span>
                                     <span class="tab-count" id="closedCount">0</span>
                                 </button>
-                            </div>
-                            
-                            <!-- Search and Clear -->
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <input type="text" id="searchInput" placeholder="Search approved customers..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
-                                        <circle cx="11" cy="11" r="8"/>
-                                        <path d="m21 21-4.35-4.35"/>
-                                    </svg>
-                                </div>
-                                <button onclick="clearSearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                                    Clear
+                                <button onclick="showOngoingLeadsTab()" class="tab-button" id="ongoingLeadsTab">
+                                    <span class="tab-label">Ongoing Leads</span>
+                                    <span class="tab-count" id="ongoingLeadsCount">0</span>
                                 </button>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab Content -->
-                    <div id="tabContent">
-                        <!-- Add Tab Content -->
-                        <div id="addTabContent">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-all" onclick="showAddLeadForm()">
-                                    <div class="flex items-center justify-center mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                            <circle cx="9" cy="7" r="4"/>
-                                            <path d="m22 21-3-3"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-heading-7 dark:text-dark-base-600 text-center mb-2">Add New Lead</h3>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 text-center">Create a new potential customer lead</p>
-                                </div>
-
-                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-all" onclick="showAddCustomerForm()">
-                                    <div class="flex items-center justify-center mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                            <circle cx="9" cy="7" r="4"/>
-                                            <circle cx="22" cy="11" r="3"/>
-                                            <path d="m16 11 2 2 4-4"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-heading-7 dark:text-dark-base-600 text-center mb-2">Add New Customer</h3>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 text-center">Submit customer for finance approval</p>
-                                </div>
-                            </div>
                             
-                            <!-- Important Note -->
-                            <div class="mt-6 p-4 rounded-lg dark:bg-dark-warning-600/20 dark:border dark:border-dark-warning-600/30">
-                                <div class="flex items-center gap-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-warning-600">
-                                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                                        <path d="M12 9v4"/>
-                                        <path d="m12 17 .01 0"/>
-                                    </svg>
-                                    <div>
-                                        <h4 class="text-body-l-semibold dark:text-dark-warning-600"></h4>
-                                        <p class="text-body-m-regular dark:text-dark-base-500 mt-1"></p>
-                                    </div>
+                            <div class="text-body-s-regular dark:text-dark-base-500" id="searchResults"></div>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div id="tabContent">
+                            <!-- All Tab Content -->
+                            <div id="allTabContent" class="tab-content">
+                                <div class="mb-4">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">All Customers & Leads</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500">Overview of all customers and leads in the system</p>
+                                </div>
+                                <div id="allCustomersList" class="space-y-4">
+                                    <!-- All content will be loaded here -->
+                                </div>
+                                <div id="allEmptyState" class="text-center py-12" style="display: none;">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Data Found</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No customers or leads found matching your criteria</p>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Leads Tab Content -->
-                        <div id="leadsTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">All Leads</h3>
-                                <button onclick="showAddLeadForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                    Add New Lead
-                                </button>
+                            <!-- POC Tab Content -->
+                            <div id="pocTabContent" class="tab-content hidden">
+                                <div class="mb-4">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">POC Customers</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500">Customers currently in Proof of Concept phase</p>
+                                </div>
+                                <div id="pocCustomersList" class="space-y-4">
+                                    <!-- POC customers will be loaded here -->
+                                </div>
+                                <div id="pocEmptyState" class="text-center py-12" style="display: none;">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No POC Customers</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">All POC customers are currently waiting for finance approval</p>
+                                </div>
                             </div>
-                            <div id="leadsList" class="space-y-4">
-                                <!-- Leads will be populated here -->
-                            </div>
-                            <div id="leadsEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Leads</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No leads found</p>
-                            </div>
-                        </div>
 
-                        <!-- POC Tab Content -->
-                        <div id="pocTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">POC Customers</h3>
-                                <p class="text-body-m-regular dark:text-dark-base-500">Only approved customers are shown here</p>
+                            <!-- Onboarded Tab Content -->
+                            <div id="onboardedTabContent" class="tab-content hidden">
+                                <div class="mb-4">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">Onboarded Customers</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500">Successfully onboarded customers</p>
+                                </div>
+                                <div id="onboardedCustomersList" class="space-y-4">
+                                    <!-- Onboarded customers will be loaded here -->
+                                </div>
+                                <div id="onboardedEmptyState" class="text-center py-12" style="display: none;">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Onboarded Customers</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No customers have been onboarded yet</p>
+                                </div>
                             </div>
-                            <div id="pocCustomersList" class="space-y-4">
-                                <!-- POC customers will be populated here -->
-                            </div>
-                            <div id="pocEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">POC Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No approved POC customers found</p>
-                            </div>
-                        </div>
 
-                        <!-- Onboarded Tab Content -->
-                        <div id="onboardedTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Onboarded Customers</h3>
-                                <p class="text-body-m-regular dark:text-dark-base-500">Only approved customers are shown here</p>
+                            <!-- Closed Leads Tab Content -->
+                            <div id="closedLeadsTabContent" class="tab-content hidden">
+                                <div class="mb-4">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">Closed</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500">Closed customers and leads</p>
+                                </div>
+                                <div id="closedLeadsList" class="space-y-4">
+                                    <!-- Closed leads and customers will be loaded here -->
+                                </div>
+                                <div id="closedLeadsEmptyState" class="text-center py-12" style="display: none;">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Closed Items</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No closed customers or leads found</p>
+                                </div>
                             </div>
-                            <div id="onboardedCustomersList" class="space-y-4">
-                                <!-- Onboarded customers will be populated here -->
-                            </div>
-                            <div id="onboardedEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Onboarded Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No approved onboarded customers found</p>
-                            </div>
-                        </div>
 
-                        <!-- Closed Leads Tab Content -->
-                        <div id="closedLeadsTabContent" class="hidden">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-heading-6 dark:text-dark-base-600">Closed Leads & Customers</h3>
-                                <p class="text-body-m-regular dark:text-dark-base-500">Closed leads and approved closed customers</p>
-                            </div>
-                            <div id="closedLeadsList" class="space-y-4">
-                                <!-- Closed leads will be populated here -->
-                            </div>
-                            <div id="closedLeadsEmptyState" class="text-center py-12">
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Closed Leads & Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No closed leads or customers found</p>
+                            <!-- Ongoing Leads Tab Content -->
+                            <div id="ongoingLeadsTabContent" class="tab-content hidden">
+                                <div class="mb-4">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">Ongoing Leads</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500">Active leads in progress</p>
+                                </div>
+                                <div id="ongoingLeadsList" class="space-y-4">
+                                    <!-- Ongoing leads will be loaded here -->
+                                </div>
+                                <div id="ongoingLeadsEmptyState" class="text-center py-12" style="display: none;">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Ongoing Leads</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No active leads found</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -497,38 +412,90 @@
 
                 <!-- Finance Content -->
                 <div id="financeContent" class="hidden">
-                    <div class="mb-8">
-                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Finance - Customer Approval System</h2>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Review and approve pending customer onboardings. Only approved customers will appear in Customer Overview.</p>
-                        
-                        <!-- Finance Stats -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                            <div class="p-4 rounded-lg dark:bg-dark-warning-600/20 dark:border dark:border-dark-warning-600/30">
-                                <h4 class="text-body-l-semibold dark:text-dark-warning-600">Pending Approval</h4>
-                                <p id="pendingApprovalsCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
-                            </div>
-                            <div class="p-4 rounded-lg dark:bg-dark-success-600/20 dark:border dark:border-dark-success-600/30">
-                                <h4 class="text-body-l-semibold dark:text-dark-success-600">Total Approved</h4>
-                                <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
-                            </div>
-                            <div class="p-4 rounded-lg dark:bg-dark-semantic-danger-300/20 dark:border dark:border-dark-semantic-danger-300/30">
-                                <h4 class="text-body-l-semibold dark:text-dark-semantic-danger-300">Total Rejected</h4>
-                                <p id="totalRejectedCount" class="text-heading-6 dark:text-dark-semantic-danger-300">0</p>
-                            </div>
+                    <div class="mb-6">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Finance Approval</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Review and approve customer applications</p>
+                    </div>
+
+                    <!-- Finance Status Tabs -->
+                    <div class="mb-6">
+                        <div class="flex space-x-1">
+                            <button onclick="showPendingApprovals()" class="tab-button active" id="pendingTab">
+                                <span class="tab-label">Pending Approval</span>
+                                <span class="tab-count" id="pendingApprovalCount">0</span>
+                            </button>
+                            <button onclick="showApprovedCustomers()" class="tab-button" id="approvedTab">
+                                <span class="tab-label">Approved</span>
+                                <span class="tab-count" id="approvedCustomerCount">0</span>
+                            </button>
+                            <button onclick="showRejectedCustomers()" class="tab-button" id="rejectedTab">
+                                <span class="tab-label">Rejected</span>
+                                <span class="tab-count" id="rejectedCustomerCount">0</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div id="pendingApprovalsList" class="space-y-4">
-                        <!-- Pending approvals will be populated here -->
+                    <!-- Finance Tab Content -->
+                    <div id="financeTabContent">
+                        <!-- Pending Approvals -->
+                        <div id="pendingApprovalsContent">
+                            <div id="pendingApprovalsList" class="space-y-4">
+                                <!-- Pending approvals will be loaded here -->
+                            </div>
+                            <div id="pendingApprovalsEmpty" class="text-center py-12" style="display: none;">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">All customer applications have been reviewed</p>
+                            </div>
+                        </div>
+
+                        <!-- Approved Customers -->
+                        <div id="approvedCustomersContent" class="hidden">
+                            <div id="approvedCustomersList" class="space-y-4">
+                                <!-- Approved customers will be loaded here -->
+                            </div>
+                            <div id="approvedCustomersEmpty" class="text-center py-12" style="display: none;">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Approved Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers have been approved yet</p>
+                            </div>
+                        </div>
+
+                        <!-- Rejected Customers -->
+                        <div id="rejectedCustomersContent" class="hidden">
+                            <div id="rejectedCustomersList" class="space-y-4">
+                                <!-- Rejected customers will be loaded here -->
+                            </div>
+                            <div id="rejectedCustomersEmpty" class="text-center py-12" style="display: none;">
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Rejected Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers have been rejected</p>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div id="financeEmptyState" class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-success-600">
-                            <path d="M9 12l2 2 4-4"/>
-                            <circle cx="12" cy="12" r="10"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">All customer onboardings have been processed</p>
+                </div>
+
+                <!-- Ground Operations Content -->
+                <div id="groundOperationsContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
+                        <div class="mt-8">
+                            <div class="max-w-2xl mx-auto p-6 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 rounded-lg">
+                                <h4 class="text-heading-6 dark:text-dark-base-600 mb-4">Available Operations</h4>
+                                <div class="space-y-3">
+                                    <div class="p-4 dark:bg-dark-stroke-base-400 rounded-lg">
+                                        <h5 class="text-body-l-semibold dark:text-dark-base-600">Device Rectification</h5>
+                                        <p class="text-body-m-regular dark:text-dark-base-500">Repair and maintenance of tracking devices</p>
+                                    </div>
+                                    <div class="p-4 dark:bg-dark-stroke-base-400 rounded-lg">
+                                        <h5 class="text-body-l-semibold dark:text-dark-base-600">Field Operations</h5>
+                                        <p class="text-body-m-regular dark:text-dark-base-500">On-site installation and support</p>
+                                    </div>
+                                    <div class="p-4 dark:bg-dark-stroke-base-400 rounded-lg">
+                                        <h5 class="text-body-l-semibold dark:text-dark-base-600">Quality Assurance</h5>
+                                        <p class="text-body-m-regular dark:text-dark-base-500">Testing and validation of devices</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -558,10 +525,10 @@
                                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Password</label>
                                     <div class="relative">
                                         <input type="password" name="password" id="newUserPassword" class="w-full rounded-lg border p-3 pr-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter password" required>
-                                        <button type="button" onclick="toggleNewUserPasswordVisibility()" class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-500">
-                                                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
+                                        <button type="button" onclick="toggleNewPasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg id="newPasswordToggleIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-500">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                <circle cx="12" cy="12" r="3"/>
                                             </svg>
                                         </button>
                                     </div>
@@ -569,16 +536,12 @@
                                 
                                 <div>
                                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Role</label>
-                                    <select name="role" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                        <option value="user">User</option>
-                                        <option value="manager">Manager</option>
+                                    <select name="role" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                                        <option value="">Select Role</option>
                                         <option value="admin">Admin</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="user">User</option>
                                     </select>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Department</label>
-                                    <input type="text" name="department" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter department">
                                 </div>
                                 
                                 <button type="submit" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
@@ -586,7 +549,7 @@
                                 </button>
                             </form>
                         </div>
-
+                        
                         <!-- Existing Users List -->
                         <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
                             <div class="flex items-center justify-between mb-4">
@@ -601,21 +564,49 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Other page contents -->
-                <div id="groundOperationsContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
+    <!-- Floating Add Button -->
+    <div id="floatingAddButton" class="fixed bottom-6 right-6 z-40 hidden">
+        <button onclick="showAddOptions()" class="floating-add-btn flex items-center justify-center w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white shadow-lg hover:dark:bg-brand-blue-500 transition-all transform hover:scale-110">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+            </svg>
+        </button>
+        
+        <!-- Add Options Menu -->
+        <div id="addOptionsMenu" class="hidden absolute bottom-16 right-0 w-48 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 rounded-lg shadow-lg">
+            <div class="p-2">
+                <button onclick="showAddLeadForm()" class="w-full text-left p-3 rounded-lg hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="m22 21-3-3m0 0a2 2 0 0 0 0-4 2 2 0 0 0 0 4"/>
+                        </svg>
+                        <span>Add New Lead</span>
                     </div>
-                </div>
+                </button>
+                <button onclick="showAddCustomerForm()" class="w-full text-left p-3 rounded-lg hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="m22 21-3-3m0 0a2 2 0 0 0 0-4 2 2 0 0 0 0 4"/>
+                        </svg>
+                        <span>Add New Customer</span>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Add Lead Form Modal -->
-    <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Lead</h2>
                 <button onclick="closeAddLeadForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
@@ -626,40 +617,43 @@
                 </button>
             </div>
             
-            <form id="addLeadForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Inbound/Outbound</label>
-                    <select name="type" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option>Inbound</option>
-                        <option>Outbound</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                    <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact</label>
-                    <input type="text" name="contact" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter contact information" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Potential Fleet Size</label>
-                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Status</label>
-                    <select name="status" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option>New</option>
-                        <option>In Progress</option>
-                        <option>Qualified</option>
-                        <option>Not Qualified</option>
-                        <option>Converted</option>
-                        <option>Closed</option>
-                    </select>
+            <form id="addLeadForm" onsubmit="handleAddLead(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Lead Type</label>
+                        <select name="type" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                            <option value="">Select Type</option>
+                            <option value="Inbound">Inbound</option>
+                            <option value="Outbound">Outbound</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                        <input type="text" name="customerName" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Contact</label>
+                        <input type="text" name="contact" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Fleet Size</label>
+                        <input type="number" name="fleetSize" required min="1" class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Status</label>
+                        <select name="status" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                            <option value="">Select Status</option>
+                            <option value="New">New</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Qualified">Qualified</option>
+                            <option value="Not Qualified">Not Qualified</option>
+                            <option value="Converted">Converted</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
@@ -695,201 +689,196 @@
                     </svg>
                     <div>
                         <h4 class="text-body-l-semibold dark:text-dark-warning-600">Finance Approval Required</h4>
-                        <p class="text-body-m-regular dark:text-dark-base-500 mt-1">This customer will be sent to Finance for approval. It will only appear in Customer Overview after approval.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step Indicator -->
-            <div class="mb-6">
-                <div class="flex items-center">
-                    <div class="step-indicator active" id="step1Indicator">
-                        <div class="step-number">1</div>
-                        <div class="step-label">Basic Details</div>
-                    </div>
-                    <div class="step-line"></div>
-                    <div class="step-indicator" id="step2Indicator">
-                        <div class="step-number">2</div>
-                        <div class="step-label">Requirements & POC</div>
+                        <p class="text-body-m-regular dark:text-dark-base-500 mt-1">This customer will be sent to Finance for approval. Only approved customers appear in the main overview.</p>
                     </div>
                 </div>
             </div>
             
-            <form id="addCustomerForm">
-                <!-- Step 1: Basic Details -->
+            <!-- Step Indicator -->
+            <div class="flex items-center justify-center mb-8">
+                <div class="flex items-center">
+                    <div id="step1Indicator" class="step-indicator active">
+                        <span>1</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div id="step2Indicator" class="step-indicator">
+                        <span>2</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="addCustomerForm" onsubmit="handleAddCustomer(event)">
+                <!-- Step 1: Basic Information -->
                 <div id="step1Content">
-                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Basic Customer Information</h3>
+                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-6">Step 1: Basic Information</h3>
                     
-                    <!-- Account Manager Details -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name of Account Manager</label>
-                            <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Account Manager Name</label>
+                            <input type="text" name="accountManagerName" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
                         </div>
                         
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Employee ID of Account Manager</label>
-                            <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter employee ID" required>
-                        </div>
-                    </div>
-
-                    <!-- Customer Details -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                            <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Account Manager ID</label>
+                            <input type="text" name="accountManagerId" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
                         </div>
                         
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile no.</label>
-                            <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter mobile number" required>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                            <input type="text" name="customerName" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Customer Mobile</label>
+                            <input type="tel" name="customerMobile" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
+                            <input type="email" name="customerEmail" required class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
                         </div>
                     </div>
-
-                    <div class="mb-6">
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
-                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
-                    </div>
-
-                    <!-- Lead Source -->
-                    <div class="mb-6">
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source (Select multiple)</label>
-                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 max-h-48 overflow-y-auto">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="social_media" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Other Digital Channels (Social Media)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="market_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Market Referrals (friend of Cautio)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="onground_marketing" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Onground Marketing (Roadshows, Events, Tradeshows, others etc.)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="field_sales" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Field Sales (walk-ins, via drivers or fleets)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="word_of_mouth" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">WORD OF MOUTH</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="customer_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Customer Referrals (customer of Cautio)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="cold_outreach" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach (Email or Call)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="linkedin" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">LinkedIn</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="channel_partners" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Channel Partners (Redbus, Wheelseye, others etc.)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="website_form" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Website Form (cautio.in/com)</span>
-                                </label>
-                                <label class="flex items-start">
-                                    <input type="checkbox" name="leadSource" value="other" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end">
+                    
+                    <div class="flex justify-end mt-6">
                         <button type="button" onclick="goToStep2()" class="py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Next
+                            Next Step
                         </button>
                     </div>
                 </div>
 
-                <!-- Step 2: Requirements & POC -->
+                <!-- Step 2: Requirements & POC Details -->
                 <div id="step2Content" class="hidden">
-                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Requirements & POC Details</h3>
+                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-6">Step 2: Requirements & POC Details</h3>
                     
-                    <!-- Customer Requirements -->
-                    <div class="mb-6">
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
-                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 space-y-2">
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_no_uniform" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver has not worn uniform</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_seatbelt" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver Seatbelt is unfastened</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_on_call" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver on call</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_smoking" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is smoking</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_consuming" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is Consuming Paan Masala/ Alcohol</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="driver_drowsiness" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Signs of driver drowsiness detected</span>
-                            </label>
-                            <label class="flex items-start">
-                                <input type="checkbox" name="requirements" value="overspeed_alert" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Overspeed Alert detected (__km/h)</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <!-- POC Type and Duration -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="space-y-6">
+                        <!-- Lead Sources -->
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
-                            <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                <option value="free_poc">Free POC</option>
-                                <option value="paid_poc">Paid POC</option>
-                                <option value="direct_onboarding">Direct Onboarding</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Duration</label>
-                            <div class="flex gap-2">
-                                <select name="pocDuration" id="pocDurationSelect" class="flex-1 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                    <option value="15">15 days</option>
-                                    <option value="30" selected>30 days</option>
-                                    <option value="45">45 days</option>
-                                    <option value="60">60 days</option>
-                                    <option value="custom">Custom</option>
-                                </select>
-                                <div id="customDurationDiv" class="hidden flex items-center gap-2">
-                                    <input type="number" name="customDuration" id="customDurationInput" min="1" max="365" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="30">
-                                    <span class="text-body-m-regular dark:text-dark-base-600">days</span>
-                                </div>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-3">Lead Sources (Select all that apply)</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Website" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Website</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Referral" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Referral</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Cold Call" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Cold Call</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Social Media" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Social Media</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Trade Show" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Trade Show</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="leadSource" value="Other" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
+                                </label>
                             </div>
                         </div>
+
+                        <!-- Requirements -->
+                        <div>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-3">Requirements (Select all that apply)</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Real-time Tracking" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Real-time Tracking</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Fleet Management" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Fleet Management</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Route Optimization" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Route Optimization</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Driver Monitoring" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Driver Monitoring</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Fuel Monitoring" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Fuel Monitoring</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="checkbox" name="requirements" value="Maintenance Alerts" class="form-checkbox">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Maintenance Alerts</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- POC Type -->
+                        <div>
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-3">POC Type</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3 cursor-pointer p-4 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocType" value="poc" required class="form-radio">
+                                    <div>
+                                        <span class="text-body-m-semibold dark:text-dark-base-600">Proof of Concept (POC)</span>
+                                        <p class="text-body-s-regular dark:text-dark-base-500">Customer will undergo a trial period</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer p-4 rounded-lg dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocType" value="direct_onboarding" required class="form-radio">
+                                    <div>
+                                        <span class="text-body-m-semibold dark:text-dark-base-600">Direct Onboarding</span>
+                                        <p class="text-body-s-regular dark:text-dark-base-500">Customer will be directly onboarded without POC</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- POC Duration (shown only for POC type) -->
+                        <div id="pocDurationSection">
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-3">POC Duration</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                                <label class="flex items-center justify-center p-3 rounded-lg cursor-pointer dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocDuration" value="30" class="sr-only" onchange="hideCustomDuration()">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">30 Days</span>
+                                </label>
+                                <label class="flex items-center justify-center p-3 rounded-lg cursor-pointer dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocDuration" value="60" class="sr-only" onchange="hideCustomDuration()">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">60 Days</span>
+                                </label>
+                                <label class="flex items-center justify-center p-3 rounded-lg cursor-pointer dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocDuration" value="90" class="sr-only" onchange="hideCustomDuration()">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">90 Days</span>
+                                </label>
+                                <label class="flex items-center justify-center p-3 rounded-lg cursor-pointer dark:bg-dark-stroke-base-400 hover:dark:bg-dark-stroke-base-600">
+                                    <input type="radio" name="pocDuration" value="custom" class="sr-only" onchange="showCustomDuration()">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Custom</span>
+                                </label>
+                            </div>
+                            
+                            <div id="customDurationDiv" class="hidden">
+                                <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Custom Duration (Days)</label>
+                                <input type="number" name="customDuration" min="1" max="365" class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                            </div>
+                        </div>
+
+                        <!-- POC Start Date (shown only for POC type) -->
+                        <div id="pocStartDateSection">
+                            <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">POC Start Date (Optional)</label>
+                            <input type="date" name="pocStartDate" class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600">
+                            <p class="text-body-s-regular dark:text-dark-base-500 mt-1">Leave empty to set start date after finance approval</p>
+                        </div>
                     </div>
                     
-                    <div class="mb-6">
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Start Date</label>
-                        <input type="date" name="pocStartDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                    </div>
-                    
-                    <div class="flex gap-4 pt-4">
+                    <div class="flex gap-4 pt-6">
                         <button type="button" onclick="goToStep1()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                            Back
+                            Previous
                         </button>
                         <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
                             Submit for Finance Approval
+                        </button>
+                        <button type="button" onclick="closeAddCustomerForm()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -900,64 +889,52 @@
     <!-- POC Action Modal -->
     <div id="pocActionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">POC Action Required</h2>
-                <button onclick="closePOCActionModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
+            <div class="text-center mb-6">
+                <h3 class="text-heading-6 dark:text-dark-base-600 mb-2">POC Actions</h3>
+                <p class="text-body-m-regular dark:text-dark-base-500">Choose an action for <span id="pocCustomerName" class="font-semibold"></span></p>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <button onclick="confirmOnboard()" class="w-full py-3 px-4 rounded-lg dark:bg-green-600 dark:text-utility-white hover:dark:bg-green-500 text-body-m-semibold">
+                    Onboard Customer
+                </button>
+                <button onclick="showExtendPOCForm()" class="w-full py-3 px-4 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
+                    Extend POC
+                </button>
+                <button onclick="confirmClose()" class="w-full py-3 px-4 rounded-lg dark:bg-red-600 dark:text-utility-white hover:dark:bg-red-500 text-body-m-semibold">
+                    Close POC
                 </button>
             </div>
             
-            <div class="space-y-4">
-                <p class="text-body-l-regular dark:text-dark-base-600 mb-4">
-                    Customer: <span id="pocCustomerName" class="font-semibold"></span>
-                </p>
-                <p class="text-body-m-regular dark:text-dark-base-500 mb-6">
-                    What would you like to do with this POC?
-                </p>
-                
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2">
-                        <button onclick="showExtendPOCForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Extend POC
-                        </button>
-                    </div>
-                    <button onclick="endPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
-                        End POC
-                    </button>
-                    <button onclick="onboardCustomer()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
-                        Onboard Customer
-                    </button>
-                </div>
-
-                <!-- Extend POC Form -->
-                <div id="extendPOCForm" class="hidden mt-4 p-4 border-t dark:border-dark-stroke-contrast-400">
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Extend by how many days?</label>
-                    <div class="flex items-center gap-2 mb-4">
-                        <input type="number" id="extendDaysInput" min="1" max="365" value="10" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <span class="text-body-m-regular dark:text-dark-base-600">days</span>
-                    </div>
-                    <div class="flex gap-2">
+            <!-- Extend POC Form -->
+            <div id="extendPOCForm" class="hidden">
+                <div class="border-t dark:border-dark-stroke-contrast-400 pt-4">
+                    <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Extend by how many days?</label>
+                    <input type="number" id="extendDaysInput" value="10" min="1" max="90" class="w-full px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:border dark:border-dark-stroke-contrast-400 dark:text-dark-base-600 mb-4">
+                    
+                    <div class="flex gap-3">
                         <button onclick="confirmExtendPOC()" class="flex-1 py-2 px-4 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
                             Confirm Extend
                         </button>
-                        <button onclick="hideExtendPOCForm()" class="py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        <button onclick="hideExtendPOCForm()" class="flex-1 py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
                             Cancel
                         </button>
                     </div>
                 </div>
             </div>
+            
+            <button onclick="closePOCActionModal()" class="w-full py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                Cancel
+            </button>
         </div>
     </div>
 
-    <!-- Manual Email Scheduling Modal -->
-    <div id="manualEmailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+    <!-- Finance Approval Modal -->
+    <div id="financeApprovalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Schedule Email</h2>
-                <button onclick="closeManualEmailModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Customer Approval</h2>
+                <button onclick="closeFinanceApprovalModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <path d="m18 6-12 12"/>
                         <path d="m6 6 12 12"/>
@@ -965,56 +942,48 @@
                 </button>
             </div>
             
-            <form id="manualEmailForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer</label>
-                    <p id="selectedCustomerName" class="text-body-m-regular dark:text-dark-base-500 mb-2"></p>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email Type</label>
-                    <select name="emailType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option value="poc_reminder">POC Reminder</option>
-                        <option value="followup">Follow-up</option>
-                        <option value="onboarding_reminder">Onboarding Reminder</option>
-                        <option value="custom">Custom Message</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Date</label>
-                    <input type="date" name="scheduleDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Time</label>
-                    <input type="time" name="scheduleTime" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                </div>
-                
-                <div id="customMessageDiv" class="hidden">
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Message</label>
-                    <textarea name="customMessage" rows="4" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Schedule Email
-                    </button>
-                    <button type="button" onclick="closeManualEmailModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
+            <div id="financeApprovalContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
         </div>
     </div>
 
-    <!-- Email Status Toast -->
-    <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm bg-green-600 text-white p-4 rounded-lg shadow-lg">
-        <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span id="emailToastMessage">Email sent successfully!</span>
+    <!-- Customer Details Modal -->
+    <div id="customerDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Customer Details</h2>
+                <button onclick="closeCustomerDetailsModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="customerDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Toast -->
+    <div id="emailToast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="px-6 py-4 rounded-lg shadow-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+            <div class="flex items-center gap-3">
+                <div id="toastIcon" class="flex-shrink-0">
+                    <!-- Icon will be added dynamically -->
+                </div>
+                <div>
+                    <div id="toastMessage" class="text-body-m-semibold dark:text-dark-base-600"></div>
+                </div>
+                <button onclick="hideEmailToast()" class="ml-4 p-1 rounded hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-500">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
