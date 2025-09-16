@@ -318,15 +318,16 @@
                     <h1 class="text-heading-6 dark:text-dark-base-600">Dashboard</h1>
                     <div class="flex items-center gap-4">
                         <button onclick="showAllCustomersNames()" class="text-body-l-regular dark:text-dark-base-600 cursor-pointer hover:dark:text-brand-blue-600 transition-colors flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
-                                <path d="m22 21-3-3"/>
-                                <path d="M22 11a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z"/>
-                                <path d="M19 14v-1a2 2 0 1 0-2-2h1"/>
+                                <path d="M22 11l-3-3"/>
+                                <path d="M22 8l-3 3"/>
+                                <path d="M19 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/>
+                                <path d="M7 8V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v4"/>
                             </svg>
-                            Total Approved Customers: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span>
                         </button>
+                        <span class="text-body-l-regular dark:text-dark-base-600">Total: <span id="totalCustomersHeaderCount" class="text-brand-blue-600 font-semibold">0</span></span>
                         <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -343,14 +344,6 @@
             <div id="contentArea" class="p-6">
                 <!-- Customers Overview Content -->
                 <div id="customersOverviewContent">
-                    <!-- Total Customers Count -->
-                    <div class="text-center mb-8">
-                        <div onclick="showAllCustomersNames()" class="inline-block px-8 py-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 cursor-pointer hover:dark:bg-dark-fill-base-600 transition-colors">
-                            <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Total Approved Customers</h2>
-                            <p id="totalCustomersDisplay" class="text-display-3 dark:text-brand-blue-600">0</p>
-                            <p class="text-body-s-regular dark:text-dark-base-500 mt-2">Click to view all approved customers</p>
-                        </div>
-                    </div>
 
                     <!-- Dashboard Tabs -->
                     <div class="mb-6">
@@ -660,17 +653,298 @@
 
                 <!-- Stock Content -->
                 <div id="stockContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Stock Management</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Inventory and stock management system</p>
+                    <div class="mb-8">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Stock Management</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Manage and track inventory stock levels</p>
+                    </div>
+
+                    <!-- Stock Overview Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-base-600">Total Items</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                    <path d="M12 3v6"/>
+                                </svg>
+                            </div>
+                            <p class="text-display-3 dark:text-brand-blue-600 mb-2">247</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Different Products</p>
+                        </div>
+
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-base-600">Low Stock</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-warning-600">
+                                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                                    <path d="M12 9v4"/>
+                                    <path d="m12 17 .01 0"/>
+                                </svg>
+                            </div>
+                            <p class="text-display-3 dark:text-dark-warning-600 mb-2">12</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Items Need Restock</p>
+                        </div>
+
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-base-600">Out of Stock</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-semantic-danger-300">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="m15 9-6 6"/>
+                                    <path d="m9 9 6 6"/>
+                                </svg>
+                            </div>
+                            <p class="text-display-3 dark:text-dark-semantic-danger-300 mb-2">5</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Items Out of Stock</p>
+                        </div>
+
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-base-600">Total Value</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-success-600">
+                                    <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                                </svg>
+                            </div>
+                            <p class="text-display-3 dark:text-dark-success-600 mb-2">₹2.4L</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Current Stock Value</p>
+                        </div>
+                    </div>
+
+                    <!-- Stock Table -->
+                    <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-heading-6 dark:text-dark-base-600">Current Stock Levels</h3>
+                            <div class="flex items-center gap-3">
+                                <input type="text" placeholder="Search stock..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <button class="px-4 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                    Add Stock
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Table Header -->
+                        <div class="grid grid-cols-6 gap-4 p-4 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400 mb-2">
+                            <div class="text-body-s-semibold dark:text-dark-base-600">Product Name</div>
+                            <div class="text-body-s-semibold dark:text-dark-base-600">SKU</div>
+                            <div class="text-body-s-semibold dark:text-dark-base-600">Category</div>
+                            <div class="text-body-s-semibold dark:text-dark-base-600">Current Stock</div>
+                            <div class="text-body-s-semibold dark:text-dark-base-600">Status</div>
+                            <div class="text-body-s-semibold dark:text-dark-base-600">Actions</div>
+                        </div>
+
+                        <!-- Sample Stock Data -->
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-6 gap-4 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400 transition-colors">
+                                <div class="text-body-m-regular dark:text-dark-base-600">Cautio Device V2</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">CD-V2-001</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">Hardware</div>
+                                <div class="text-body-m-semibold dark:text-dark-base-600">45</div>
+                                <div><span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">In Stock</span></div>
+                                <div class="flex items-center gap-2">
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white">Edit</button>
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600">View</button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-6 gap-4 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400 transition-colors">
+                                <div class="text-body-m-regular dark:text-dark-base-600">Mounting Bracket</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">MB-STD-001</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">Accessories</div>
+                                <div class="text-body-m-semibold dark:text-dark-base-600">8</div>
+                                <div><span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Low Stock</span></div>
+                                <div class="flex items-center gap-2">
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white">Edit</button>
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600">View</button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-6 gap-4 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 hover:dark:bg-dark-fill-base-400 transition-colors">
+                                <div class="text-body-m-regular dark:text-dark-base-600">Power Cable</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">PC-12V-001</div>
+                                <div class="text-body-s-regular dark:text-dark-base-500">Cables</div>
+                                <div class="text-body-m-semibold dark:text-dark-base-600">0</div>
+                                <div><span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Out of Stock</span></div>
+                                <div class="flex items-center gap-2">
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white">Restock</button>
+                                    <button class="px-2 py-1 text-xs rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600">View</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Inventory Management Content -->
                 <div id="inventoryManagementContent" class="hidden">
-                    <div class="text-center py-12">
-                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Inventory Management</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Advanced inventory management system</p>
+                    <div class="mb-8">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Inventory Management</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Advanced inventory tracking and management system</p>
+                    </div>
+
+                    <!-- Inventory Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="p-6 rounded-lg dark:bg-dark-success-600/20 dark:border dark:border-dark-success-600/30">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-success-600">Inward Stock</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-success-600">
+                                    <path d="m3 16 4 4 4-4"/>
+                                    <path d="M7 20V4"/>
+                                    <path d="M20 8h-5"/>
+                                    <path d="M15 10V6.5a2.5 2.5 0 0 1 2.5-2.5"/>
+                                    <path d="m15 14 5 2v-2"/>
+                                </svg>
+                            </div>
+                            <p class="text-heading-6 dark:text-dark-success-600">1,247</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Items Received This Month</p>
+                        </div>
+
+                        <div class="p-6 rounded-lg dark:bg-dark-warning-600/20 dark:border dark:border-dark-warning-600/30">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-warning-600">Outward Stock</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-warning-600">
+                                    <path d="m3 8 4-4 4 4"/>
+                                    <path d="M7 4v16"/>
+                                    <path d="M20 16h-5"/>
+                                    <path d="M15 14v3.5a2.5 2.5 0 0 1-2.5 2.5"/>
+                                    <path d="m15 10-5-2v2"/>
+                                </svg>
+                            </div>
+                            <p class="text-heading-6 dark:text-dark-warning-600">892</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Items Dispatched This Month</p>
+                        </div>
+
+                        <div class="p-6 rounded-lg dark:bg-dark-info-600/20 dark:border dark:border-dark-info-600/30">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-body-l-semibold dark:text-dark-info-600">Current Balance</h3>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-info-600">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M7 16V9"/>
+                                    <path d="M14 16V5"/>
+                                    <path d="M21 16V12"/>
+                                </svg>
+                            </div>
+                            <p class="text-heading-6 dark:text-dark-info-600">2,847</p>
+                            <p class="text-body-s-regular dark:text-dark-base-500">Total Items in Inventory</p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Recent Inward -->
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">Recent Inward Stock</h3>
+                                <button class="px-3 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
+                                    Add Inward
+                                </button>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-success-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Cautio Device V2</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Today, 2:30 PM</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-success-600">+50</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Supplier: TechCorp</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-success-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Power Cables</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Yesterday, 11:15 AM</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-success-600">+100</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Supplier: ElectroCorp</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-success-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Mounting Brackets</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">2 days ago</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-success-600">+75</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Supplier: MetalWorks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Outward -->
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">Recent Outward Stock</h3>
+                                <button class="px-3 py-2 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-600/90 text-body-s-semibold">
+                                    Add Outward
+                                </button>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-warning-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Cautio Device V2</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Today, 4:00 PM</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-warning-600">-15</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Customer: ABC Transport</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-warning-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Installation Kit</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Yesterday, 3:45 PM</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-warning-600">-8</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Customer: XYZ Logistics</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 border-l-4 border-dark-warning-600">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="text-body-l-semibold dark:text-dark-base-600">Power Adapters</h4>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">3 days ago</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-body-m-regular dark:text-dark-base-500">Quantity: <span class="font-semibold dark:text-dark-warning-600">-25</span></span>
+                                        <span class="text-body-s-regular dark:text-dark-base-500">Customer: PQR Fleet</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Alerts -->
+                    <div class="mt-8 p-6 rounded-lg dark:bg-dark-semantic-danger-300/20 dark:border dark:border-dark-semantic-danger-300/30">
+                        <div class="flex items-center gap-3 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-semantic-danger-300">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                                <path d="M12 9v4"/>
+                                <path d="m12 17 .01 0"/>
+                            </svg>
+                            <h3 class="text-heading-6 dark:text-dark-semantic-danger-300">Inventory Alerts</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="p-4 rounded-lg dark:bg-dark-fill-base-300">
+                                <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Power Cables</h4>
+                                <p class="text-body-m-regular dark:text-dark-semantic-danger-300">Out of Stock - Need immediate restock</p>
+                            </div>
+                            <div class="p-4 rounded-lg dark:bg-dark-fill-base-300">
+                                <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Mounting Brackets</h4>
+                                <p class="text-body-m-regular dark:text-dark-warning-600">Low Stock - 8 units remaining</p>
+                            </div>
+                            <div class="p-4 rounded-lg dark:bg-dark-fill-base-300">
+                                <h4 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Sim Cards</h4>
+                                <p class="text-body-m-regular dark:text-dark-warning-600">Low Stock - 12 units remaining</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
