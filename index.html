@@ -350,280 +350,412 @@
                 </div>
             </div>
 
-            <!-- Enhanced Tab Navigation -->
-            <div class="enhanced-tabs dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
-                <div class="flex space-x-1 overflow-x-auto">
-                    <button onclick="switchTab('all')" class="tab-button active" id="allTab">
-                        <span class="tab-label">All Customers</span>
-                        <span class="tab-count" id="allCount">0</span>
-                    </button>
-                    <button onclick="switchTab('leads')" class="tab-button" id="leadsTab">
-                        <span class="tab-label">Leads</span>
-                        <span class="tab-count" id="leadsCount">0</span>
-                    </button>
-                    <button onclick="switchTab('poc')" class="tab-button" id="pocTab">
-                        <span class="tab-label">Active POC</span>
-                        <span class="tab-count" id="pocCount">0</span>
-                    </button>
-                    <button onclick="switchTab('pending')" class="tab-button" id="pendingTab">
-                        <span class="tab-label">Pending Approvals</span>
-                        <span class="tab-count" id="pendingCount">0</span>
-                    </button>
-                    <button onclick="switchTab('approved')" class="tab-button" id="approvedTab">
-                        <span class="tab-label">Approved</span>
-                        <span class="tab-count" id="approvedCount">0</span>
-                    </button>
-                </div>
-            </div>
-
             <!-- Content Area -->
             <div class="p-6">
-                <!-- Quick Stats -->
-                <div class="mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <!-- Total Stock Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Total Stock</p>
-                                    <p id="totalStockCount" class="text-heading-6 dark:text-brand-blue-600">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-brand-blue-600/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
-                                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                                        <path d="M12 3v6"/>
-                                    </svg>
-                                </div>
+                <!-- Customers Overview Content -->
+                <div id="customersOverviewContent">
+                    <!-- Overview Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-brand-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <line x1="17" y1="10" x2="21" y2="10"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Total Stock</p>
+                                <p id="totalStockCount" class="text-heading-6 dark:text-brand-blue-600">0</p>
                             </div>
                         </div>
 
-                        <!-- Available Stock Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Available Stock</p>
-                                    <p id="availableStockCount" class="text-heading-6 dark:text-dark-success-600">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-dark-success-600/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-success-600">
-                                        <path d="M9 12l2 2 4-4"/>
-                                        <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.03 0 3.89.67 5.39 1.81"/>
-                                    </svg>
-                                </div>
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-success-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22,4 12,14.01 9,11.01"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Available Stock</p>
+                                <p id="availableStockCount" class="text-heading-6 dark:text-dark-success-600">0</p>
                             </div>
                         </div>
 
-                        <!-- Allocated Stock Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Allocated Stock</p>
-                                    <p id="allocatedStockCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-dark-warning-600/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-warning-600">
-                                        <path d="M12 9v4"/>
-                                        <path d="M12 17h.01"/>
-                                        <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"/>
-                                        <path d="M9 3h6v2a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1V3Z"/>
-                                    </svg>
-                                </div>
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-warning-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Allocated Stock</p>
+                                <p id="allocatedStockCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
                             </div>
                         </div>
 
-                        <!-- Total Approved Customers Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Approved Customers</p>
-                                    <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-dark-success-600/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-success-600">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="9" cy="7" r="4"/>
-                                        <path d="m22 21-3-3"/>
-                                    </svg>
-                                </div>
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-success-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <polyline points="22,10 22,14 16,14"/>
+                                </svg>
                             </div>
-                        </div>
-
-                        <!-- Inward Devices Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Inward Devices</p>
-                                    <p id="inwardDevicesCount" class="text-heading-6 dark:text-brand-blue-600">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-brand-blue-600/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
-                                        <path d="M12 9v6"/>
-                                        <path d="M9 12h6"/>
-                                        <circle cx="12" cy="12" r="10"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Outward Devices Card -->
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-2">Outward Devices</p>
-                                    <p id="outwardDevicesCount" class="text-heading-6 dark:text-dark-semantic-danger-300">0</p>
-                                </div>
-                                <div class="p-3 rounded-full dark:bg-dark-semantic-danger-300/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-semantic-danger-300">
-                                        <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
-                                    </svg>
-                                </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Total Approved</p>
+                                <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Content Container -->
-                <div class="mb-8">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <h2 class="text-heading-6 dark:text-dark-base-600" id="contentTitle">All Customers</h2>
-                            <div class="flex items-center gap-2">
-                                <span class="text-body-s-regular dark:text-dark-base-500" id="totalCustomersCount">0 customers</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center gap-3">
-                            <!-- Enhanced Search -->
-                            <div class="relative">
-                                <input type="text" id="searchInput" placeholder="Search customers..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                            </div>
-                            
-                            <button onclick="clearSearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                                Clear
+                    <!-- Enhanced Tab System -->
+                    <div class="enhanced-tabs dark:bg-dark-fill-base-300 rounded-xl p-2 mb-8">
+                        <div class="flex flex-wrap gap-2">
+                            <button id="allTab" class="tab-button active" onclick="showAllTab()">
+                                <span class="tab-label">All Customers</span>
+                                <span class="tab-count" id="allCount">0</span>
+                            </button>
+                            <button id="pocTab" class="tab-button" onclick="showPOCTab()">
+                                <span class="tab-label">POC</span>
+                                <span class="tab-count" id="pocCount">0</span>
+                            </button>
+                            <button id="onboardedTab" class="tab-button" onclick="showOnboardedTab()">
+                                <span class="tab-label">Onboarded</span>
+                                <span class="tab-count" id="onboardedCount">0</span>
+                            </button>
+                            <button id="closedTab" class="tab-button" onclick="showClosedTab()">
+                                <span class="tab-label">Closed</span>
+                                <span class="tab-count" id="closedCount">0</span>
+                            </button>
+                            <button id="ongoingLeadsTab" class="tab-button" onclick="showOngoingLeadsTab()">
+                                <span class="tab-label">Ongoing Leads</span>
+                                <span class="tab-count" id="ongoingLeadsCount">0</span>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Customer Content -->
-                <div id="customersContent">
-                    <div id="customersList" class="space-y-4">
-                        <!-- Customer items will be populated here -->
+                    <!-- Search Bar -->
+                    <div class="search-container mb-6">
+                        <div class="relative">
+                            <input type="text" id="searchInput" class="search-input w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Search customers...">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </div>
                     </div>
-                    
-                    <div id="customersEmptyState" class="text-center py-12 hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M22 10h-6"/>
-                            <path d="M22 14h-6"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers Found</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Try adjusting your search or add new customers</p>
+
+                    <!-- Tab Content -->
+                    <div id="tabContent">
+                        <!-- All Customers Tab -->
+                        <div id="allTabContent">
+                            <table class="compact-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="compact-th">Customer Name</th>
+                                        <th class="compact-th">Email</th>
+                                        <th class="compact-th">Mobile</th>
+                                        <th class="compact-th">Status</th>
+                                        <th class="compact-th">POC Start</th>
+                                        <th class="compact-th">POC End</th>
+                                        <th class="compact-th">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allCustomersList">
+                                    <!-- Customers will be populated here -->
+                                </tbody>
+                            </table>
+                            <div id="allEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <line x1="17" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers found matching your criteria</p>
+                            </div>
+                        </div>
+
+                        <!-- POC Tab -->
+                        <div id="pocTabContent" class="hidden">
+                            <table class="compact-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="compact-th">Customer Name</th>
+                                        <th class="compact-th">Email</th>
+                                        <th class="compact-th">POC Type</th>
+                                        <th class="compact-th">Days Remaining</th>
+                                        <th class="compact-th">Account Manager</th>
+                                        <th class="compact-th">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pocCustomersList">
+                                    <!-- POC customers will be populated here -->
+                                </tbody>
+                            </table>
+                            <div id="pocEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No POC Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers are currently in POC phase</p>
+                            </div>
+                        </div>
+
+                        <!-- Onboarded Tab -->
+                        <div id="onboardedTabContent" class="hidden">
+                            <table class="compact-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="compact-th">Customer Name</th>
+                                        <th class="compact-th">Email</th>
+                                        <th class="compact-th">Mobile</th>
+                                        <th class="compact-th">Source</th>
+                                        <th class="compact-th">Account Manager</th>
+                                        <th class="compact-th">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="onboardedCustomersList">
+                                    <!-- Onboarded customers will be populated here -->
+                                </tbody>
+                            </table>
+                            <div id="onboardedEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <polyline points="22,10 22,14 16,14"/>
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Onboarded Customers</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers have been onboarded yet</p>
+                            </div>
+                        </div>
+
+                        <!-- Closed Tab -->
+                        <div id="closedTabContent" class="hidden">
+                            <table class="compact-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="compact-th">Name</th>
+                                        <th class="compact-th">Contact</th>
+                                        <th class="compact-th">Type</th>
+                                        <th class="compact-th">Closed Date</th>
+                                        <th class="compact-th">Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="closedList">
+                                    <!-- Closed customers/leads will be populated here -->
+                                </tbody>
+                            </table>
+                            <div id="closedEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="m15 9-6 6"/>
+                                    <path d="m9 9 6 6"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Closed Records</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No customers or leads have been closed</p>
+                            </div>
+                        </div>
+
+                        <!-- Ongoing Leads Tab -->
+                        <div id="ongoingLeadsTabContent" class="hidden">
+                            <table class="compact-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="compact-th">Lead Name</th>
+                                        <th class="compact-th">Contact</th>
+                                        <th class="compact-th">Type</th>
+                                        <th class="compact-th">Fleet Size</th>
+                                        <th class="compact-th">Status</th>
+                                        <th class="compact-th">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ongoingLeadsList">
+                                    <!-- Ongoing leads will be populated here -->
+                                </tbody>
+                            </table>
+                            <div id="ongoingLeadsEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <line x1="17" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Ongoing Leads</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">No active leads in the pipeline</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Stock Content (Initially Hidden) -->
-                <div id="stockContent" class="hidden">
-                    <iframe src="stock.html" class="w-full h-screen border-0 rounded-lg"></iframe>
-                </div>
-
-                <!-- Inventory Management Content (Initially Hidden) -->
-                <div id="inventoryManagementContent" class="hidden">
-                    <iframe src="inventory.html" class="w-full h-screen border-0 rounded-lg"></iframe>
-                </div>
-
-                <!-- Finance Content (Initially Hidden) -->
+                <!-- Finance Content -->
                 <div id="financeContent" class="hidden">
-                    <div class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Finance Management</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Finance features coming soon</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-warning-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M8 12h8"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Pending Approvals</p>
+                                <p id="pendingApprovalsCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-success-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22,4 12,14.01 9,11.01"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Total Approved</p>
+                                <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon dark:text-dark-semantic-danger-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="m15 9-6 6"/>
+                                    <path d="m9 9 6 6"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <p class="text-body-s-regular dark:text-dark-base-500">Total Rejected</p>
+                                <p id="totalRejectedCount" class="text-heading-6 dark:text-dark-semantic-danger-300">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dark:bg-dark-fill-base-300 rounded-lg p-6">
+                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Pending Customer Approvals</h2>
+                        
+                        <table class="compact-table w-full">
+                            <thead>
+                                <tr>
+                                    <th class="compact-th">Customer Name</th>
+                                    <th class="compact-th">Email</th>
+                                    <th class="compact-th">POC Type</th>
+                                    <th class="compact-th">Account Manager</th>
+                                    <th class="compact-th">Submitted</th>
+                                    <th class="compact-th">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingApprovalsList">
+                                <!-- Pending approvals will be populated here -->
+                            </tbody>
+                        </table>
+                        
+                        <div id="financeEmptyState" class="text-center py-12 hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
+                            <p class="text-body-l-regular dark:text-dark-base-500">All customer submissions have been processed</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Ground Operations Content (Initially Hidden) -->
+                <!-- Stock Management Content -->
+                <div id="stockContent" class="hidden">
+                    <div class="text-center py-12">
+                        <div class="text-heading-6 dark:text-dark-base-600 mb-4">Stock Management</div>
+                        <p class="text-body-l-regular dark:text-dark-base-500 mb-6">Manage your inventory and stock levels</p>
+                        <button onclick="window.location.href='stock.html'" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
+                            Go to Stock Management
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Inventory Management Content -->
+                <div id="inventoryManagementContent" class="hidden">
+                    <div class="text-center py-12">
+                        <div class="text-heading-6 dark:text-dark-base-600 mb-4">Inventory Management</div>
+                        <p class="text-body-l-regular dark:text-dark-base-500 mb-6">Track device inward and outward movements</p>
+                        <button onclick="window.location.href='inventory.html'" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
+                            Go to Inventory Management
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ground Operations Content -->
                 <div id="groundOperationsContent" class="hidden">
                     <div class="text-center py-12">
                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
                             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
                         </svg>
                         <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Ground Operations</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Ground operations features coming soon</p>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Ground operations management coming soon</p>
                     </div>
                 </div>
 
-                <!-- Add Credentials Content (Initially Hidden) -->
+                <!-- Add Credentials Content -->
                 <div id="addCredentialsContent" class="hidden">
-                    <div class="max-w-2xl">
-                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Add Customer Credentials</h2>
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Add New Credentials</h2>
                         
-                        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 dark:border dark:border-dark-stroke-contrast-400">
-                            <form id="addCredentialForm" class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                                        <select name="customerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                                            <option value="">Select customer</option>
-                                            <!-- Options will be populated dynamically -->
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Credential Type</label>
-                                        <select name="credentialType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                                            <option value="">Select type</option>
-                                            <option value="login">Login Credentials</option>
-                                            <option value="api">API Keys</option>
-                                            <option value="database">Database Access</option>
-                                            <option value="ftp">FTP/SFTP</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                    </div>
+                        <form id="addCredentialForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service Name</label>
+                                    <input type="text" name="serviceName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="e.g., AWS, Google Cloud" required>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service/Platform Name</label>
-                                    <input type="text" name="serviceName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="e.g., AWS Console, Google Analytics, etc." required>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service Type</label>
+                                    <select name="serviceType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                                        <option value="">Select type</option>
+                                        <option value="cloud">Cloud Service</option>
+                                        <option value="api">API Service</option>
+                                        <option value="database">Database</option>
+                                        <option value="email">Email Service</option>
+                                        <option value="sms">SMS Service</option>
+                                        <option value="payment">Payment Gateway</option>
+                                        <option value="other">Other</option>
+                                    </select>
                                 </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Username/Email</label>
-                                        <input type="text" name="username" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter username or email">
-                                    </div>
-                                    <div>
-                                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Password/Token</label>
-                                        <input type="password" name="password" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter password or token">
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Additional Details</label>
-                                    <textarea name="additionalDetails" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Server URLs, port numbers, special instructions, etc."></textarea>
-                                </div>
-                                
-                                <div class="flex justify-end">
-                                    <button type="submit" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                        Save Credentials
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <!-- Credentials List -->
-                        <div class="mt-8">
-                            <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Stored Credentials</h3>
-                            <div id="credentialsList" class="space-y-4">
-                                <!-- Credentials will be populated here -->
                             </div>
-                        </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Username/API Key</label>
+                                    <input type="text" name="username" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter username or API key" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Password/Secret</label>
+                                    <input type="password" name="password" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter password or secret" required>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service URL (Optional)</label>
+                                <input type="url" name="serviceUrl" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="https://example.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
+                                <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes about this credential..."></textarea>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                    Save Credentials
+                                </button>
+                                <button type="button" onclick="showCustomersOverview()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -631,42 +763,43 @@
     </div>
 
     <!-- Floating Add Button -->
-    <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-40">
-        <button onclick="toggleAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+    <div id="floatingAddBtn" class="hidden">
+        <button onclick="toggleAddMenu()" class="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full shadow-2xl flex items-center justify-center text-white transition-all duration-300 hover:scale-105">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 5v14"/>
-                <path d="M5 12h14"/>
+                <path d="M12 5v14m-7-7h14"/>
             </svg>
         </button>
         
-        <!-- Add Menu -->
-        <div id="addMenu" class="hidden absolute bottom-16 right-0 w-48 dark:bg-dark-fill-base-300 rounded-lg shadow-lg dark:border dark:border-dark-stroke-contrast-400 overflow-hidden">
-            <button onclick="showAddLeadModal(); toggleAddMenu();" class="w-full text-left px-4 py-3 hover:dark:bg-dark-fill-base-600 text-body-s-semibold dark:text-dark-base-600 border-b dark:border-dark-stroke-contrast-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M22 10h-6"/>
-                    <path d="M22 14h-6"/>
-                </svg>
-                Add Lead
-            </button>
-            <button onclick="showAddCustomerModal(); toggleAddMenu();" class="w-full text-left px-4 py-3 hover:dark:bg-dark-fill-base-600 text-body-s-semibold dark:text-dark-base-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M22 21l-3-3"/>
-                </svg>
-                Add Customer
-            </button>
+        <!-- Add Menu Dropdown -->
+        <div id="addMenu" class="absolute bottom-16 right-0 hidden">
+            <div class="bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-xl border dark:border-dark-stroke-contrast-400 p-2 w-max">
+                <button onclick="showAddCustomerForm()" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-dark-fill-base-600 rounded-lg text-body-m-medium dark:text-dark-base-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-3">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="24" y2="13"/>
+                        <line x1="24" y1="8" x2="19" y2="13"/>
+                    </svg>
+                    Add Customer
+                </button>
+                <button onclick="showAddLeadForm()" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-dark-fill-base-600 rounded-lg text-body-m-medium dark:text-dark-base-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-3">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="17" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Add Lead
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Add Lead Modal -->
     <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Lead</h2>
-                <button onclick="closeAddLeadModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                <button onclick="closeAddLeadForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <path d="m18 6-12 12"/>
                         <path d="m6 6 12 12"/>
@@ -676,48 +809,45 @@
             
             <form id="addLeadForm" class="space-y-4">
                 <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Name</label>
-                    <input type="text" name="leadName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter lead name" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email</label>
-                    <input type="email" name="leadEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Phone Number</label>
-                    <input type="tel" name="leadPhone" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter phone number">
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Company</label>
-                    <input type="text" name="leadCompany" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter company name">
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source</label>
-                    <select name="leadSource" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <option value="">Select source</option>
-                        <option value="website">Website</option>
-                        <option value="referral">Referral</option>
-                        <option value="social_media">Social Media</option>
-                        <option value="cold_outreach">Cold Outreach</option>
-                        <option value="event">Event/Conference</option>
-                        <option value="other">Other</option>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Type</label>
+                    <select name="type" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select type</option>
+                        <option value="Inbound">Inbound</option>
+                        <option value="Outbound">Outbound</option>
                     </select>
                 </div>
                 
                 <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes</label>
-                    <textarea name="leadNotes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                    <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact (Email/Phone)</label>
+                    <input type="text" name="contact" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="email@domain.com or +1234567890" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Fleet Size</label>
+                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Number of vehicles" min="1">
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Status</label>
+                    <select name="status" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select status</option>
+                        <option value="New">New</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Not Qualified">Not Qualified</option>
+                    </select>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
                     <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
                         Add Lead
                     </button>
-                    <button type="button" onclick="closeAddLeadModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                    <button type="button" onclick="closeAddLeadForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
                         Cancel
                     </button>
                 </div>
@@ -730,7 +860,7 @@
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Customer</h2>
-                <button onclick="closeAddCustomerModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                <button onclick="closeAddCustomerForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <path d="m18 6-12 12"/>
                         <path d="m6 6 12 12"/>
@@ -738,66 +868,121 @@
                 </button>
             </div>
             
+            <!-- Step Indicator -->
+            <div class="flex items-center justify-center mb-8">
+                <div class="flex items-center">
+                    <div id="step1Indicator" class="step-indicator active">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Basic Info</div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div id="step2Indicator" class="step-indicator">
+                        <div class="step-number">2</div>
+                        <div class="step-label">POC Details</div>
+                    </div>
+                </div>
+            </div>
+            
             <form id="addCustomerForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                        <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                <!-- Step 1: Basic Information -->
+                <div id="step1Content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Account Manager Name</label>
+                            <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Account Manager ID</label>
+                            <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager ID">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                            <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile</label>
+                            <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="+1234567890">
+                        </div>
                     </div>
                     
                     <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email</label>
-                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Phone Number</label>
-                        <input type="tel" name="customerPhone" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter phone number" required>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
+                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="customer@example.com" required>
                     </div>
                     
                     <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Company</label>
-                        <input type="text" name="customerCompany" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter company name" required>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-3">Lead Sources</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="leadSource" value="website" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Website</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="leadSource" value="referral" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Referral</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="leadSource" value="social_media" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Social Media</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="leadSource" value="cold_outreach" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="button" onclick="goToStep2()" class="py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Next →
+                        </button>
                     </div>
                 </div>
                 
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Address</label>
-                    <textarea name="customerAddress" rows="2" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter complete address" required></textarea>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Step 2: POC Details -->
+                <div id="step2Content" class="hidden">
                     <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Account Manager</label>
-                        <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-3">Requirements</label>
+                        <div class="grid grid-cols-1 gap-3">
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="requirements" value="vehicle_tracking" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Vehicle Tracking</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="requirements" value="fleet_management" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Fleet Management</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="requirements" value="route_optimization" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Route Optimization</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="requirements" value="driver_monitoring" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver Monitoring</span>
+                            </label>
+                        </div>
                     </div>
                     
                     <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Manager Phone</label>
-                        <input type="tel" name="accountManagerPhone" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter manager phone" required>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Type</label>
+                        <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                            <option value="">Select POC type</option>
+                            <option value="free_poc">Free POC</option>
+                            <option value="paid_poc">Paid POC</option>
+                            <option value="direct_onboarding">Direct Onboarding</option>
+                        </select>
                     </div>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Type</label>
-                    <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select POC type</option>
-                        <option value="no_poc">No POC</option>
-                        <option value="free_poc">Free POC</option>
-                        <option value="paid_poc">Paid POC</option>
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
                     <div>
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Duration</label>
                         <select id="pocDurationSelect" name="pocDuration" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                            <option value="">Select duration</option>
-                            <option value="7">7 days</option>
                             <option value="15">15 days</option>
-                            <option value="30">30 days</option>
+                            <option value="30" selected>30 days</option>
                             <option value="45">45 days</option>
                             <option value="60">60 days</option>
                             <option value="custom">Custom</option>
@@ -806,33 +991,33 @@
                     
                     <div id="customDurationDiv" class="hidden">
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Duration (days)</label>
-                        <input type="number" name="customDuration" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter days" min="1">
+                        <input type="number" name="customDuration" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter custom duration" min="1">
                     </div>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes</label>
-                    <textarea name="customerNotes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Add Customer
-                    </button>
-                    <button type="button" onclick="closeAddCustomerModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
+                    
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Start Date</label>
+                        <input type="date" name="pocStartDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                    
+                    <div class="flex gap-4 pt-4">
+                        <button type="button" onclick="goToStep1()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            ← Back
+                        </button>
+                        <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Submit for Approval
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Customer Details Modal -->
-    <div id="customerDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <!-- POC Action Modal -->
+    <div id="pocActionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Customer Details</h2>
-                <button onclick="closeCustomerDetailsModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                <h2 class="text-heading-6 dark:text-dark-base-600">POC Actions</h2>
+                <button onclick="closePOCActionModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <path d="m18 6-12 12"/>
                         <path d="m6 6 12 12"/>
@@ -840,13 +1025,45 @@
                 </button>
             </div>
             
-            <div id="customerDetailsContent">
-                <!-- Customer details will be populated here -->
+            <div class="mb-6">
+                <p class="text-body-l-regular dark:text-dark-base-600">Choose an action for customer:</p>
+                <p class="text-body-l-semibold dark:text-dark-base-600" id="pocCustomerName">-</p>
+            </div>
+            
+            <div class="space-y-3">
+                <button onclick="showExtendPOCForm()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-700 text-body-s-semibold">
+                    Extend POC
+                </button>
+                <button onclick="onboardCustomer()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-700 text-body-s-semibold">
+                    Onboard Customer
+                </button>
+                <button onclick="endPOC()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-400 text-body-s-semibold">
+                    End POC
+                </button>
+            </div>
+            
+            <!-- Extend POC Form -->
+            <div id="extendPOCForm" class="hidden mt-6 p-4 rounded-lg dark:bg-dark-fill-base-400">
+                <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-3">Extend POC Duration</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Additional Days</label>
+                        <input type="number" id="extendDaysInput" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter days to extend" value="10" min="1">
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="confirmExtendPOC()" class="flex-1 py-2 px-4 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-700 text-body-s-semibold">
+                            Confirm Extend
+                        </button>
+                        <button onclick="hideExtendPOCForm()" class="flex-1 py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Manual Email Scheduling Modal -->
+    <!-- Manual Email Modal -->
     <div id="manualEmailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
             <div class="flex items-center justify-between mb-6">
@@ -860,8 +1077,8 @@
             </div>
             
             <div class="mb-4">
-                <span class="text-body-l-regular dark:text-dark-base-500">Scheduling email for: </span>
-                <span id="selectedCustomerName" class="text-body-l-semibold dark:text-dark-base-600"></span>
+                <p class="text-body-l-regular dark:text-dark-base-600">Schedule email for:</p>
+                <p class="text-body-l-semibold dark:text-dark-base-600" id="selectedCustomerName">-</p>
             </div>
             
             <form id="manualEmailForm" class="space-y-4">
@@ -878,15 +1095,14 @@
                 
                 <div id="customMessageDiv" class="hidden">
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Message</label>
-                    <textarea name="customMessage" rows="4" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
+                    <textarea name="customMessage" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Date</label>
                         <input type="date" name="scheduleDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
                     </div>
-                    
                     <div>
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Time</label>
                         <input type="time" name="scheduleTime" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
@@ -905,48 +1121,13 @@
         </div>
     </div>
 
-    <!-- POC Action Modal -->
-    <div id="pocActionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">POC Action Required</h2>
-                <button onclick="closePOCActionModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="mb-6">
-                <p class="text-body-l-regular dark:text-dark-base-500">Customer: <span id="pocActionCustomerName" class="text-body-l-semibold dark:text-dark-base-600"></span></p>
-                <p class="text-body-l-regular dark:text-dark-base-500">POC has been running for: <span id="pocDurationText" class="text-body-l-semibold dark:text-dark-base-600"></span></p>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="extendPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                    Extend POC
-                </button>
-                <button onclick="convertToCustomer()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-500 text-body-s-semibold">
-                    Convert to Customer
-                </button>
-                <button onclick="endPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
-                    End POC
-                </button>
-                <button onclick="closePOCActionModal()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                    Remind Later
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Email Toast -->
-    <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg dark:bg-dark-success-600 dark:text-utility-white">
+    <!-- Success Toast -->
+    <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg">
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
-            <span id="emailToastMessage">Email sent successfully!</span>
+            <span id="emailToastMessage">Action completed successfully!</span>
         </div>
     </div>
 
