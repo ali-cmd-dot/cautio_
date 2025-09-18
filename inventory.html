@@ -1,335 +1,738 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management - Cautio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="inventory.css">
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
-</head>
-<body class="__variable_3c557b dark font-sans dark:bg-dark-fill-base-400 locale-en" style="--primary-font:'__Inter_e8ce0c', '__Inter_Fallback_e8ce0c'">
+/* Inventory Management Specific Styles */
+
+/* Inventory Tab Buttons - Distinct from main dashboard tabs */
+.inventory-tab-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: #2d3748;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #a0aec0;
+    min-height: 44px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-tab-button:hover:not(.active) {
+    background: #3a4a5c;
+    color: #cbd5e0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.inventory-tab-button.active {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #ffffff;
+    border-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+    font-weight: 700;
+}
+
+.inventory-tab-button .tab-label {
+    display: block;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.inventory-tab-button .tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    line-height: 1;
+    backdrop-filter: blur(4px);
+}
+
+.inventory-tab-button.active .tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-tab-button:not(.active) .tab-count {
+    background: rgba(5, 150, 105, 0.6);
+    color: #ffffff;
+}
+
+/* Device Cards */
+.device-card {
+    background: linear-gradient(135deg, rgba(45, 55, 72, 0.1) 0%, rgba(74, 85, 104, 0.1) 100%);
+    border: 1px solid rgba(74, 76, 89, 0.3);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.device-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.15);
+    border-color: rgba(5, 150, 105, 0.3);
+}
+
+.device-card.outward-card {
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
+    border-color: rgba(198, 52, 42, 0.3);
+}
+
+.device-card.outward-card:hover {
+    box-shadow: 0 8px 25px rgba(198, 52, 42, 0.15);
+    border-color: rgba(198, 52, 42, 0.5);
+}
+
+/* Status Badges for Devices */
+.device-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.device-status-badge.available {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.device-status-badge.allocated {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.device-status-badge.returned {
+    background-color: #6b7280;
+    color: #fff;
+}
+
+/* Condition Badges - UPDATED with new conditions */
+.condition-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.condition-badge.good {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.condition-badge.new {
+    background-color: #0045ff;
+    color: #fff;
+}
+
+.condition-badge.lense_issue {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.condition-badge.sim_module_fail {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+.condition-badge.auto_restart {
+    background-color: #8b5cf6;
+    color: #fff;
+}
+
+.condition-badge.device_tampered {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+/* Legacy condition badges for backward compatibility */
+.condition-badge.used {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.condition-badge.refurbished {
+    background-color: #f59e0b;
+    color: #fff;
+}
+
+.condition-badge.damaged {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+/* CSV Import Areas */
+.csv-import-area {
+    border: 2px dashed rgba(74, 76, 89, 0.5);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(26, 90, 255, 0.05) 100%);
+    cursor: pointer;
+}
+
+.csv-import-area:hover {
+    border-color: #0045ff;
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
+    transform: translateY(-1px);
+}
+
+.csv-import-area.drag-over {
+    border-color: #059669;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+    transform: scale(1.02);
+}
+
+/* Outward CSV Import Area */
+.csv-import-area.outward-import {
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.05) 0%, rgba(245, 101, 101, 0.05) 100%);
+}
+
+.csv-import-area.outward-import:hover {
+    border-color: #c6342a;
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.1) 0%, rgba(245, 101, 101, 0.1) 100%);
+}
+
+.csv-import-area.outward-import.drag-over {
+    border-color: #c6342a;
+    background: linear-gradient(135deg, rgba(198, 52, 42, 0.15) 0%, rgba(245, 101, 101, 0.15) 100%);
+}
+
+/* Import Progress Bars */
+.import-progress {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.import-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    transition: width 0.3s ease;
+    width: 0%;
+    border-radius: 4px;
+}
+
+.import-progress-bar.outward-progress {
+    background: linear-gradient(90deg, #c6342a 0%, #f56565 100%);
+}
+
+/* Import Results */
+.import-results {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+.import-results.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* File Upload Buttons */
+.file-upload-btn {
+    background: linear-gradient(135deg, #0045ff 0%, #1a5aff 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-upload-btn:hover {
+    background: linear-gradient(135deg, #1a5aff 0%, #3366ff 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 69, 255, 0.3);
+}
+
+.file-upload-btn.outward-btn {
+    background: linear-gradient(135deg, #c6342a 0%, #f56565 100%);
+}
+
+.file-upload-btn.outward-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(198, 52, 42, 0.3);
+}
+
+/* Inventory Search Bar Enhancement */
+#inventorySearchInput {
+    transition: all 0.3s ease;
+}
+
+#inventorySearchInput:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    border-color: #059669;
+}
+
+/* Loading Spinner for Inventory */
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-icon {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: solid 3px transparent;
+    border-top-color: #059669;
+    border-left-color: #059669;
+    border-radius: 50%;
+    animation: inventory-spinner 1s linear infinite;
+}
+
+@keyframes inventory-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Stock Summary Cards */
+.stock-summary-card {
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.1) 0%, rgba(26, 90, 255, 0.1) 100%);
+    border: 1px solid rgba(0, 69, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stock-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 69, 255, 0.15);
+    border-color: rgba(0, 69, 255, 0.3);
+}
+
+/* Form Enhancements */
+.inventory-form input:focus,
+.inventory-form select:focus,
+.inventory-form textarea:focus {
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    border-color: #059669;
+    outline: none;
+}
+
+/* Toast Notifications */
+#inventoryToast {
+    transition: all 0.3s ease;
+    transform: translateX(100%);
+}
+
+#inventoryToast.show {
+    transform: translateX(0);
+}
+
+#inventoryToast.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+#inventoryToast.error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+#inventoryToast.warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Device Info Grid */
+.device-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.device-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.device-info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(220, 226, 229, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.device-info-value {
+    font-size: 0.875rem;
+    color: rgba(220, 226, 229, 1);
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.device-action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.device-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.device-action-btn.view {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.device-action-btn.edit {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+}
+
+.device-action-btn.delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.device-action-btn.return {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+}
+
+/* Empty State Enhancements */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-state svg {
+    opacity: 0.6;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Modal Enhancements */
+.inventory-modal {
+    backdrop-filter: blur(8px);
+}
+
+.inventory-modal .modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Device Timeline */
+.device-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.device-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #059669 0%, #10b981 100%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.75rem;
+    top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    background: #059669;
+    border-radius: 50%;
+    border: 2px solid #1a1a1a;
+}
+
+/* Quick Stats */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: rgba(45, 55, 72, 0.5);
+    border: 1px solid rgba(74, 76, 89, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0045ff;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: rgba(220, 226, 229, 0.7);
+    margin-top: 0.25rem;
+}
+
+/* Enhanced Scrollbar for Inventory */
+.inventory-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.inventory-content::-webkit-scrollbar-track {
+    background: rgba(74, 76, 89, 0.3);
+    border-radius: 4px;
+}
+
+.inventory-content::-webkit-scrollbar-thumb {
+    background: rgba(5, 150, 105, 0.5);
+    border-radius: 4px;
+}
+
+.inventory-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(5, 150, 105, 0.7);
+}
+
+/* Bulk Import Section Styling */
+.bulk-import-section {
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border: 1px solid rgba(0, 69, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.bulk-import-section:hover {
+    border-color: rgba(0, 69, 255, 0.2);
+    background: linear-gradient(135deg, rgba(0, 69, 255, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+}
+
+/* Progress Animation */
+@keyframes progressPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.import-progress-bar {
+    animation: progressPulse 1.5s ease-in-out infinite;
+}
+
+/* Success/Error Message Animations */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(0.9);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.import-results {
+    animation: bounceIn 0.6s ease-out;
+}
+
+/* Enhanced CSV Drag Area Icons */
+.csv-import-area svg {
+    transition: all 0.3s ease;
+}
+
+.csv-import-area:hover svg {
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.csv-import-area.drag-over svg {
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .inventory-tab-button {
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
     
-    <!-- Loading Overlay -->
-    <div id="inventoryLoadingOverlay" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center">
-        <div class="flex flex-col items-center">
-            <div class="spinner">
-                <div class="spinner-icon"></div>
-            </div>
-            <div class="mt-8 text-center">
-                <div class="text-heading-6 dark:text-dark-base-600 mb-2">Processing...</div>
-                <div class="text-body-l-regular dark:text-dark-base-500">Please wait</div>
-            </div>
-        </div>
-    </div>
+    .inventory-tab-button .tab-count {
+        margin-left: 4px;
+        padding: 1px 6px;
+        font-size: 0.625rem;
+    }
+    
+    .device-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #inventorySearchInput {
+        width: 100%;
+    }
+    
+    .csv-import-area {
+        padding: 1rem;
+    }
+    
+    .csv-import-area svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .bulk-import-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .device-action-btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.625rem;
+    }
+}
 
-    <!-- Main Container -->
-    <div class="min-h-screen dark:bg-dark-fill-base-400">
-        <!-- Header -->
-        <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <button onclick="goBackToDashboard()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        Back to Dashboard
-                    </button>
-                    <h1 class="text-heading-6 dark:text-dark-base-600">Inventory Management</h1>
-                </div>
-                
-                <!-- Stock Summary -->
-                <div class="flex items-center gap-6">
-                    <div class="text-center">
-                        <div class="text-body-s-semibold dark:text-dark-base-500">Total Stock</div>
-                        <div id="totalStockCount" class="text-heading-6 dark:text-brand-blue-600">0</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-body-s-semibold dark:text-dark-base-500">Available</div>
-                        <div id="availableStockCount" class="text-heading-6 dark:text-dark-success-600">0</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-body-s-semibold dark:text-dark-base-500">Allocated</div>
-                        <div id="allocatedStockCount" class="text-heading-6 dark:text-dark-warning-600">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+@media (max-width: 480px) {
+    .inventory-tab-button {
+        padding: 6px 12px;
+        font-size: 0.625rem;
+        margin-right: 2px;
+    }
+    
+    .device-card {
+        padding: 0.75rem;
+    }
+    
+    .csv-import-area {
+        padding: 0.75rem;
+    }
+}
 
-        <!-- Tab Navigation -->
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex space-x-1">
-                    <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
-                        <span class="tab-label">Inward</span>
-                        <span class="tab-count" id="inwardCount">0</span>
-                    </button>
-                    <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
-                        <span class="tab-label">Outward</span>
-                        <span class="tab-count" id="outwardCount">0</span>
-                    </button>
-                </div>
-                
-                <!-- Search and Actions -->
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <input type="text" id="inventorySearchInput" placeholder="Search devices..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                    </div>
-                    <button onclick="clearInventorySearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Clear
-                    </button>
-                </div>
-            </div>
+/* Performance optimizations */
+.device-card,
+.csv-import-area,
+.file-upload-btn,
+.device-action-btn {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
 
-            <!-- Tab Content -->
-            <div id="inventoryTabContent">
-                <!-- Inward Tab Content -->
-                <div id="inwardTabContent">
-                    <!-- CSV Upload Section for Inward -->
-                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Inward Import</h4>
-                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Device Condition, Notes</p>
-                        
-                        <div class="csv-import-area" id="inwardCSVImportArea">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-brand-blue-600">
-                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                                <path d="M12 3v6"/>
-                            </svg>
-                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
-                            <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
-                            <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
-                                Choose CSV File
-                            </button>
-                        </div>
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
 
-                        <!-- Import Progress -->
-                        <div id="inwardImportProgressSection" class="hidden mt-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
-                                <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
-                            </div>
-                            <div class="import-progress">
-                                <div id="inwardImportProgressBar" class="import-progress-bar"></div>
-                            </div>
-                        </div>
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .condition-badge {
+        border: 2px solid currentColor;
+        font-weight: 700;
+    }
+    
+    .device-action-btn {
+        border: 2px solid currentColor;
+    }
+    
+    .csv-import-area {
+        border-width: 3px;
+    }
+}
 
-                        <!-- Import Results -->
-                        <div id="inwardImportResults" class="hidden mt-4">
-                            <!-- Results will be populated here -->
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
-                        <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Add Inward Device
-                        </button>
-                    </div>
-                    
-                    <div id="inwardDevicesList" class="space-y-4">
-                        <!-- Inward devices will be populated here -->
-                    </div>
-                    
-                    <div id="inwardEmptyState" class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                            <path d="M12 3v6"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">No devices have been received yet</p>
-                    </div>
-                </div>
-
-                <!-- Outward Tab Content -->
-                <div id="outwardTabContent" class="hidden">
-                    <!-- CSV Upload Section for Outward -->
-                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Outward Import</h4>
-                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Customer Name, Location, Outward Date, SIM No, Notes</p>
-                        
-                        <div class="csv-import-area outward-import" id="outwardCSVImportArea">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-dark-semantic-danger-300">
-                                <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
-                            </svg>
-                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
-                            <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
-                            <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn outward-btn">
-                                Choose CSV File
-                            </button>
-                        </div>
-
-                        <!-- Import Progress -->
-                        <div id="outwardImportProgressSection" class="hidden mt-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
-                                <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
-                            </div>
-                            <div class="import-progress">
-                                <div id="outwardImportProgressBar" class="import-progress-bar outward-progress"></div>
-                            </div>
-                        </div>
-
-                        <!-- Import Results -->
-                        <div id="outwardImportResults" class="hidden mt-4">
-                            <!-- Results will be populated here -->
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
-                        <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
-                            Add Outward Device
-                        </button>
-                    </div>
-                    
-                    <div id="outwardDevicesList" class="space-y-4">
-                        <!-- Outward devices will be populated here -->
-                    </div>
-                    
-                    <div id="outwardEmptyState" class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Inward Device Modal -->
-    <div id="addInwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Add Inward Device</h2>
-                <button onclick="closeAddInwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="addInwardForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
-                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device registration number" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
-                    <input type="text" name="deviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Condition</label>
-                    <select name="deviceCondition" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select condition</option>
-                        <option value="good">Good</option>
-                        <option value="lense_issue">Lense issue</option>
-                        <option value="sim_module_fail">SIM module fail</option>
-                        <option value="auto_restart">Auto restart</option>
-                        <option value="device_tampered">Device tampered</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Add to Inward
-                    </button>
-                    <button type="button" onclick="closeAddInwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Outward Device Modal -->
-    <div id="addOutwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">Add Outward Device</h2>
-                <button onclick="closeAddOutwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
-                        <path d="m18 6-12 12"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="addOutwardForm" class="space-y-4">
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
-                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device registration number" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
-                    <input type="text" name="deviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
-                    <select name="customerId" id="customerSelect" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select customer</option>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Location</label>
-                    <input type="text" name="location" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter location" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Date</label>
-                    <input type="date" name="outwardDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">SIM No (Optional)</label>
-                    <input type="text" name="simNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter SIM number">
-                </div>
-                
-                <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
-                </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
-                        Add to Outward
-                    </button>
-                    <button type="button" onclick="closeAddOutwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Success/Error Toast -->
-    <div id="inventoryToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg">
-        <div class="flex items-center">
-            <span id="inventoryToastIcon" class="h-5 w-5 mr-2"></span>
-            <span id="inventoryToastMessage">Action completed successfully!</span>
-        </div>
-    </div>
-
-    <script src="inventory.js"></script>
-</body>
-</html>
+/* Print styles */
+@media print {
+    .csv-import-area,
+    .file-upload-btn,
+    .device-action-btn,
+    #inventoryToast,
+    #inventoryLoadingOverlay {
+        display: none !important;
+    }
+    
+    .device-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+}
