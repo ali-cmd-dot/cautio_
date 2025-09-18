@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="inventory.css">
     <title>Cautio</title>
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="assets/favicon.ico">
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen">
-                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png">
+                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="assets/main-logo.png 1x, assets/main-logo-1.png 2x" src="assets/main-logo-1.png">
                     </div>
                 </div>
                 <div class="flex justify-center self-center">
@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <div class="relative z-10 flex items-center justify-center sm:mt-0 sm:h-screen">
-                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="main-logo.png 1x, main-logo-1.png 2x" src="main-logo-1.png">
+                        <img alt="Auth" fetchpriority="high" width="436" height="436" decoding="async" data-nimg="1" style="color:transparent" srcset="assets/main-logo.png 1x, assets/main-logo-1.png 2x" src="assets/main-logo-1.png">
                     </div>
                 </div>
                 <div class="flex justify-center self-center">
@@ -342,7 +342,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                                 <polyline points="16,17 21,12 16,7"/>
-                                <line x1="21" y1="12" x2="9" y2="12"/>
+                                <line x1="21" x2="9" y1="12" y2="12"/>
                             </svg>
                             Logout
                         </button>
@@ -351,241 +351,175 @@
             </div>
 
             <!-- Content Area -->
-            <div class="p-6">
+            <div id="contentArea" class="p-6">
                 <!-- Customers Overview Content -->
                 <div id="customersOverviewContent">
-                    <!-- Overview Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-brand-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <line x1="17" y1="10" x2="21" y2="10"/>
-                                </svg>
+                    <!-- Dashboard Tabs -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex space-x-1">
+                                <button onclick="showAllTab()" class="tab-button active" id="allTab">
+                                    <span class="tab-label">All</span>
+                                    <span class="tab-count" id="allCount">0</span>
+                                </button>
+                                <button onclick="showPOCTab()" class="tab-button" id="pocTab">
+                                    <span class="tab-label">POC</span>
+                                    <span class="tab-count" id="pocCount">0</span>
+                                </button>
+                                <button onclick="showOnboardedTab()" class="tab-button" id="onboardedTab">
+                                    <span class="tab-label">Onboarded</span>
+                                    <span class="tab-count" id="onboardedCount">0</span>
+                                </button>
+                                <button onclick="showClosedTab()" class="tab-button" id="closedTab">
+                                    <span class="tab-label">Closed</span>
+                                    <span class="tab-count" id="closedCount">0</span>
+                                </button>
+                                <button onclick="showOngoingLeadsTab()" class="tab-button" id="ongoingLeadsTab">
+                                    <span class="tab-label">Ongoing Leads</span>
+                                    <span class="tab-count" id="ongoingLeadsCount">0</span>
+                                </button>
                             </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Total Stock</p>
-                                <p id="totalStockCount" class="text-heading-6 dark:text-brand-blue-600">0</p>
+                            
+                            <!-- Search and Clear -->
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <input type="text" id="searchInput" placeholder="Search customers..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                    </svg>
+                                </div>
+                                <button onclick="clearSearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                                    Clear
+                                </button>
                             </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-success-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                    <polyline points="22,4 12,14.01 9,11.01"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Available Stock</p>
-                                <p id="availableStockCount" class="text-heading-6 dark:text-dark-success-600">0</p>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-warning-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="3"/>
-                                    <path d="M12 1v6m0 6v6"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Allocated Stock</p>
-                                <p id="allocatedStockCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-success-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <polyline points="22,10 22,14 16,14"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Total Approved</p>
-                                <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Enhanced Tab System -->
-                    <div class="enhanced-tabs dark:bg-dark-fill-base-300 rounded-xl p-2 mb-8">
-                        <div class="flex flex-wrap gap-2">
-                            <button id="allTab" class="tab-button active" onclick="showAllTab()">
-                                <span class="tab-label">All Customers</span>
-                                <span class="tab-count" id="allCount">0</span>
-                            </button>
-                            <button id="pocTab" class="tab-button" onclick="showPOCTab()">
-                                <span class="tab-label">POC</span>
-                                <span class="tab-count" id="pocCount">0</span>
-                            </button>
-                            <button id="onboardedTab" class="tab-button" onclick="showOnboardedTab()">
-                                <span class="tab-label">Onboarded</span>
-                                <span class="tab-count" id="onboardedCount">0</span>
-                            </button>
-                            <button id="closedTab" class="tab-button" onclick="showClosedTab()">
-                                <span class="tab-label">Closed</span>
-                                <span class="tab-count" id="closedCount">0</span>
-                            </button>
-                            <button id="ongoingLeadsTab" class="tab-button" onclick="showOngoingLeadsTab()">
-                                <span class="tab-label">Ongoing Leads</span>
-                                <span class="tab-count" id="ongoingLeadsCount">0</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Search Bar -->
-                    <div class="search-container mb-6">
-                        <div class="relative">
-                            <input type="text" id="searchInput" class="search-input w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Search customers...">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
-                                <circle cx="11" cy="11" r="8"/>
-                                <path d="m21 21-4.35-4.35"/>
-                            </svg>
                         </div>
                     </div>
 
                     <!-- Tab Content -->
                     <div id="tabContent">
-                        <!-- All Customers Tab -->
+                        <!-- All Tab Content -->
                         <div id="allTabContent">
-                            <table class="compact-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="compact-th">Customer Name</th>
-                                        <th class="compact-th">Email</th>
-                                        <th class="compact-th">Mobile</th>
-                                        <th class="compact-th">Status</th>
-                                        <th class="compact-th">POC Start</th>
-                                        <th class="compact-th">POC End</th>
-                                        <th class="compact-th">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="allCustomersList">
-                                    <!-- Customers will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="allEmptyState" class="text-center py-12 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <line x1="17" y1="10" x2="21" y2="10"/>
-                                </svg>
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No customers found matching your criteria</p>
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Customer Name</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Email</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Mobile</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Status</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">POC Start</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">POC End</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="allCustomersList">
+                                        <!-- Customers will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="allEmptyState" class="text-center py-12">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Customers Found</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">Click the + button to add new customers</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- POC Tab -->
+                        <!-- POC Tab Content -->
                         <div id="pocTabContent" class="hidden">
-                            <table class="compact-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="compact-th">Customer Name</th>
-                                        <th class="compact-th">Email</th>
-                                        <th class="compact-th">POC Type</th>
-                                        <th class="compact-th">Days Remaining</th>
-                                        <th class="compact-th">Account Manager</th>
-                                        <th class="compact-th">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pocCustomersList">
-                                    <!-- POC customers will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="pocEmptyState" class="text-center py-12 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                    <circle cx="12" cy="12" r="3"/>
-                                    <path d="M12 1v6m0 6v6"/>
-                                </svg>
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No POC Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No customers are currently in POC phase</p>
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Customer Name</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Email</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">POC Type</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Days Remaining</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Account Manager</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pocCustomersList">
+                                        <!-- POC customers will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="pocEmptyState" class="text-center py-12">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No POC Customers</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No approved POC customers found</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Onboarded Tab -->
+                        <!-- Onboarded Tab Content -->
                         <div id="onboardedTabContent" class="hidden">
-                            <table class="compact-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="compact-th">Customer Name</th>
-                                        <th class="compact-th">Email</th>
-                                        <th class="compact-th">Mobile</th>
-                                        <th class="compact-th">Source</th>
-                                        <th class="compact-th">Account Manager</th>
-                                        <th class="compact-th">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="onboardedCustomersList">
-                                    <!-- Onboarded customers will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="onboardedEmptyState" class="text-center py-12 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                    <polyline points="22,10 22,14 16,14"/>
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                </svg>
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Onboarded Customers</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No customers have been onboarded yet</p>
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Customer Name</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Email</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Mobile</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Onboard Source</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Account Manager</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="onboardedCustomersList">
+                                        <!-- Onboarded customers will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="onboardedEmptyState" class="text-center py-12">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Onboarded Customers</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No approved onboarded customers found</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Closed Tab -->
+                        <!-- Closed Tab Content -->
                         <div id="closedTabContent" class="hidden">
-                            <table class="compact-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="compact-th">Name</th>
-                                        <th class="compact-th">Contact</th>
-                                        <th class="compact-th">Type</th>
-                                        <th class="compact-th">Closed Date</th>
-                                        <th class="compact-th">Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="closedList">
-                                    <!-- Closed customers/leads will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="closedEmptyState" class="text-center py-12 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="m15 9-6 6"/>
-                                    <path d="m9 9 6 6"/>
-                                </svg>
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Closed Records</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No customers or leads have been closed</p>
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Name</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Contact</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Type</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Closed Date</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="closedList">
+                                        <!-- Closed items will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="closedEmptyState" class="text-center py-12">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Closed Items</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No closed customers or leads found</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Ongoing Leads Tab -->
+                        <!-- Ongoing Leads Tab Content -->
                         <div id="ongoingLeadsTabContent" class="hidden">
-                            <table class="compact-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="compact-th">Lead Name</th>
-                                        <th class="compact-th">Contact</th>
-                                        <th class="compact-th">Type</th>
-                                        <th class="compact-th">Fleet Size</th>
-                                        <th class="compact-th">Status</th>
-                                        <th class="compact-th">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="ongoingLeadsList">
-                                    <!-- Ongoing leads will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="ongoingLeadsEmptyState" class="text-center py-12 hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <line x1="17" y1="10" x2="21" y2="10"/>
-                                </svg>
-                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Ongoing Leads</h3>
-                                <p class="text-body-l-regular dark:text-dark-base-500">No active leads in the pipeline</p>
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Lead Name</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Contact</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Type</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Fleet Size</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Status</th>
+                                            <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ongoingLeadsList">
+                                        <!-- Ongoing leads will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="ongoingLeadsEmptyState" class="text-center py-12">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Ongoing Leads</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No active leads found</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -593,169 +527,524 @@
 
                 <!-- Finance Content -->
                 <div id="financeContent" class="hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-warning-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 12h8"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Pending Approvals</p>
+                    <div class="mb-8">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">Finance - Customer Approval System</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Review and approve pending customer onboardings. Only approved customers will appear in Customer Overview.</p>
+                        
+                        <!-- Finance Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                            <div class="p-4 rounded-lg dark:bg-dark-warning-600/20 dark:border dark:border-dark-warning-600/30">
+                                <h4 class="text-body-l-semibold dark:text-dark-warning-600">Pending Approval</h4>
                                 <p id="pendingApprovalsCount" class="text-heading-6 dark:text-dark-warning-600">0</p>
                             </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-success-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                    <polyline points="22,4 12,14.01 9,11.01"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Total Approved</p>
+                            <div class="p-4 rounded-lg dark:bg-dark-success-600/20 dark:border dark:border-dark-success-600/30">
+                                <h4 class="text-body-l-semibold dark:text-dark-success-600">Total Approved</h4>
                                 <p id="totalApprovedCount" class="text-heading-6 dark:text-dark-success-600">0</p>
                             </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon dark:text-dark-semantic-danger-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="m15 9-6 6"/>
-                                    <path d="m9 9 6 6"/>
-                                </svg>
-                            </div>
-                            <div class="stat-content">
-                                <p class="text-body-s-regular dark:text-dark-base-500">Total Rejected</p>
+                            <div class="p-4 rounded-lg dark:bg-dark-semantic-danger-300/20 dark:border dark:border-dark-semantic-danger-300/30">
+                                <h4 class="text-body-l-semibold dark:text-dark-semantic-danger-300">Total Rejected</h4>
                                 <p id="totalRejectedCount" class="text-heading-6 dark:text-dark-semantic-danger-300">0</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="dark:bg-dark-fill-base-300 rounded-lg p-6">
-                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Pending Customer Approvals</h2>
-                        
-                        <table class="compact-table w-full">
-                            <thead>
-                                <tr>
-                                    <th class="compact-th">Customer Name</th>
-                                    <th class="compact-th">Email</th>
-                                    <th class="compact-th">POC Type</th>
-                                    <th class="compact-th">Account Manager</th>
-                                    <th class="compact-th">Submitted</th>
-                                    <th class="compact-th">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pendingApprovalsList">
-                                <!-- Pending approvals will be populated here -->
-                            </tbody>
-                        </table>
-                        
-                        <div id="financeEmptyState" class="text-center py-12 hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <polyline points="22,4 12,14.01 9,11.01"/>
-                            </svg>
-                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
-                            <p class="text-body-l-regular dark:text-dark-base-500">All customer submissions have been processed</p>
-                        </div>
+                    <div id="pendingApprovalsList" class="space-y-4">
+                        <!-- Pending approvals will be populated here -->
                     </div>
-                </div>
-
-                <!-- Stock Management Content -->
-                <div id="stockContent" class="hidden">
-                    <div class="text-center py-12">
-                        <div class="text-heading-6 dark:text-dark-base-600 mb-4">Stock Management</div>
-                        <p class="text-body-l-regular dark:text-dark-base-500 mb-6">Manage your inventory and stock levels</p>
-                        <button onclick="window.location.href='stock.html'" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
-                            Go to Stock Management
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Inventory Management Content -->
-                <div id="inventoryManagementContent" class="hidden">
-                    <div class="text-center py-12">
-                        <div class="text-heading-6 dark:text-dark-base-600 mb-4">Inventory Management</div>
-                        <p class="text-body-l-regular dark:text-dark-base-500 mb-6">Track device inward and outward movements</p>
-                        <button onclick="window.location.href='inventory.html'" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-m-semibold">
-                            Go to Inventory Management
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Ground Operations Content -->
-                <div id="groundOperationsContent" class="hidden">
-                    <div class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    
+                    <div id="financeEmptyState" class="text-center py-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-success-600">
+                            <path d="M9 12l2 2 4-4"/>
+                            <circle cx="12" cy="12" r="10"/>
                         </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Ground Operations</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">Ground operations management coming soon</p>
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Pending Approvals</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">All customer onboardings have been processed</p>
                     </div>
                 </div>
 
                 <!-- Add Credentials Content -->
                 <div id="addCredentialsContent" class="hidden">
-                    <div class="max-w-2xl mx-auto">
-                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Add New Credentials</h2>
-                        
-                        <form id="addCredentialForm" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mb-8">
+                        <h2 class="text-heading-5 dark:text-dark-base-600 mb-2">User Credentials Management</h2>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Add and manage user credentials for dashboard access</p>
+                    </div>
+
+                    <!-- Add New Credential Form -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">Add New User</h3>
+                            <form id="addCredentialForm" class="space-y-4">
                                 <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service Name</label>
-                                    <input type="text" name="serviceName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="e.g., AWS, Google Cloud" required>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name</label>
+                                    <input type="text" name="fullName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter full name" required>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service Type</label>
-                                    <select name="serviceType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                                        <option value="">Select type</option>
-                                        <option value="cloud">Cloud Service</option>
-                                        <option value="api">API Service</option>
-                                        <option value="database">Database</option>
-                                        <option value="email">Email Service</option>
-                                        <option value="sms">SMS Service</option>
-                                        <option value="payment">Payment Gateway</option>
-                                        <option value="other">Other</option>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email Address</label>
+                                    <input type="email" name="email" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Password</label>
+                                    <div class="relative">
+                                        <input type="password" name="password" id="newUserPassword" class="w-full rounded-lg border p-3 pr-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter password" required>
+                                        <button type="button" onclick="toggleNewUserPasswordVisibility()" class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-500">
+                                                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Role</label>
+                                    <select name="role" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                        <option value="user">User</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="admin">Admin</option>
                                     </select>
                                 </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Username/API Key</label>
-                                    <input type="text" name="username" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter username or API key" required>
-                                </div>
                                 
                                 <div>
-                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Password/Secret</label>
-                                    <input type="password" name="password" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter password or secret" required>
+                                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Department</label>
+                                    <input type="text" name="department" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter department">
+                                </div>
+                                
+                                <button type="submit" class="w-full py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                    Add User
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Existing Users List -->
+                        <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-heading-6 dark:text-dark-base-600">Existing Users</h3>
+                                <button onclick="loadCredentials()" class="px-3 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                                    Refresh
+                                </button>
+                            </div>
+                            <div id="credentialsList" class="space-y-3 max-h-96 overflow-y-auto">
+                                <!-- Credentials will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other page contents -->
+                <div id="groundOperationsContent" class="hidden">
+                    <div class="text-center py-12">
+                        <h3 class="text-heading-5 dark:text-dark-base-600 mb-4">Ground Operations</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Device rectification and ground team operations</p>
+                    </div>
+                </div>
+
+                <!-- Stock Content -->
+                <div id="stockContent" class="hidden">
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <h1 class="text-heading-5 dark:text-dark-base-600">Stock Management</h1>
+                        </div>
+
+                        <!-- Stock Summary Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="stock-summary-card rounded-lg p-6 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-1">Total Items</p>
+                                        <p id="totalStockItems" class="text-heading-6 dark:text-dark-base-600">0</p>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-brand-blue-600">
+                                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                        <path d="M12 3v6"/>
+                                    </svg>
                                 </div>
                             </div>
                             
-                            <div>
-                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Service URL (Optional)</label>
-                                <input type="url" name="serviceUrl" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="https://example.com">
+                            <div class="stock-summary-card rounded-lg p-6 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-1">Available</p>
+                                        <p id="availableItems" class="text-heading-6 dark:text-dark-base-600">0</p>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-600">
+                                        <path d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
                             </div>
                             
-                            <div>
-                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
-                                <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Additional notes about this credential..."></textarea>
+                            <div class="stock-summary-card rounded-lg p-6 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-1">Allocated</p>
+                                        <p id="allocatedItems" class="text-heading-6 dark:text-dark-base-600">0</p>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-600">
+                                        <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                                    </svg>
+                                </div>
                             </div>
                             
-                            <div class="flex gap-4">
-                                <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                                    Save Credentials
-                                </button>
-                                <button type="button" onclick="showCustomersOverview()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                                    Cancel
-                                </button>
+                            <div class="stock-summary-card rounded-lg p-6 dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-1">Total Models</p>
+                                        <p id="totalModels" class="text-heading-6 dark:text-dark-base-600">0</p>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                                        <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/>
+                                        <path d="M9 22v-4h6v4"/>
+                                        <path d="M8 6h.01"/>
+                                        <path d="M16 6h.01"/>
+                                        <path d="M12 6h.01"/>
+                                        <path d="M12 10h.01"/>
+                                        <path d="M12 14h.01"/>
+                                        <path d="M16 10h.01"/>
+                                        <path d="M16 14h.01"/>
+                                        <path d="M8 10h.01"/>
+                                        <path d="M8 14h.01"/>
+                                    </svg>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- CSV Import Section -->
+                        <div class="mb-8">
+                            <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                <h2 class="text-heading-6 dark:text-dark-base-600 mb-4">Import Stock Data</h2>
+                                <div id="csvImportArea" class="csv-import-area" onclick="document.getElementById('csvFileInput').click()">
+                                    <div class="mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                            <line x1="16" y1="13" x2="8" y2="13"/>
+                                            <line x1="16" y1="17" x2="8" y2="17"/>
+                                            <polyline points="10,9 9,9 8,9"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Drag and drop your CSV file here</h3>
+                                    <p class="text-body-m-regular dark:text-dark-base-500 mb-4">or click to browse files</p>
+                                    <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                                    <button onclick="document.getElementById('csvFileInput').click()" class="file-upload-btn">
+                                        Choose CSV File
+                                    </button>
+                                </div>
+                                
+                                <!-- Import Progress -->
+                                <div id="importProgressSection" class="hidden mt-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-body-m-semibold dark:text-dark-base-600">Importing...</span>
+                                        <span id="importProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                    </div>
+                                    <div class="import-progress">
+                                        <div id="importProgressBar" class="import-progress-bar"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Import Results -->
+                                <div id="importResults" class="hidden">
+                                    <!-- Results will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stock List Section -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-heading-6 dark:text-dark-base-600">Stock Inventory</h2>
+                                
+                                <!-- Search and Filter -->
+                                <div class="flex items-center gap-3">
+                                    <div class="relative">
+                                        <input type="text" id="stockSearchInput" placeholder="Search stock..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                            <circle cx="11" cy="11" r="8"/>
+                                            <path d="m21 21-4.35-4.35"/>
+                                        </svg>
+                                    </div>
+                                    <select id="statusFilter" class="rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                        <option value="">All Status</option>
+                                        <option value="available">Available</option>
+                                        <option value="allocated">Allocated</option>
+                                        <option value="returned">Returned</option>
+                                    </select>
+                                    <button onclick="clearStockSearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock Table -->
+                            <div class="table-container overflow-x-auto table-responsive">
+                                <table class="w-full compact-table">
+                                    <thead class="dark:bg-dark-fill-base-400">
+                                        <tr>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Sl. No.</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Registration Number</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">IMEI</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Model</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Status</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Condition</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Batch No.</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Inward Date</th>
+                                            <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stockTableBody">
+                                        <!-- Stock items will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="stockEmptyState" class="text-center py-12 hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                    <path d="M12 3v6"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Stock Items</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">Import CSV data to see stock items here</p>
+                            </div>
+                        </div>
+
+                        <!-- Import History Section -->
+                        <div>
+                            <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Import History</h2>
+                            <div id="importHistoryList" class="space-y-4">
+                                <!-- Import history will be populated here -->
+                            </div>
+                            
+                            <div id="importHistoryEmptyState" class="text-center py-12">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z"/>
+                                </svg>
+                                <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Import History</h3>
+                                <p class="text-body-l-regular dark:text-dark-base-500">CSV import records will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Management Content -->
+                <div id="inventoryManagementContent" class="hidden">
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <h1 class="text-heading-5 dark:text-dark-base-600">Inventory Management</h1>
+                        </div>
+
+                        <!-- Stock Summary -->
+                        <div class="quick-stats mb-8">
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalStockCount">0</div>
+                                <div class="stat-label">Total Stock</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="inwardDevicesCount">0</div>
+                                <div class="stat-label">Inward Devices</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="outwardDevicesCount">0</div>
+                                <div class="stat-label">Outward Devices</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="availableStockCount">0</div>
+                                <div class="stat-label">Available</div>
+                            </div>
+                        </div>
+
+                        <!-- Search Bar -->
+                        <div class="mb-6">
+                            <div class="relative max-w-md">
+                                <input type="text" id="inventorySearchInput" placeholder="Search devices..." class="w-full rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Tab Navigation -->
+                        <div class="flex border-b dark:border-dark-stroke-contrast-400 mb-6">
+                            <button id="inwardTab" onclick="showInwardTab()" class="inventory-tab-button active px-6 py-3 text-body-m-semibold dark:text-dark-base-600 border-b-2 border-transparent">
+                                <span class="tab-label">Inward Devices</span>
+                                <span class="tab-count ml-2 px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white" id="inwardCount">0</span>
+                            </button>
+                            <button id="outwardTab" onclick="showOutwardTab()" class="inventory-tab-button px-6 py-3 text-body-m-semibold dark:text-dark-base-600 border-b-2 border-transparent">
+                                <span class="tab-label">Outward Devices</span>
+                                <span class="tab-count ml-2 px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white" id="outwardCount">0</span>
+                            </button>
+                        </div>
+
+                        <!-- Inward Tab Content -->
+                        <div id="inwardTabContent" class="">
+                            <!-- CSV Import for Inward -->
+                            <div class="mb-6">
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-heading-6 dark:text-dark-base-600">Import Inward Devices</h3>
+                                        <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
+                                            Add Device Manually
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="inwardCSVImportArea" class="csv-import-area">
+                                        <div class="mb-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-green-600">
+                                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                                <path d="M12 3v6"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Drag and drop CSV for inward devices</h3>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-4">or click to browse files</p>
+                                        <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
+                                        <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
+                                            Choose CSV File
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Inward Import Progress -->
+                                    <div id="inwardImportProgressSection" class="hidden mt-6">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-body-m-semibold dark:text-dark-base-600">Importing...</span>
+                                            <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                        </div>
+                                        <div class="import-progress">
+                                            <div id="inwardImportProgressBar" class="import-progress-bar"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Inward Import Results -->
+                                    <div id="inwardImportResults" class="hidden">
+                                        <!-- Results will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Inward Devices List -->
+                            <div>
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
+                                </div>
+                                
+                                <!-- Inward Devices Table -->
+                                <div class="table-container overflow-x-auto table-responsive">
+                                    <table class="w-full compact-table">
+                                        <thead class="dark:bg-dark-fill-base-400">
+                                            <tr>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Registration No.</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">IMEI</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Model</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Batch No.</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Inward Date</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Status</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Condition</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="inwardDevicesList">
+                                            <!-- Inward devices will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div id="inwardEmptyState" class="text-center py-12 hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                        <path d="M12 3v6"/>
+                                    </svg>
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">Devices will appear here once imported</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Outward Tab Content -->
+                        <div id="outwardTabContent" class="hidden">
+                            <!-- CSV Import for Outward -->
+                            <div class="mb-6">
+                                <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-heading-6 dark:text-dark-base-600">Import Outward Devices</h3>
+                                        <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
+                                            Add Outward Device
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="outwardCSVImportArea" class="csv-import-area outward-import">
+                                        <div class="mb-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-red-600">
+                                                <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Drag and drop CSV for outward devices</h3>
+                                        <p class="text-body-m-regular dark:text-dark-base-500 mb-4">or click to browse files</p>
+                                        <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
+                                        <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn">
+                                            Choose CSV File
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Outward Import Progress -->
+                                    <div id="outwardImportProgressSection" class="hidden mt-6">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-body-m-semibold dark:text-dark-base-600">Importing...</span>
+                                            <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                        </div>
+                                        <div class="import-progress">
+                                            <div id="outwardImportProgressBar" class="import-progress-bar"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Outward Import Results -->
+                                    <div id="outwardImportResults" class="hidden">
+                                        <!-- Results will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Outward Devices List -->
+                            <div>
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
+                                </div>
+                                
+                                <!-- Outward Devices Table -->
+                                <div class="table-container overflow-x-auto table-responsive">
+                                    <table class="w-full compact-table">
+                                        <thead class="dark:bg-dark-fill-base-400">
+                                            <tr>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Registration No.</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">IMEI</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Customer</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Location</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Outward Date</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">SIM No.</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Model</th>
+                                                <th class="text-left p-3 text-body-s-semibold dark:text-dark-base-600">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="outwardDevicesList">
+                                            <!-- Outward devices will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div id="outwardEmptyState" class="text-center py-12 hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                        <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                                    </svg>
+                                    <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
+                                    <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -763,40 +1052,46 @@
     </div>
 
     <!-- Floating Add Button -->
-    <div id="floatingAddBtn" class="hidden">
-        <button onclick="toggleAddMenu()" class="w-14 h-14 bg-green-600 hover:bg-green-700 rounded-full shadow-2xl flex items-center justify-center text-white transition-all duration-300 hover:scale-105">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 5v14m-7-7h14"/>
-            </svg>
-        </button>
-        
-        <!-- Add Menu Dropdown -->
-        <div id="addMenu" class="absolute bottom-16 right-0 hidden">
-            <div class="bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-xl border dark:border-dark-stroke-contrast-400 p-2 w-max">
-                <button onclick="showAddCustomerForm()" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-dark-fill-base-600 rounded-lg text-body-m-medium dark:text-dark-base-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-3">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <line x1="19" y1="8" x2="24" y2="13"/>
-                        <line x1="24" y1="8" x2="19" y2="13"/>
-                    </svg>
-                    Add Customer
-                </button>
-                <button onclick="showAddLeadForm()" class="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-dark-fill-base-600 rounded-lg text-body-m-medium dark:text-dark-base-600 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-3">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <line x1="17" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    Add Lead
-                </button>
+    <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-[70] hidden">
+        <div class="relative">
+            <button onclick="toggleAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white shadow-lg hover:dark:bg-brand-blue-500 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14m-7-7h14"/>
+                </svg>
+            </button>
+            <div id="addMenu" class="hidden fixed inset-0 z-[71] backdrop-blur-md bg-black bg-opacity-10 flex items-center justify-center">
+                <div class="bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-xl p-3 w-max dark:border dark:border-dark-stroke-contrast-400 relative pr-8">
+                    <button onclick="toggleAddMenu()" class="absolute top-2 right-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-dark-fill-base-600 dark:text-dark-base-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m18 6-12 12"/>
+                            <path d="m6 6 12 12"/>
+                        </svg>
+                    </button>
+                    <button onclick="showAddLeadForm()" class="w-full text-left px-3 py-2 rounded hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 text-sm flex items-center gap-2 no-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="m22 21-3-3"/>
+                        </svg>
+                        Add New Lead
+                    </button>
+                    <button onclick="showAddCustomerForm()" class="w-full text-left px-3 py-2 rounded hover:dark:bg-dark-fill-base-600 dark:text-dark-base-600 text-sm flex items-center gap-2 no-transform whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <circle cx="22" cy="11" r="3"/>
+                            <path d="m16 11 2 2 4-4"/>
+                        </svg>
+                        Add New Customer
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Lead Modal -->
-    <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+    <!-- Add Lead Form Modal -->
+    <div id="addLeadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Lead</h2>
                 <button onclick="closeAddLeadForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
@@ -809,11 +1104,10 @@
             
             <form id="addLeadForm" class="space-y-4">
                 <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Type</label>
-                    <select name="type" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select type</option>
-                        <option value="Inbound">Inbound</option>
-                        <option value="Outbound">Outbound</option>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Inbound/Outbound</label>
+                    <select name="type" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>Inbound</option>
+                        <option>Outbound</option>
                     </select>
                 </div>
                 
@@ -823,29 +1117,30 @@
                 </div>
                 
                 <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact (Email/Phone)</label>
-                    <input type="text" name="contact" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="email@domain.com or +1234567890" required>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Contact</label>
+                    <input type="text" name="contact" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter contact information" required>
                 </div>
                 
                 <div>
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Fleet Size</label>
-                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Number of vehicles" min="1">
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Potential Fleet Size</label>
+                    <input type="number" name="fleetSize" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter fleet size" required>
                 </div>
                 
                 <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Status</label>
-                    <select name="status" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select status</option>
-                        <option value="New">New</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Qualified">Qualified</option>
-                        <option value="Not Qualified">Not Qualified</option>
+                    <select name="status" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <option>New</option>
+                        <option>In Progress</option>
+                        <option>Qualified</option>
+                        <option>Not Qualified</option>
+                        <option>Converted</option>
+                        <option>Closed</option>
                     </select>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
                     <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                        Add Lead
+                        Save Lead
                     </button>
                     <button type="button" onclick="closeAddLeadForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
                         Cancel
@@ -855,9 +1150,9 @@
         </div>
     </div>
 
-    <!-- Add Customer Modal -->
+    <!-- Add Customer Multi-Step Form Modal -->
     <div id="addCustomerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Add New Customer</h2>
                 <button onclick="closeAddCustomerForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
@@ -868,143 +1163,209 @@
                 </button>
             </div>
             
-            <!-- Step Indicator -->
-            <div class="flex items-center justify-center mb-8">
-                <div class="flex items-center">
-                    <div id="step1Indicator" class="step-indicator active">
-                        <div class="step-number">1</div>
-                        <div class="step-label">Basic Info</div>
+            <!-- Important Finance Notice -->
+            <div class="mb-6 p-4 rounded-lg dark:bg-dark-warning-600/20 dark:border dark:border-dark-warning-600/30">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-warning-600">
+                        <path d="M12 2v20m8-9a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-body-l-semibold dark:text-dark-warning-600">Finance Approval Required</h4>
+                        <p class="text-body-m-regular dark:text-dark-base-500 mt-1">This customer will be sent to Finance for approval. It will only appear in Customer Overview after approval.</p>
                     </div>
-                    <div class="step-connector"></div>
-                    <div id="step2Indicator" class="step-indicator">
+                </div>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="mb-6">
+                <div class="flex items-center">
+                    <div class="step-indicator active" id="step1Indicator">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Basic Details</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-indicator" id="step2Indicator">
                         <div class="step-number">2</div>
-                        <div class="step-label">POC Details</div>
+                        <div class="step-label">Requirements & POC</div>
                     </div>
                 </div>
             </div>
             
-            <form id="addCustomerForm" class="space-y-4">
-                <!-- Step 1: Basic Information -->
+            <form id="addCustomerForm">
+                <!-- Step 1: Basic Details -->
                 <div id="step1Content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Basic Customer Information</h3>
+                    
+                    <!-- Account Manager Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Account Manager Name</label>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Full Name of Account Manager</label>
                             <input type="text" name="accountManagerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager name" required>
                         </div>
                         
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Account Manager ID</label>
-                            <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter account manager ID">
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Employee ID of Account Manager</label>
+                            <input type="text" name="accountManagerId" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter employee ID" required>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Customer Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
                             <input type="text" name="customerName" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter customer name" required>
                         </div>
                         
                         <div>
-                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile</label>
-                            <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="+1234567890">
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Mobile no.</label>
+                            <input type="tel" name="customerMobile" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter mobile number" required>
                         </div>
                     </div>
-                    
-                    <div>
+
+                    <div class="mb-6">
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Email</label>
-                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="customer@example.com" required>
+                        <input type="email" name="customerEmail" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter email address" required>
                     </div>
-                    
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-3">Lead Sources</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="leadSource" value="website" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Website</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="leadSource" value="referral" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Referral</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="leadSource" value="social_media" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Social Media</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="leadSource" value="cold_outreach" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach</span>
-                            </label>
+
+                    <!-- Lead Source -->
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Lead Source (Select multiple)</label>
+                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 max-h-48 overflow-y-auto">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="social_media" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Other Digital Channels (Social Media)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="market_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Market Referrals (friend of Cautio)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="onground_marketing" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Onground Marketing (Roadshows, Events, Tradeshows, others etc.)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="field_sales" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Field Sales (walk-ins, via drivers or fleets)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="word_of_mouth" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">WORD OF MOUTH</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="customer_referrals" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Customer Referrals (customer of Cautio)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="cold_outreach" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Cold Outreach (Email or Call)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="linkedin" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">LinkedIn</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="channel_partners" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Channel Partners (Redbus, Wheelseye, others etc.)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="website_form" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Website Form (cautio.in/com)</span>
+                                </label>
+                                <label class="flex items-start">
+                                    <input type="checkbox" name="leadSource" value="other" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">Other</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    
+
                     <div class="flex justify-end">
                         <button type="button" onclick="goToStep2()" class="py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Next →
+                            Next
                         </button>
                     </div>
                 </div>
-                
-                <!-- Step 2: POC Details -->
+
+                <!-- Step 2: Requirements & POC -->
                 <div id="step2Content" class="hidden">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-3">Requirements</label>
-                        <div class="grid grid-cols-1 gap-3">
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="requirements" value="vehicle_tracking" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Vehicle Tracking</span>
+                    <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Requirements & POC Details</h3>
+                    
+                    <!-- Customer Requirements -->
+                    <div class="mb-6">
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer requirements/KPIs - checklist</label>
+                        <div class="border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 rounded-lg p-4 space-y-2">
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_no_uniform" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver has not worn uniform</span>
                             </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="requirements" value="fleet_management" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Fleet Management</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_seatbelt" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver Seatbelt is unfastened</span>
                             </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="requirements" value="route_optimization" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Route Optimization</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_on_call" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver on call</span>
                             </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" name="requirements" value="driver_monitoring" class="rounded border-gray-300 dark:border-dark-stroke-contrast-400">
-                                <span class="text-body-m-regular dark:text-dark-base-600">Driver Monitoring</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_smoking" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is smoking</span>
+                            </label>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_consuming" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Driver is Consuming Paan Masala/ Alcohol</span>
+                            </label>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="driver_drowsiness" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Signs of driver drowsiness detected</span>
+                            </label>
+                            <label class="flex items-start">
+                                <input type="checkbox" name="requirements" value="overspeed_alert" class="mr-2 mt-1 rounded border dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400">
+                                <span class="text-body-m-regular dark:text-dark-base-600">Overspeed Alert detected (__km/h)</span>
                             </label>
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Type</label>
-                        <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                            <option value="">Select POC type</option>
-                            <option value="free_poc">Free POC</option>
-                            <option value="paid_poc">Paid POC</option>
-                            <option value="direct_onboarding">Direct Onboarding</option>
-                        </select>
+                    <!-- POC Type and Duration -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC - Paid/Free, Direct onboarding</label>
+                            <select name="pocType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <option value="free_poc">Free POC</option>
+                                <option value="paid_poc">Paid POC</option>
+                                <option value="direct_onboarding">Direct Onboarding</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Duration</label>
+                            <div class="flex gap-2">
+                                <select name="pocDuration" id="pocDurationSelect" class="flex-1 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                    <option value="15">15 days</option>
+                                    <option value="30" selected>30 days</option>
+                                    <option value="45">45 days</option>
+                                    <option value="60">60 days</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                                <div id="customDurationDiv" class="hidden flex items-center gap-2">
+                                    <input type="number" name="customDuration" id="customDurationInput" min="1" max="365" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="30">
+                                    <span class="text-body-m-regular dark:text-dark-base-600">days</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Duration</label>
-                        <select id="pocDurationSelect" name="pocDuration" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
-                            <option value="15">15 days</option>
-                            <option value="30" selected>30 days</option>
-                            <option value="45">45 days</option>
-                            <option value="60">60 days</option>
-                            <option value="custom">Custom</option>
-                        </select>
-                    </div>
-                    
-                    <div id="customDurationDiv" class="hidden">
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Duration (days)</label>
-                        <input type="number" name="customDuration" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter custom duration" min="1">
-                    </div>
-                    
-                    <div>
+                    <div class="mb-6">
                         <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">POC Start Date</label>
                         <input type="date" name="pocStartDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                     </div>
                     
                     <div class="flex gap-4 pt-4">
-                        <button type="button" onclick="goToStep1()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                            ← Back
+                        <button type="button" onclick="goToStep1()" class="py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Back
                         </button>
                         <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Submit for Approval
+                            Submit for Finance Approval
                         </button>
                     </div>
                 </div>
@@ -1016,7 +1377,7 @@
     <div id="pocActionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-heading-6 dark:text-dark-base-600">POC Actions</h2>
+                <h2 class="text-heading-6 dark:text-dark-base-600">POC Action Required</h2>
                 <button onclick="closePOCActionModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
                         <path d="m18 6-12 12"/>
@@ -1025,36 +1386,40 @@
                 </button>
             </div>
             
-            <div class="mb-6">
-                <p class="text-body-l-regular dark:text-dark-base-600">Choose an action for customer:</p>
-                <p class="text-body-l-semibold dark:text-dark-base-600" id="pocCustomerName">-</p>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="showExtendPOCForm()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-700 text-body-s-semibold">
-                    Extend POC
-                </button>
-                <button onclick="onboardCustomer()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-700 text-body-s-semibold">
-                    Onboard Customer
-                </button>
-                <button onclick="endPOC()" class="w-full py-3 px-4 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-400 text-body-s-semibold">
-                    End POC
-                </button>
-            </div>
-            
-            <!-- Extend POC Form -->
-            <div id="extendPOCForm" class="hidden mt-6 p-4 rounded-lg dark:bg-dark-fill-base-400">
-                <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-3">Extend POC Duration</h3>
+            <div class="space-y-4">
+                <p class="text-body-l-regular dark:text-dark-base-600 mb-4">
+                    Customer: <span id="pocCustomerName" class="font-semibold"></span>
+                </p>
+                <p class="text-body-m-regular dark:text-dark-base-500 mb-6">
+                    What would you like to do with this POC?
+                </p>
+                
                 <div class="space-y-3">
-                    <div>
-                        <label class="block text-body-m-semibold dark:text-dark-base-600 mb-2">Additional Days</label>
-                        <input type="number" id="extendDaysInput" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter days to extend" value="10" min="1">
+                    <div class="flex items-center gap-2">
+                        <button onclick="showExtendPOCForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                            Extend POC
+                        </button>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="confirmExtendPOC()" class="flex-1 py-2 px-4 rounded-lg dark:bg-dark-warning-600 dark:text-utility-white hover:dark:bg-dark-warning-700 text-body-s-semibold">
+                    <button onclick="endPOC()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
+                        End POC
+                    </button>
+                    <button onclick="onboardCustomer()" class="w-full py-3 px-6 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">
+                        Onboard Customer
+                    </button>
+                </div>
+
+                <!-- Extend POC Form -->
+                <div id="extendPOCForm" class="hidden mt-4 p-4 border-t dark:border-dark-stroke-contrast-400">
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Extend by how many days?</label>
+                    <div class="flex items-center gap-2 mb-4">
+                        <input type="number" id="extendDaysInput" min="1" max="365" value="10" class="w-20 rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <span class="text-body-m-regular dark:text-dark-base-600">days</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="confirmExtendPOC()" class="flex-1 py-2 px-4 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
                             Confirm Extend
                         </button>
-                        <button onclick="hideExtendPOCForm()" class="flex-1 py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        <button onclick="hideExtendPOCForm()" class="py-2 px-4 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
                             Cancel
                         </button>
                     </div>
@@ -1063,7 +1428,7 @@
         </div>
     </div>
 
-    <!-- Manual Email Modal -->
+    <!-- Manual Email Scheduling Modal -->
     <div id="manualEmailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
             <div class="flex items-center justify-between mb-6">
@@ -1076,16 +1441,15 @@
                 </button>
             </div>
             
-            <div class="mb-4">
-                <p class="text-body-l-regular dark:text-dark-base-600">Schedule email for:</p>
-                <p class="text-body-l-semibold dark:text-dark-base-600" id="selectedCustomerName">-</p>
-            </div>
-            
             <form id="manualEmailForm" class="space-y-4">
                 <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer</label>
+                    <p id="selectedCustomerName" class="text-body-m-regular dark:text-dark-base-500 mb-2"></p>
+                </div>
+                
+                <div>
                     <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Email Type</label>
-                    <select name="emailType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                        <option value="">Select email type</option>
+                    <select name="emailType" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                         <option value="poc_reminder">POC Reminder</option>
                         <option value="followup">Follow-up</option>
                         <option value="onboarding_reminder">Onboarding Reminder</option>
@@ -1093,20 +1457,19 @@
                     </select>
                 </div>
                 
-                <div id="customMessageDiv" class="hidden">
-                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Message</label>
-                    <textarea name="customMessage" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Date</label>
+                    <input type="date" name="scheduleDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Date</label>
-                        <input type="date" name="scheduleDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                    </div>
-                    <div>
-                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Time</label>
-                        <input type="time" name="scheduleTime" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
-                    </div>
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Schedule Time</label>
+                    <input type="time" name="scheduleTime" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                
+                <div id="customMessageDiv" class="hidden">
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Custom Message</label>
+                    <textarea name="customMessage" rows="4" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter your custom message..."></textarea>
                 </div>
                 
                 <div class="flex gap-4 pt-4">
@@ -1121,16 +1484,561 @@
         </div>
     </div>
 
-    <!-- Success Toast -->
-    <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg">
+    <!-- Inventory Management Page -->
+    <div id="inventoryPage" class="hidden min-h-screen dark:bg-dark-fill-base-400">
+        <!-- Loading Overlay -->
+        <div id="inventoryLoadingOverlay" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center">
+            <div class="flex flex-col items-center">
+                <div class="spinner">
+                    <div class="spinner-icon"></div>
+                </div>
+                <div class="mt-8 text-center">
+                    <div class="text-heading-6 dark:text-dark-base-600 mb-2">Processing...</div>
+                    <div class="text-body-l-regular dark:text-dark-base-500">Please wait</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="min-h-screen dark:bg-dark-fill-base-400">
+            <!-- Header -->
+            <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button onclick="showDashboardPage()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back to Dashboard
+                        </button>
+                        <h1 class="text-heading-6 dark:text-dark-base-600">Inventory Management</h1>
+                    </div>
+                    
+                    <!-- Stock Summary -->
+                    <div class="flex items-center gap-6">
+                        <div class="text-center">
+                            <div class="text-body-s-semibold dark:text-dark-base-500">Total Stock</div>
+                            <div id="inventoryPageTotalStockCount" class="text-heading-6 dark:text-brand-blue-600">0</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-body-s-semibold dark:text-dark-base-500">Available</div>
+                            <div id="inventoryPageAvailableStockCount" class="text-heading-6 dark:text-dark-success-600">0</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-body-s-semibold dark:text-dark-base-500">Allocated</div>
+                            <div id="inventoryPageAllocatedStockCount" class="text-heading-6 dark:text-dark-warning-600">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex space-x-1">
+                        <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
+                            <span class="tab-label">Inward</span>
+                            <span class="tab-count" id="inwardCount">0</span>
+                        </button>
+                        <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
+                            <span class="tab-label">Outward</span>
+                            <span class="tab-count" id="outwardCount">0</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Search and Actions -->
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <input type="text" id="inventorySearchInput" placeholder="Search devices..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        <button onclick="clearInventorySearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="inventoryTabContent">
+                    <!-- Inward Tab Content -->
+                    <div id="inwardTabContent">
+                        <!-- CSV Upload Section for Inward -->
+                        <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Inward Import</h4>
+                            <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Device Condition, Notes</p>
+                            
+                            <div class="csv-import-area" id="inwardCSVImportArea">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-brand-blue-600">
+                                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                    <path d="M12 3v6"/>
+                                </svg>
+                                <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                                <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
+                                <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
+                                    Choose CSV File
+                                </button>
+                            </div>
+
+                            <!-- Import Progress -->
+                            <div id="inwardImportProgressSection" class="hidden mt-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                    <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                </div>
+                                <div class="import-progress">
+                                    <div id="inwardImportProgressBar" class="import-progress-bar"></div>
+                                </div>
+                            </div>
+
+                            <!-- Import Results -->
+                            <div id="inwardImportResults" class="hidden mt-4">
+                                <!-- Results will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
+                            <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                Add Inward Device
+                            </button>
+                        </div>
+                        
+                        <div id="inwardDevicesList" class="space-y-4">
+                            <!-- Inward devices will be populated here -->
+                        </div>
+                        
+                        <div id="inwardEmptyState" class="text-center py-12">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                <path d="M12 3v6"/>
+                            </svg>
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
+                            <p class="text-body-l-regular dark:text-dark-base-500">No devices have been received yet</p>
+                        </div>
+                    </div>
+
+                    <!-- Outward Tab Content -->
+                    <div id="outwardTabContent" class="hidden">
+                        <!-- CSV Upload Section for Outward -->
+                        <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Outward Import</h4>
+                            <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Customer Name, Location, Outward Date, SIM No, Notes</p>
+                            
+                            <div class="csv-import-area outward-import" id="outwardCSVImportArea">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-dark-semantic-danger-300">
+                                    <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                                </svg>
+                                <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                                <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
+                                <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn outward-btn">
+                                    Choose CSV File
+                                </button>
+                            </div>
+
+                            <!-- Import Progress -->
+                            <div id="outwardImportProgressSection" class="hidden mt-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                    <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                </div>
+                                <div class="import-progress">
+                                    <div id="outwardImportProgressBar" class="import-progress-bar outward-progress"></div>
+                                </div>
+                            </div>
+
+                            <!-- Import Results -->
+                            <div id="outwardImportResults" class="hidden mt-4">
+                                <!-- Results will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
+                            <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
+                                Add Outward Device
+                            </button>
+                        </div>
+                        
+                        <div id="outwardDevicesList" class="space-y-4">
+                            <!-- Outward devices will be populated here -->
+                        </div>
+                        
+                        <div id="outwardEmptyState" class="text-center py-12">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                                <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                            </svg>
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
+                            <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Management Page -->
+    <div id="stockPage" class="hidden min-h-screen dark:bg-dark-fill-base-400">
+        <!-- Loading Overlay -->
+        <div id="stockLoadingOverlay" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center">
+            <div class="flex flex-col items-center">
+                <div class="spinner">
+                    <div class="spinner-icon"></div>
+                </div>
+                <div class="mt-8 text-center">
+                    <div class="text-heading-6 dark:text-dark-base-600 mb-2">Processing...</div>
+                    <div class="text-body-l-regular dark:text-dark-base-500">Please wait</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="min-h-screen dark:bg-dark-fill-base-400">
+            <!-- Header -->
+            <div class="dark:bg-dark-fill-base-300 dark:border-b dark:border-dark-stroke-contrast-400 p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button onclick="showDashboardPage()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back to Dashboard
+                        </button>
+                        <h1 class="text-heading-6 dark:text-dark-base-600">Stock Management</h1>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="flex items-center gap-4">
+                        <button onclick="showInventoryPage()" class="flex items-center gap-2 px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                <path d="M12 3v6"/>
+                            </svg>
+                            Inventory Management
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="p-6">
+                <!-- Stock Summary Cards -->
+                <div class="quick-stats mb-8">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStockItems">0</div>
+                        <div class="stat-label">Total Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="availableItems">0</div>
+                        <div class="stat-label">Available</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="allocatedItems">0</div>
+                        <div class="stat-label">Allocated</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalModels">0</div>
+                        <div class="stat-label">Device Models</div>
+                    </div>
+                </div>
+
+                <!-- CSV Import Section -->
+                <div class="mb-8">
+                    <div class="p-6 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h2 class="text-heading-6 dark:text-dark-base-600 mb-4">Import Stock Data</h2>
+                        <p class="text-body-m-regular dark:text-dark-base-500 mb-6">
+                            Upload a CSV file to import stock data. The file should contain the following columns:
+                            <strong>Sl. No., PO No, Batch No., Inward Date, Device Model No., Device Registration Number, Device IMEI</strong>
+                        </p>
+                        
+                        <!-- CSV Upload Area -->
+                        <div class="csv-import-area" id="csvImportArea">
+                            <div class="mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-brand-blue-600">
+                                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-body-l-semibold dark:text-dark-base-600 mb-2">Drag and drop your CSV file here</h3>
+                            <p class="text-body-m-regular dark:text-dark-base-500 mb-4">or click to browse files</p>
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                            <button onclick="document.getElementById('csvFileInput').click()" class="file-upload-btn">
+                                Choose CSV File
+                            </button>
+                        </div>
+                        
+                        <!-- Import Progress -->
+                        <div id="importProgressSection" class="hidden mt-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-body-m-semibold dark:text-dark-base-600">Importing...</span>
+                                <span id="importProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                            </div>
+                            <div class="import-progress">
+                                <div id="importProgressBar" class="import-progress-bar"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Import Results -->
+                        <div id="importResults" class="hidden">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock List Section -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-heading-6 dark:text-dark-base-600">Stock Inventory</h2>
+                        
+                        <!-- Search and Filter -->
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <input type="text" id="stockSearchInput" placeholder="Search stock..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                            </div>
+                            <select id="statusFilter" class="rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                                <option value="">All Status</option>
+                                <option value="available">Available</option>
+                                <option value="allocated">Allocated</option>
+                                <option value="returned">Returned</option>
+                            </select>
+                            <button onclick="clearStockSearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full rounded-lg dark:bg-dark-fill-base-300">
+                            <thead class="dark:bg-dark-fill-base-400">
+                                <tr>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Sl. No.</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Registration Number</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">IMEI</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Model</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Status</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Condition</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Batch No.</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Inward Date</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTableBody">
+                                <!-- Stock items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="stockEmptyState" class="text-center py-12 hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                            <path d="M12 3v6"/>
+                        </svg>
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Stock Items</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">Import CSV data to see stock items here</p>
+                    </div>
+                </div>
+
+                <!-- Import History Section -->
+                <div>
+                    <h2 class="text-heading-6 dark:text-dark-base-600 mb-6">Import History</h2>
+                    <div id="importHistoryList" class="space-y-4">
+                        <!-- Import history will be populated here -->
+                    </div>
+                    
+                    <div id="importHistoryEmptyState" class="text-center py-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M8 16H3v5"/>
+                        </svg>
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Import History</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">CSV import history will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Inward Device Modal -->
+    <div id="addInwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add Inward Device</h2>
+                <button onclick="closeAddInwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addInwardForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
+                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device registration number" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
+                    <input type="text" name="deviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Condition</label>
+                    <select name="deviceCondition" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select condition</option>
+                        <option value="good">Good</option>
+                        <option value="lense_issue">Lense issue</option>
+                        <option value="sim_module_fail">SIM module fail</option>
+                        <option value="auto_restart">Auto restart</option>
+                        <option value="device_tampered">Device tampered</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
+                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Add to Inward
+                    </button>
+                    <button type="button" onclick="closeAddInwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Outward Device Modal -->
+    <div id="addOutwardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add Outward Device</h2>
+                <button onclick="closeAddOutwardForm()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addOutwardForm" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
+                    <input type="text" name="deviceRegistrationNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device registration number" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
+                    <input type="text" name="deviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Customer Name</label>
+                    <select name="customerId" id="customerSelect" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                        <option value="">Select customer</option>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Location</label>
+                    <input type="text" name="location" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter location" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Date</label>
+                    <input type="date" name="outwardDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">SIM No (Optional)</label>
+                    <input type="text" name="simNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter SIM number">
+                </div>
+                
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Notes (Optional)</label>
+                    <textarea name="notes" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter any additional notes..."></textarea>
+                </div>
+                
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
+                        Add to Outward
+                    </button>
+                    <button type="button" onclick="closeAddOutwardForm()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Device Details Modal -->
+    <div id="deviceDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Device Details</h2>
+                <button onclick="closeDeviceDetailsModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="deviceDetailsContent">
+                <!-- Device details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Toast for Inventory -->
+    <div id="inventoryToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg">
         <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <span id="inventoryToastIcon" class="h-5 w-5 mr-2"></span>
+            <span id="inventoryToastMessage">Action completed successfully!</span>
+        </div>
+    </div>
+
+    <!-- Success/Error Toast for Stock -->
+    <div id="stockToast" class="fixed top-4 right-4 hidden z-50 max-w-sm p-4 rounded-lg shadow-lg">
+        <div class="flex items-center">
+            <span id="stockToastIcon" class="h-5 w-5 mr-2"></span>
+            <span id="stockToastMessage">Action completed successfully!</span>
+        </div>
+    </div>
+
+    <!-- Email Status Toast -->
+    <div id="emailToast" class="fixed top-4 right-4 hidden z-50 max-w-sm bg-green-600 text-white p-4 rounded-lg shadow-lg">
+        <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <span id="emailToastMessage">Action completed successfully!</span>
+            <span id="emailToastMessage">Email sent successfully!</span>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="inventory.js"></script>
+    <script src="stock.js"></script>
 </body>
 </html>
