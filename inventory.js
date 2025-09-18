@@ -1,13 +1,11 @@
 // Inventory Management JavaScript
 // This file handles all inventory-related functionality
 
-// Supabase Configuration - Using configuration from config.js
+// Supabase Configuration - Direct connection (no config.js needed)
 function getSupabaseClient() {
-    if (!window.CAUTIO_CONFIG) {
-        console.error('Configuration not loaded. Make sure config.js is included before this script.');
-        return null;
-    }
-    return window.supabase.createClient(window.CAUTIO_CONFIG.supabase.url, window.CAUTIO_CONFIG.supabase.key);
+    const SUPABASE_URL = 'https://jcmjazindwonrplvjwxl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
+    return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 // Use global supabase variable from main script
@@ -53,10 +51,18 @@ const OUTWARD_REQUIRED_COLUMNS = [
 
 // Initialize inventory management
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait for main script to initialize supabase
-    if (!window.supabase || !supabase) {
-        console.error('Supabase client not initialized');
+    // Initialize supabase client if not already done
+    if (!window.supabaseClient || typeof window.supabaseClient.from !== 'function') {
+        window.supabaseClient = getSupabaseClient();
+    }
+    if (!window.supabaseClient) {
+        console.error('Failed to initialize Supabase client');
         return;
+    }
+    
+    // Set global supabase variable
+    if (typeof supabase === 'undefined') {
+        supabase = window.supabaseClient;
     }
     
     // Get user session from localStorage
@@ -95,14 +101,14 @@ function checkInventoryUserSession() {
     
     if (!userSession) {
         // Redirect to main dashboard login
-        window.location.href = '/';
+        window.location.href = './';
     }
 }
 
 // Go back to main dashboard
 function goBackToDashboard() {
     // Navigate back to main dashboard
-    window.location.href = '/';
+    window.location.href = './';
 }
 
 // Setup event listeners for inventory
@@ -490,7 +496,7 @@ function createInwardDeviceCard(device) {
         const badgeClass = status === 'available' ? 
             'compact-badge status-available' :
             'compact-badge status-allocated';
-        return `<span class="${badgeClass}">● ${statusText}</span>`;
+        return `<span class="${badgeClass}">â— ${statusText}</span>`;
     };
 
     const stockInfo = device.stock || {};
@@ -1351,8 +1357,8 @@ function showInwardImportResults(successful, failed, errors) {
                 <h5 class="text-body-m-semibold dark:text-dark-base-600 mb-2">Errors:</h5>
                 <div class="max-h-32 overflow-y-auto">
                     <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
-                        ${errors.slice(0, 10).map(error => `<li>• ${error}</li>`).join('')}
-                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ''}
+                        ${errors.slice(0, 10).map(error => `<li>â€¢ ${error}</li>`).join('')}
+                        ${errors.length > 10 ? `<li>â€¢ ... and ${errors.length - 10} more errors</li>` : ''}
                     </ul>
                 </div>
             </div>
@@ -1418,8 +1424,8 @@ function showOutwardImportResults(successful, failed, errors) {
                 <h5 class="text-body-m-semibold dark:text-dark-base-600 mb-2">Errors:</h5>
                 <div class="max-h-32 overflow-y-auto">
                     <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
-                        ${errors.slice(0, 10).map(error => `<li>• ${error}</li>`).join('')}
-                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ''}
+                        ${errors.slice(0, 10).map(error => `<li>â€¢ ${error}</li>`).join('')}
+                        ${errors.length > 10 ? `<li>â€¢ ... and ${errors.length - 10} more errors</li>` : ''}
                     </ul>
                 </div>
             </div>
