@@ -1,7 +1,13 @@
-// Supabase Configuration
-const supabaseUrl = 'https://jcmjazindwonrplvjwxl.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// Supabase Configuration - Using configuration from config.js
+function getSupabaseClient() {
+    if (!window.CAUTIO_CONFIG) {
+        console.error('Configuration not loaded. Make sure config.js is included before this script.');
+        return null;
+    }
+    return window.supabase.createClient(window.CAUTIO_CONFIG.supabase.url, window.CAUTIO_CONFIG.supabase.key);
+}
+
+let supabase;
 
 // Global variables
 let sidebarExpanded = false;
@@ -21,6 +27,13 @@ let selectedCustomerId = null; // For customer dropdown
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Supabase client
+    supabase = getSupabaseClient();
+    if (!supabase) {
+        console.error('Failed to initialize Supabase client');
+        return;
+    }
+    
     updateTabHighlight('allTab');
     
     // Check for existing session
@@ -306,6 +319,87 @@ document.addEventListener('click', function(event) {
         dropdown.classList.add('hidden');
     }
 });
+
+// Page Navigation Functions
+function showDashboardPage() {
+    // Hide all pages
+    hideAllPages();
+    
+    // Show dashboard page
+    document.getElementById('dashboardPage').classList.remove('hidden');
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('forgotPasswordPage').classList.add('hidden');
+}
+
+function showInventoryPage() {
+    // Show inventory content within dashboard
+    hideAllContent();
+    document.getElementById('inventoryManagementContent').classList.remove('hidden');
+    updateMenuHighlight('inventory');
+    
+    // Load inventory content and update summary
+    if (typeof loadInventoryData === 'function') {
+        loadInventoryData().then(() => {
+            // Ensure stock summary is updated after data loads
+            if (typeof updateStockSummary === 'function') {
+                updateStockSummary();
+            }
+        });
+    } else if (typeof updateStockSummary === 'function') {
+        // If data already loaded, just update the summary
+        updateStockSummary();
+    }
+}
+
+function showStockPage() {
+    // Show stock content within dashboard
+    hideAllContent();
+    document.getElementById('stockContent').classList.remove('hidden');
+    updateMenuHighlight('stock');
+    
+    // Load stock content if not already loaded
+    if (typeof loadStockData === 'function') {
+        loadStockData();
+    }
+}
+
+function hideAllPages() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('forgotPasswordPage').classList.add('hidden');
+    document.getElementById('dashboardPage').classList.add('hidden');
+    document.getElementById('inventoryPage').classList.add('hidden');
+    document.getElementById('stockPage').classList.add('hidden');
+}
+
+function showInventoryManagement() {
+    hideAllContent();
+    document.getElementById('inventoryManagementContent').classList.remove('hidden');
+    updateMenuHighlight('inventory');
+    
+    // Load inventory content and update summary
+    if (typeof loadInventoryData === 'function') {
+        loadInventoryData().then(() => {
+            // Ensure stock summary is updated after data loads
+            if (typeof updateStockSummary === 'function') {
+                updateStockSummary();
+            }
+        });
+    } else if (typeof updateStockSummary === 'function') {
+        // If data already loaded, just update the summary
+        updateStockSummary();
+    }
+}
+
+function showStock() {
+    hideAllContent();
+    document.getElementById('stockContent').classList.remove('hidden');
+    updateMenuHighlight('stock');
+    
+    // Load stock content if not already loaded
+    if (typeof loadStockData === 'function') {
+        loadStockData();
+    }
+}
 
 // Floating Add Button Functions
 function toggleAddMenu() {
@@ -926,6 +1020,15 @@ async function loadData() {
             pendingApprovals = approvalData || [];
         }
 
+        // Load inventory data for main dashboard statistics
+        if (typeof loadInventoryData === 'function') {
+            await loadInventoryData();
+            // Ensure stock summary is updated after inventory data loads
+            if (typeof updateStockSummary === 'function') {
+                updateStockSummary();
+            }
+        }
+        
         // Update UI
         updateCustomerCounts();
         updateTabsContent();
@@ -1221,25 +1324,25 @@ function createCustomerRow(customer) {
     };
 
     const getStatusBadge = (status, pocType) => {
-        if (status === 'closed') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Closed</span>';
-        if (pocType === 'direct_onboarding') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">Onboarded</span>';
-        if (pocType === 'free_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-info-600 dark:text-utility-white">Free POC</span>';
-        if (pocType === 'paid_poc') return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-warning-600 dark:text-utility-white">Paid POC</span>';
-        return '<span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Unknown</span>';
+        if (status === 'closed') return '<span class="compact-badge condition-device_tampered">Closed</span>';
+        if (pocType === 'direct_onboarding') return '<span class="compact-badge status-available">Onboarded</span>';
+        if (pocType === 'free_poc') return '<span class="compact-badge condition-new">Free POC</span>';
+        if (pocType === 'paid_poc') return '<span class="compact-badge condition-lense_issue">Paid POC</span>';
+        return '<span class="compact-badge condition-used">Unknown</span>';
     };
 
     return `
-        <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${customer.customer_name}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.customer_email}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.customer_mobile}</td>
-            <td class="px-4 py-3">${getStatusBadge(customer.status, customer.poc_type)}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${formatDate(customer.poc_start_date)}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${formatDate(customer.poc_end_date)}</td>
-            <td class="px-4 py-3">
+        <tr>
+            <td class="compact-text-primary">${customer.customer_name}</td>
+            <td class="compact-text-secondary">${customer.customer_email}</td>
+            <td class="compact-text-secondary">${customer.customer_mobile}</td>
+            <td>${getStatusBadge(customer.status, customer.poc_type)}</td>
+            <td class="compact-text-secondary">${formatDate(customer.poc_start_date)}</td>
+            <td class="compact-text-secondary">${formatDate(customer.poc_end_date)}</td>
+            <td>
                 ${customer.status !== 'closed' ? `
-                    <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
-                        📧 Email
+                    <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
+                        📧
                     </button>
                 ` : ''}
             </td>
@@ -1257,33 +1360,35 @@ function createPOCRow(customer) {
     const getDaysRemainingBadge = () => {
         if (daysRemaining === null) return 'N/A';
         
-        let badgeClass = 'dark:bg-dark-info-600';
+        let badgeClass = 'condition-new';
         let text = `${daysRemaining} days`;
         
         if (daysRemaining <= 0) {
-            badgeClass = 'dark:bg-dark-semantic-danger-300';
+            badgeClass = 'condition-device_tampered';
             text = 'Expired';
         } else if (daysRemaining <= 3) {
-            badgeClass = 'dark:bg-dark-warning-600';
+            badgeClass = 'condition-lense_issue';
         }
         
-        return `<span class="px-2 py-1 text-xs rounded-full ${badgeClass} dark:text-utility-white">${text}</span>`;
+        return `<span class="compact-badge ${badgeClass}">${text}</span>`;
+    };
+
+    const getPOCTypeBadge = (pocType) => {
+        return pocType === 'free_poc' ? 
+            '<span class="compact-badge condition-new">Free POC</span>' :
+            '<span class="compact-badge condition-lense_issue">Paid POC</span>';
     };
 
     return `
-        <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${customer.customer_name}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.customer_email}</td>
-            <td class="px-4 py-3">
-                <span class="px-2 py-1 text-xs rounded-full ${customer.poc_type === 'free_poc' ? 'dark:bg-dark-info-600' : 'dark:bg-dark-warning-600'} dark:text-utility-white">
-                    ${customer.poc_type === 'free_poc' ? 'Free POC' : 'Paid POC'}
-                </span>
-            </td>
-            <td class="px-4 py-3">${getDaysRemainingBadge()}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.account_manager_name}</td>
-            <td class="px-4 py-3">
-                <button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="px-3 py-1 text-xs rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500">
-                    Manage
+        <tr>
+            <td class="compact-text-primary">${customer.customer_name}</td>
+            <td class="compact-text-secondary">${customer.customer_email}</td>
+            <td>${getPOCTypeBadge(customer.poc_type)}</td>
+            <td>${getDaysRemainingBadge()}</td>
+            <td class="compact-text-secondary">${customer.account_manager_name}</td>
+            <td>
+                <button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
+                    ⚙️
                 </button>
             </td>
         </tr>
@@ -1293,27 +1398,23 @@ function createPOCRow(customer) {
 function createOnboardedRow(customer) {
     const getOnboardSourceBadge = (source) => {
         const badges = {
-            'direct': 'Direct',
-            'poc_conversion': 'POC Converted',
-            'lead_conversion': 'Lead Converted'
+            'direct': '<span class="compact-badge status-available">Direct</span>',
+            'poc_conversion': '<span class="compact-badge condition-new">POC Converted</span>',
+            'lead_conversion': '<span class="compact-badge condition-used">Lead Converted</span>'
         };
-        return badges[source] || 'Unknown';
+        return badges[source] || '<span class="compact-badge condition-used">Unknown</span>';
     };
 
     return `
-        <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${customer.customer_name}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.customer_email}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.customer_mobile}</td>
-            <td class="px-4 py-3">
-                <span class="px-2 py-1 text-xs rounded-full dark:bg-brand-blue-600 dark:text-utility-white">
-                    ${getOnboardSourceBadge(customer.onboard_source)}
-                </span>
-            </td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${customer.account_manager_name}</td>
-            <td class="px-4 py-3">
-                <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
-                    📧 Email
+        <tr>
+            <td class="compact-text-primary">${customer.customer_name}</td>
+            <td class="compact-text-secondary">${customer.customer_email}</td>
+            <td class="compact-text-secondary">${customer.customer_mobile}</td>
+            <td>${getOnboardSourceBadge(customer.onboard_source)}</td>
+            <td class="compact-text-secondary">${customer.account_manager_name}</td>
+            <td>
+                <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
+                    📧
                 </button>
             </td>
         </tr>
@@ -1328,26 +1429,22 @@ function createClosedRow(item, type) {
 
     if (type === 'customer') {
         return `
-            <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${item.customer_name}</td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${item.customer_email}</td>
-                <td class="px-4 py-3">
-                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">Customer</span>
-                </td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${formatDate(item.poc_end_date)}</td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">POC Ended</td>
+            <tr>
+                <td class="compact-text-primary">${item.customer_name}</td>
+                <td class="compact-text-secondary">${item.customer_email}</td>
+                <td><span class="compact-badge condition-device_tampered">Customer</span></td>
+                <td class="compact-text-secondary">${formatDate(item.poc_end_date)}</td>
+                <td class="compact-text-secondary">POC Ended</td>
             </tr>
         `;
     } else {
         return `
-            <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${item.customer_name}</td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${item.contact}</td>
-                <td class="px-4 py-3">
-                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-stroke-base-400 dark:text-dark-base-600">Lead</span>
-                </td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${formatDate(item.created_at)}</td>
-                <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">Lead Closed</td>
+            <tr>
+                <td class="compact-text-primary">${item.customer_name}</td>
+                <td class="compact-text-secondary">${item.contact}</td>
+                <td><span class="compact-badge condition-used">Lead</span></td>
+                <td class="compact-text-secondary">${formatDate(item.created_at)}</td>
+                <td class="compact-text-secondary">Lead Closed</td>
             </tr>
         `;
     }
@@ -1356,33 +1453,35 @@ function createClosedRow(item, type) {
 function createLeadRow(lead) {
     const getStatusBadge = (status) => {
         const statusClasses = {
-            'New': 'dark:bg-dark-info-600',
-            'In Progress': 'dark:bg-dark-warning-600',
-            'Qualified': 'dark:bg-dark-success-600',
-            'Not Qualified': 'dark:bg-dark-semantic-danger-300',
-            'Converted': 'dark:bg-brand-blue-600'
+            'New': 'condition-new',
+            'In Progress': 'condition-lense_issue',
+            'Qualified': 'status-available',
+            'Not Qualified': 'condition-device_tampered',
+            'Converted': 'status-allocated'
         };
         
-        return `<span class="px-2 py-1 text-xs rounded-full ${statusClasses[status] || 'dark:bg-dark-stroke-base-400'} dark:text-utility-white">${status}</span>`;
+        return `<span class="compact-badge ${statusClasses[status] || 'condition-used'}">${status}</span>`;
+    };
+
+    const getTypeBadge = (type) => {
+        return type === 'Inbound' ? 
+            '<span class="compact-badge status-available">Inbound</span>' :
+            '<span class="compact-badge condition-new">Outbound</span>';
     };
 
     return `
-        <tr class="hover:dark:bg-dark-fill-base-600 transition-colors">
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-600">${lead.customer_name}</td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${lead.contact}</td>
-            <td class="px-4 py-3">
-                <span class="px-2 py-1 text-xs rounded-full ${lead.type === 'Inbound' ? 'dark:bg-dark-success-600' : 'dark:bg-dark-info-600'} dark:text-utility-white">
-                    ${lead.type}
-                </span>
-            </td>
-            <td class="px-4 py-3 text-body-s-regular dark:text-dark-base-500">${lead.fleet_size || 'N/A'}</td>
-            <td class="px-4 py-3">${getStatusBadge(lead.status)}</td>
-            <td class="px-4 py-3">
-                <button onclick="convertLeadToCustomer(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90">
-                    Convert
+        <tr>
+            <td class="compact-text-primary">${lead.customer_name}</td>
+            <td class="compact-text-secondary">${lead.contact}</td>
+            <td>${getTypeBadge(lead.type)}</td>
+            <td class="compact-text-secondary">${lead.fleet_size || 'N/A'}</td>
+            <td>${getStatusBadge(lead.status)}</td>
+            <td>
+                <button onclick="convertLeadToCustomer(${lead.id})" class="compact-btn compact-btn-success">
+                    ✓
                 </button>
-                <button onclick="closeLeadAction(${lead.id})" class="px-3 py-1 text-xs rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 ml-2">
-                    Close
+                <button onclick="closeLeadAction(${lead.id})" class="compact-btn compact-btn-danger ml-2">
+                    ✕
                 </button>
             </td>
         </tr>
@@ -1872,25 +1971,13 @@ function showGroundOperations() {
 }
 
 function showStock() {
-    hideAllContent();
-    document.getElementById('stockContent').classList.remove('hidden');
-    updateMenuHighlight('stock');
-    
-    // Load stock data if available
-    if (window.loadStockData) {
-        window.loadStockData();
-    }
+    // Use the full stock page instead of placeholder content
+    showStockPage();
 }
 
 function showInventoryManagement() {
-    hideAllContent();
-    document.getElementById('inventoryManagementContent').classList.remove('hidden');
-    updateMenuHighlight('inventory');
-    
-    // Load inventory data if the function exists
-    if (window.loadInventoryData) {
-        window.loadInventoryData();
-    }
+    // Use the full inventory page instead of placeholder content
+    showInventoryPage();
 }
 
 function hideAllContent() {
