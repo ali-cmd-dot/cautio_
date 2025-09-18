@@ -1,10 +1,8 @@
-// Supabase Configuration - Using configuration from config.js
+// Supabase Configuration - Direct connection (no config.js needed)
 function getSupabaseClient() {
-    if (!window.CAUTIO_CONFIG) {
-        console.error('Configuration not loaded. Make sure config.js is included before this script.');
-        return null;
-    }
-    return window.supabase.createClient(window.CAUTIO_CONFIG.supabase.url, window.CAUTIO_CONFIG.supabase.key);
+    const SUPABASE_URL = 'https://jcmjazindwonrplvjwxl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
+    return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 let supabase;
@@ -28,7 +26,8 @@ let selectedCustomerId = null; // For customer dropdown
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Supabase client
-    supabase = getSupabaseClient();
+    window.supabaseClient = getSupabaseClient();
+    supabase = window.supabaseClient;
     if (!supabase) {
         console.error('Failed to initialize Supabase client');
         return;
@@ -101,7 +100,7 @@ async function startEmailScheduler() {
     // Check every minute for emails to send
     setInterval(checkScheduledEmails, 60000);
     
-    console.log('📧 Email scheduler started');
+    console.log('ðŸ“§ Email scheduler started');
 }
 
 async function loadScheduledEmails() {
@@ -118,7 +117,7 @@ async function loadScheduledEmails() {
         }
 
         scheduledEmails = data || [];
-        console.log(`📧 Loaded ${scheduledEmails.length} scheduled emails`);
+        console.log(`ðŸ“§ Loaded ${scheduledEmails.length} scheduled emails`);
     } catch (error) {
         console.error('Error loading scheduled emails:', error);
     }
@@ -170,7 +169,7 @@ async function processScheduledEmail(scheduledEmail) {
             // Remove from local array
             scheduledEmails = scheduledEmails.filter(e => e.id !== scheduledEmail.id);
             
-            console.log(`📧 Sent scheduled email to ${customer.customer_name}`);
+            console.log(`ðŸ“§ Sent scheduled email to ${customer.customer_name}`);
         }
     } catch (error) {
         console.error('Error processing scheduled email:', error);
@@ -521,7 +520,7 @@ async function checkPOCReminders() {
                             showPOCActionModal(customer);
                         }
                         
-                        console.log(`📧 Sent automatic POC reminder to ${customer.customer_name} (Day ${diffDays})`);
+                        console.log(`ðŸ“§ Sent automatic POC reminder to ${customer.customer_name} (Day ${diffDays})`);
                     }
                 }
             }
@@ -590,9 +589,9 @@ async function sendEmail(type, customerData, additionalInfo = '') {
         // Show success notification
         showEmailToast(`Email sent to ${customerData.customer_name} (${customerData.customer_email})`);
         
-        console.log(`📧 EMAIL SENT: ${getEmailSubject(type, customerData.customer_name)}`);
-        console.log(`📧 To: ${customerData.customer_email}`);
-        console.log(`📧 Message: ${getEmailMessage(type, customerData, additionalInfo)}`);
+        console.log(`ðŸ“§ EMAIL SENT: ${getEmailSubject(type, customerData.customer_name)}`);
+        console.log(`ðŸ“§ To: ${customerData.customer_email}`);
+        console.log(`ðŸ“§ Message: ${getEmailMessage(type, customerData, additionalInfo)}`);
         
         return true;
     } catch (error) {
@@ -1342,7 +1341,7 @@ function createCustomerRow(customer) {
             <td>
                 ${customer.status !== 'closed' ? `
                     <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
-                        📧
+                        ðŸ“§
                     </button>
                 ` : ''}
             </td>
@@ -1388,7 +1387,7 @@ function createPOCRow(customer) {
             <td class="compact-text-secondary">${customer.account_manager_name}</td>
             <td>
                 <button onclick="showPOCActionModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
-                    ⚙️
+                    âš™ï¸
                 </button>
             </td>
         </tr>
@@ -1414,7 +1413,7 @@ function createOnboardedRow(customer) {
             <td class="compact-text-secondary">${customer.account_manager_name}</td>
             <td>
                 <button onclick="showManualEmailModal(${JSON.stringify(customer).replace(/"/g, '&quot;')})" class="compact-btn compact-btn-primary">
-                    📧
+                    ðŸ“§
                 </button>
             </td>
         </tr>
@@ -1478,10 +1477,10 @@ function createLeadRow(lead) {
             <td>${getStatusBadge(lead.status)}</td>
             <td>
                 <button onclick="convertLeadToCustomer(${lead.id})" class="compact-btn compact-btn-success">
-                    ✓
+                    âœ“
                 </button>
                 <button onclick="closeLeadAction(${lead.id})" class="compact-btn compact-btn-danger ml-2">
-                    ✕
+                    âœ•
                 </button>
             </td>
         </tr>
