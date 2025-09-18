@@ -1,20 +1,26 @@
 // Inventory Management JavaScript
 // This file handles all inventory-related functionality
 
-// Supabase Configuration (same as main app)
-const supabaseUrl = 'https://jcmjazindwonrplvjwxl.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// Supabase Configuration - Using configuration from config.js
+function getSupabaseClient() {
+    if (!window.CAUTIO_CONFIG) {
+        console.error('Configuration not loaded. Make sure config.js is included before this script.');
+        return null;
+    }
+    return window.supabase.createClient(window.CAUTIO_CONFIG.supabase.url, window.CAUTIO_CONFIG.supabase.key);
+}
+
+// Use global supabase variable from main script
 
 // Global variables for inventory
+// Local inventory variables (use global variables from main script when needed)
 let stockData = [];
 let inwardDevices = [];
 let outwardDevices = [];
-let approvedCustomers = [];
 let filteredInwardDevices = [];
 let filteredOutwardDevices = [];
 let currentInventoryFilter = '';
-let userSession = null;
+// approvedCustomers and userSession are available globally from main script
 
 // NEW: Device condition mapping
 const DEVICE_CONDITIONS = {
@@ -47,6 +53,12 @@ const OUTWARD_REQUIRED_COLUMNS = [
 
 // Initialize inventory management
 document.addEventListener('DOMContentLoaded', function() {
+    // Wait for main script to initialize supabase
+    if (!window.supabase || !supabase) {
+        console.error('Supabase client not initialized');
+        return;
+    }
+    
     // Get user session from localStorage
     checkInventoryUserSession();
     
@@ -56,8 +68,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup event listeners
     setupInventoryEventListeners();
     
-    // Setup realtime listeners
-    setupInventoryRealtimeListeners();
+    // Setup realtime listeners only if supabase.channel is available
+    if (typeof supabase.channel === 'function') {
+        setupInventoryRealtimeListeners();
+    } else {
+        console.warn('Realtime listeners not available - supabase.channel not found');
+    }
     
     // Show inward tab by default
     showInwardTab();
@@ -79,13 +95,14 @@ function checkInventoryUserSession() {
     
     if (!userSession) {
         // Redirect to main dashboard login
-        window.location.href = 'index.html';
+        window.location.href = '/';
     }
 }
 
 // Go back to main dashboard
 function goBackToDashboard() {
-    window.location.href = 'index.html';
+    // Navigate back to main dashboard
+    window.location.href = '/';
 }
 
 // Setup event listeners for inventory
@@ -189,7 +206,7 @@ async function autoAddStockToInward(stockItem) {
         const inwardData = {
             device_registration_number: stockItem.device_registration_number,
             device_imei: stockItem.device_imei,
-            device_condition: 'new', // Auto-set as "new" condition
+            device_condition: 'good', // Auto-set as "good" condition as per user requirement
             notes: 'Auto-added from stock import',
             processed_by: 'system',
             stock_id: stockItem.id,
@@ -351,13 +368,54 @@ async function loadApprovedCustomers() {
 
 // Update stock summary display
 function updateStockSummary() {
+    
+    // Ensure stockData is available before proceeding
+    if (!stockData || stockData.length === 0) {
+        // Use localStockData from stock.js as fallback if available
+        if (typeof localStockData !== 'undefined' && localStockData.length > 0) {
+            stockData = localStockData;
+        } else {
+            return;
+        }
+    }
+    
     const totalStock = stockData.length;
     const availableStock = stockData.filter(item => item.current_status === 'available').length;
     const allocatedStock = stockData.filter(item => item.current_status === 'allocated').length;
     
-    document.getElementById('totalStockCount').textContent = totalStock;
-    document.getElementById('availableStockCount').textContent = availableStock;
-    document.getElementById('allocatedStockCount').textContent = allocatedStock;
+    // For inventory tab: Available stock should only include items with condition = 'good'
+    const availableGoodStock = stockData.filter(item => 
+        item.current_status === 'available' && item.device_condition === 'good'
+    ).length;
+    
+    
+    // Update main dashboard cards (normal logic - all available items)
+    const totalStockEl = document.getElementById('totalStockCount');
+    const availableStockEl = document.getElementById('availableStockCount');
+    const allocatedStockEl = document.getElementById('allocatedStockCount');
+    
+    
+    if (totalStockEl) totalStockEl.textContent = totalStock;
+    if (availableStockEl) availableStockEl.textContent = availableStock;
+    if (allocatedStockEl) allocatedStockEl.textContent = allocatedStock;
+    
+    // Update inventory page cards (special logic - only good condition available items)
+    const inventoryPageTotalStockEl = document.getElementById('inventoryPageTotalStockCount');
+    const inventoryPageAvailableStockEl = document.getElementById('inventoryPageAvailableStockCount');
+    const inventoryPageAllocatedStockEl = document.getElementById('inventoryPageAllocatedStockCount');
+    
+    // Also update inventory.html cards if they exist (should use same filtered logic)
+    const inventoryHTMLTotalStockEl = document.getElementById('inventoryHTMLTotalStockCount');
+    const inventoryHTMLAvailableStockEl = document.getElementById('inventoryHTMLAvailableStockCount');
+    const inventoryHTMLAllocatedStockEl = document.getElementById('inventoryHTMLAllocatedStockCount');
+    
+    if (inventoryPageTotalStockEl) inventoryPageTotalStockEl.textContent = totalStock;
+    if (inventoryPageAvailableStockEl) inventoryPageAvailableStockEl.textContent = availableGoodStock; // Only good condition
+    if (inventoryPageAllocatedStockEl) inventoryPageAllocatedStockEl.textContent = allocatedStock;
+    
+    if (inventoryHTMLTotalStockEl) inventoryHTMLTotalStockEl.textContent = totalStock;
+    if (inventoryHTMLAvailableStockEl) inventoryHTMLAvailableStockEl.textContent = availableGoodStock; // Only good condition
+    if (inventoryHTMLAllocatedStockEl) inventoryHTMLAllocatedStockEl.textContent = allocatedStock;
 }
 
 // Update inventory tab content
@@ -369,8 +427,19 @@ function updateInventoryTabs() {
 
 // Update tab counts
 function updateTabCounts() {
-    document.getElementById('inwardCount').textContent = filteredInwardDevices.length;
-    document.getElementById('outwardCount').textContent = filteredOutwardDevices.length;
+    // Update inward and outward device counts
+    const inwardCountEls = document.querySelectorAll('#inwardCount');
+    const outwardCountEls = document.querySelectorAll('#outwardCount');
+    
+    inwardCountEls.forEach(el => el.textContent = filteredInwardDevices.length);
+    outwardCountEls.forEach(el => el.textContent = filteredOutwardDevices.length);
+    
+    // Update inward devices counter in main stats
+    const inwardDevicesCountEl = document.getElementById('inwardDevicesCount');
+    const outwardDevicesCountEl = document.getElementById('outwardDevicesCount');
+    
+    if (inwardDevicesCountEl) inwardDevicesCountEl.textContent = filteredInwardDevices.length;
+    if (outwardDevicesCountEl) outwardDevicesCountEl.textContent = filteredOutwardDevices.length;
 }
 
 // Update inward tab content
@@ -401,7 +470,7 @@ function updateOutwardTab() {
     }
 }
 
-// Create inward device card HTML - UPDATED with new conditions
+// Create inward device table row HTML - UPDATED with new conditions
 function createInwardDeviceCard(device) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
@@ -410,60 +479,55 @@ function createInwardDeviceCard(device) {
 
     const getConditionBadge = (condition) => {
         const conditionText = DEVICE_CONDITIONS[condition] || condition;
-        const badgeClass = `condition-badge ${condition}`;
+        // Map damaged to device_tampered for consistent styling
+        const mappedCondition = condition === 'damaged' ? 'device_tampered' : condition;
+        const badgeClass = `compact-badge condition-${mappedCondition}`;
         return `<span class="${badgeClass}">${conditionText}</span>`;
+    };
+
+    const getStatusBadge = (status) => {
+        const statusText = status || 'Available';
+        const badgeClass = status === 'available' ? 
+            'compact-badge status-available' :
+            'compact-badge status-allocated';
+        return `<span class="${badgeClass}">● ${statusText}</span>`;
     };
 
     const stockInfo = device.stock || {};
 
     return `
-        <div class="device-card p-4 rounded-lg">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${device.device_registration_number}</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">IMEI: ${device.device_imei}</p>
-                </div>
-                <div class="flex flex-col gap-2 items-end">
-                    ${getConditionBadge(device.device_condition)}
-                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-success-600 dark:text-utility-white">
-                        Inward
-                    </span>
-                </div>
-            </div>
-            <div class="device-info-grid">
-                <div class="device-info-item">
-                    <span class="device-info-label">Model</span>
-                    <span class="device-info-value">${stockInfo.device_model_no || 'N/A'}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Batch No</span>
-                    <span class="device-info-value">${stockInfo.batch_no || 'N/A'}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Inward Date</span>
-                    <span class="device-info-value">${formatDate(device.inward_date)}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Status</span>
-                    <span class="device-info-value">${stockInfo.current_status || 'Available'}</span>
-                </div>
-            </div>
-            ${device.notes ? `
-                <div class="mt-3 p-3 rounded-lg dark:bg-dark-fill-base-400">
-                    <span class="device-info-label">Notes</span>
-                    <p class="device-info-value mt-1">${device.notes}</p>
-                </div>
-            ` : ''}
-            <div class="mt-3 flex gap-2">
-                <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="device-action-btn view">
-                    View Details
+        <tr>
+            <td>
+                <div class="compact-text-primary">${device.device_registration_number}</div>
+            </td>
+            <td class="compact-text-secondary">
+                ${device.device_imei}
+            </td>
+            <td class="compact-text-primary">
+                ${stockInfo.device_model_no || 'N/A'}
+            </td>
+            <td class="compact-text-secondary">
+                ${stockInfo.batch_no || 'N/A'}
+            </td>
+            <td class="compact-text-secondary">
+                ${formatDate(device.inward_date)}
+            </td>
+            <td>
+                ${getStatusBadge(stockInfo.current_status)}
+            </td>
+            <td>
+                ${getConditionBadge(device.device_condition)}
+            </td>
+            <td>
+                <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="compact-btn compact-btn-primary">
+                    VIEW
                 </button>
-            </div>
-        </div>
+            </td>
+        </tr>
     `;
 }
 
-// Create outward device card HTML
+// Create outward device table row HTML
 function createOutwardDeviceCard(device) {
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
@@ -473,59 +537,39 @@ function createOutwardDeviceCard(device) {
     const stockInfo = device.stock || {};
 
     return `
-        <div class="device-card outward-card p-4 rounded-lg">
-            <div class="flex justify-between items-start mb-3">
-                <div>
-                    <h4 class="text-body-l-semibold dark:text-dark-base-600">${device.device_registration_number}</h4>
-                    <p class="text-body-m-regular dark:text-dark-base-500">IMEI: ${device.device_imei}</p>
+        <tr>
+            <td>
+                <div class="compact-text-primary">${device.device_registration_number}</div>
+            </td>
+            <td class="compact-text-secondary">
+                ${device.device_imei}
+            </td>
+            <td class="compact-text-primary">
+                ${device.customer_name}
+            </td>
+            <td class="compact-text-secondary">
+                ${device.location}
+            </td>
+            <td class="compact-text-secondary">
+                ${formatDate(device.outward_date)}
+            </td>
+            <td class="compact-text-secondary">
+                ${device.sim_no || 'N/A'}
+            </td>
+            <td class="compact-text-secondary">
+                ${stockInfo.device_model_no || 'N/A'}
+            </td>
+            <td>
+                <div class="flex gap-1">
+                    <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="compact-btn compact-btn-primary">
+                        VIEW
+                    </button>
+                    <button onclick="returnDevice('${device.id}')" class="compact-btn compact-btn-danger">
+                        RET
+                    </button>
                 </div>
-                <div class="flex flex-col gap-2 items-end">
-                    <span class="px-2 py-1 text-xs rounded-full dark:bg-dark-semantic-danger-300 dark:text-utility-white">
-                        Outward
-                    </span>
-                </div>
-            </div>
-            <div class="device-info-grid">
-                <div class="device-info-item">
-                    <span class="device-info-label">Customer</span>
-                    <span class="device-info-value">${device.customer_name}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Location</span>
-                    <span class="device-info-value">${device.location}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Outward Date</span>
-                    <span class="device-info-value">${formatDate(device.outward_date)}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">SIM No</span>
-                    <span class="device-info-value">${device.sim_no || 'N/A'}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Model</span>
-                    <span class="device-info-value">${stockInfo.device_model_no || 'N/A'}</span>
-                </div>
-                <div class="device-info-item">
-                    <span class="device-info-label">Processed By</span>
-                    <span class="device-info-value">${device.processed_by || 'N/A'}</span>
-                </div>
-            </div>
-            ${device.notes ? `
-                <div class="mt-3 p-3 rounded-lg dark:bg-dark-fill-base-400">
-                    <span class="device-info-label">Notes</span>
-                    <p class="device-info-value mt-1">${device.notes}</p>
-                </div>
-            ` : ''}
-            <div class="mt-3 flex gap-2">
-                <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="device-action-btn view">
-                    View Details
-                </button>
-                <button onclick="returnDevice('${device.id}')" class="device-action-btn return">
-                    Return Device
-                </button>
-            </div>
-        </div>
+            </td>
+        </tr>
     `;
 }
 
@@ -716,7 +760,7 @@ async function handleAddInward(e) {
         const inwardData = {
             device_registration_number: deviceRegistrationNumber,
             device_imei: deviceImei,
-            device_condition: deviceCondition,
+            device_condition: 'good', // Always set as good for inward devices per user requirement
             notes: notes || null,
             processed_by: userSession?.email || 'unknown',
             stock_id: stockDevice.id,
@@ -735,7 +779,7 @@ async function handleAddInward(e) {
         await supabase
             .from('stock')
             .update({ 
-                device_condition: deviceCondition,
+                device_condition: 'good', // Always set as good for inward devices per user requirement
                 current_status: 'available' 
             })
             .eq('id', stockDevice.id);
@@ -1052,7 +1096,7 @@ async function validateAndImportInwardCSV(results, filename) {
             validData.push({
                 device_registration_number: deviceRegNumber,
                 device_imei: deviceImei,
-                device_condition: deviceCondition.toLowerCase().replace(' ', '_'),
+                device_condition: 'good', // Always set as good for inward devices per user requirement
                 notes: row['Notes'] || 'Bulk imported',
                 processed_by: userSession?.email || 'unknown',
                 stock_id: stockDevice.id,
@@ -1523,6 +1567,19 @@ function showInventoryToast(message, type = 'success') {
         }, 300);
     }, 3000);
 }
+
+// Make functions globally available for HTML onclick handlers
+window.showInwardTab = showInwardTab;
+window.showOutwardTab = showOutwardTab;
+window.showAddInwardForm = showAddInwardForm;
+window.closeAddInwardForm = closeAddInwardForm;
+window.showAddOutwardForm = showAddOutwardForm;
+window.closeAddOutwardForm = closeAddOutwardForm;
+window.clearInventorySearch = clearInventorySearch;
+window.viewDeviceDetails = viewDeviceDetails;
+window.returnDevice = returnDevice;
+window.goBackToDashboard = goBackToDashboard;
+window.loadInventoryData = loadInventoryData;
 
 // Export functions for global access (if needed)
 window.inventoryFunctions = {
