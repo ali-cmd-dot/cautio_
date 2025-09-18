@@ -1,18 +1,11 @@
 // Stock Management JavaScript
 // This file handles CSV import and stock management functionality
 
-// Supabase Configuration - Using configuration from config.js
+// Supabase Configuration - Direct connection (no config.js needed)
 function getSupabaseClient() {
-    if (!window.CAUTIO_CONFIG) {
-        console.error(
-            "Configuration not loaded. Make sure config.js is included before this script.",
-        );
-        return null;
-    }
-    return window.supabase.createClient(
-        window.CAUTIO_CONFIG.supabase.url,
-        window.CAUTIO_CONFIG.supabase.key,
-    );
+    const SUPABASE_URL = 'https://jcmjazindwonrplvjwxl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbWphemluZHdvbnJwbHZqd3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMDEyNjMsImV4cCI6MjA3Mjg3NzI2M30.1B6sKnzrzdNFhvQUXVnRzzQnItFMaIFL0Y9WK_Gie9g';
+    return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 // Use global supabase variable from main script
@@ -38,10 +31,18 @@ const REQUIRED_COLUMNS = [
 
 // Initialize stock management
 document.addEventListener("DOMContentLoaded", function () {
-    // Wait for main script to initialize supabase
-    if (!window.supabase || !supabase) {
-        console.error("Supabase client not initialized");
+    // Initialize supabase client if not already done
+    if (!window.supabaseClient || typeof window.supabaseClient.from !== 'function') {
+        window.supabaseClient = getSupabaseClient();
+    }
+    if (!window.supabaseClient) {
+        console.error("Failed to initialize Supabase client");
         return;
+    }
+    
+    // Set global supabase variable
+    if (typeof supabase === 'undefined') {
+        supabase = window.supabaseClient;
     }
 
     // Get user session from localStorage
@@ -79,18 +80,18 @@ function checkStockUserSession() {
 
     if (!userSession) {
         // Redirect to main dashboard login
-        window.location.href = "/";
+        window.location.href = "./";
     }
 }
 
 // Navigation functions
 function goBackToDashboard() {
     // Navigate back to main dashboard
-    window.location.href = "/";
+    window.location.href = "./";
 }
 
 function goToInventoryManagement() {
-    window.location.href = "/inventory.html";
+    window.location.href = "./inventory.html";
 }
 
 // Setup event listeners for stock management
@@ -283,17 +284,17 @@ function createStockTableRow(item) {
             case "available":
                 badgeClass = "compact-badge status-available";
                 statusText = "Available";
-                icon = "●";
+                icon = "â—";
                 break;
             case "allocated":
                 badgeClass = "compact-badge status-allocated";
                 statusText = "Allocated";
-                icon = "●";
+                icon = "â—";
                 break;
             default:
                 badgeClass = "compact-badge status-allocated";
                 statusText = status;
-                icon = "●";
+                icon = "â—";
         }
 
         return `<span class="${badgeClass}">${icon} ${statusText}</span>`;
@@ -352,11 +353,11 @@ function createStockTableRow(item) {
         // This would be determined by checking if device exists in inward/outward
         // For now, we'll show a simple indicator based on status
         if (item.current_status === "available") {
-            return `<span class="compact-badge status-available">📥 Ready</span>`;
+            return `<span class="compact-badge status-available">ðŸ“¥ Ready</span>`;
         } else if (item.current_status === "allocated") {
-            return `<span class="compact-badge status-allocated">📤 Out</span>`;
+            return `<span class="compact-badge status-allocated">ðŸ“¤ Out</span>`;
         } else {
-            return `<span class="compact-badge condition-used">⚪ Unknown</span>`;
+            return `<span class="compact-badge condition-used">âšª Unknown</span>`;
         }
     };
 
@@ -380,7 +381,7 @@ function createStockTableRow(item) {
                         EDIT
                     </button>
                     <button onclick="manageInventory('${item.device_registration_number}')" class="compact-btn compact-btn-primary">
-                        📦
+                        ðŸ“¦
                     </button>
                 </div>
             </td>
@@ -607,7 +608,7 @@ async function validateAndImportCSV(results, filename) {
                 } else {
                     successfulImports++;
                     console.log(
-                        `✅ Stock imported: ${newDevices[i].device_registration_number} (will auto-add to inward)`,
+                        `âœ… Stock imported: ${newDevices[i].device_registration_number} (will auto-add to inward)`,
                     );
                 }
             }
@@ -644,7 +645,7 @@ async function validateAndImportCSV(results, filename) {
         if (successfulImports > 0) {
             setTimeout(() => {
                 showStockToast(
-                    `✅ ${successfulImports} devices imported and will be auto-added to inventory inward`,
+                    `âœ… ${successfulImports} devices imported and will be auto-added to inventory inward`,
                     "success",
                 );
             }, 2000);
@@ -703,7 +704,7 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
                     newDevicesCount > 0
                         ? `
                     <p class="text-body-s-regular text-blue-600 mt-1">
-                        📦 ${newDevicesCount} new devices will be auto-added to inventory inward
+                        ðŸ“¦ ${newDevicesCount} new devices will be auto-added to inventory inward
                     </p>
                 `
                         : ""
@@ -720,9 +721,9 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
                     <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
                         ${errors
                             .slice(0, 10)
-                            .map((error) => `<li>• ${error}</li>`)
+                            .map((error) => `<li>â€¢ ${error}</li>`)
                             .join("")}
-                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ""}
+                        ${errors.length > 10 ? `<li>â€¢ ... and ${errors.length - 10} more errors</li>` : ""}
                     </ul>
                 </div>
             </div>
@@ -743,7 +744,7 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
                 </div>
                 <p class="text-body-s-regular text-blue-600 mt-1">
                     New devices are automatically added to inventory inward with "New Device" condition.
-                    <a href="inventory.html" class="underline hover:no-underline">Manage inventory →</a>
+                    <a href="inventory.html" class="underline hover:no-underline">Manage inventory â†’</a>
                 </p>
             </div>
         `;
@@ -760,7 +761,7 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
     // Show toast
     if (isSuccess) {
         showStockToast(
-            `✅ Successfully imported ${successful} devices`,
+            `âœ… Successfully imported ${successful} devices`,
             "success",
         );
     } else {
@@ -821,13 +822,13 @@ function createImportHistoryCard(record) {
                         </p>
                         <div class="flex gap-4 mt-2">
                             <span class="text-body-s-regular text-green-600">
-                                ✅ ${record.successful_imports} successful
+                                âœ… ${record.successful_imports} successful
                             </span>
                             <span class="text-body-s-regular text-red-600">
-                                ❌ ${record.failed_imports} failed
+                                âŒ ${record.failed_imports} failed
                             </span>
                             <span class="text-body-s-regular dark:text-dark-base-500">
-                                📊 ${record.total_rows} total
+                                ðŸ“Š ${record.total_rows} total
                             </span>
                         </div>
                         ${
@@ -963,9 +964,9 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
                     <div class="device-info-value">
                         ${
                             device.current_status === "available"
-                                ? "✅ Available"
+                                ? "âœ… Available"
                                 : device.current_status === "allocated"
-                                  ? "📤 Allocated"
+                                  ? "ðŸ“¤ Allocated"
                                   : device.current_status
                         }
                     </div>
@@ -1036,7 +1037,7 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
             <div class="border-t pt-4 dark:border-dark-stroke-contrast-400">
                 <div class="flex gap-2">
                     <button onclick="manageInventory('${device.device_registration_number}')" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors text-sm">
-                        📦 Manage in Inventory
+                        ðŸ“¦ Manage in Inventory
                     </button>
                     <button onclick="closeDeviceDetailsModal()" class="px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-sm">
                         Close
@@ -1087,8 +1088,8 @@ function viewImportDetails(importId) {
             - Successful: ${importRecord.successful_imports}
             - Failed: ${importRecord.failed_imports}
             
-            ${importRecord.successful_imports > 0 ? `✅ ${importRecord.successful_imports} devices were auto-added to inventory inward\n` : ""}
-            ${importRecord.error_details ? `❌ ${importRecord.error_details.errors.length} errors occurred` : "✅ No errors"}
+            ${importRecord.successful_imports > 0 ? `âœ… ${importRecord.successful_imports} devices were auto-added to inventory inward\n` : ""}
+            ${importRecord.error_details ? `âŒ ${importRecord.error_details.errors.length} errors occurred` : "âœ… No errors"}
         `;
         alert(details);
     }
