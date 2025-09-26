@@ -1,5 +1,5 @@
 // Inventory Management JavaScript
-// This file handles all inventory-related functionality
+// This file handles all inventory management functionality including inward/outward devices and SIM management
 
 // Supabase Configuration - Direct connection (no config.js needed)
 function getSupabaseClient() {
@@ -8,55 +8,32 @@ function getSupabaseClient() {
     return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-// Use global supabase variable from main script
-
-// Global variables for inventory
-// Local inventory variables (use global variables from main script when needed)
-let stockData = [];
-let inwardDevices = [];
-let outwardDevices = [];
-let filteredInwardDevices = [];
-let filteredOutwardDevices = [];
-let currentInventoryFilter = '';
-// approvedCustomers and userSession are available globally from main script
-
-// NEW: Device condition mapping
-const DEVICE_CONDITIONS = {
-    'good': 'Good',
-    'lense_issue': 'Lense issue',
-    'sim_module_fail': 'SIM module fail',
-    'auto_restart': 'Auto restart',
-    'device_tampered': 'Device tampered',
-    'new': 'New Device' // For stock integration
+// Global variables for inventory management
+let inventoryData = {
+    inwardDevices: [],
+    outwardDevices: [],
+    stockData: [],
+    customers: [],
+    simManagement: [],
+    simHistory: []
 };
-
-// Required CSV columns for inward
-const INWARD_REQUIRED_COLUMNS = [
-    'Device Registration Number',
-    'Device IMEI',
-    'Device Condition',
-    'Notes'
-];
-
-// Required CSV columns for outward
-const OUTWARD_REQUIRED_COLUMNS = [
-    'Device Registration Number',
-    'Device IMEI',
-    'Customer Name',
-    'Location',
-    'Outward Date',
-    'SIM No',
-    'Notes'
-];
+let filteredInventoryData = {
+    inwardDevices: [],
+    outwardDevices: [],
+    simManagement: []
+};
+let currentInventoryTab = "device-management";
+let currentDeviceTab = "inward";
+let userSession = null;
 
 // Initialize inventory management
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Initialize supabase client if not already done
     if (!window.supabaseClient || typeof window.supabaseClient.from !== 'function') {
         window.supabaseClient = getSupabaseClient();
     }
     if (!window.supabaseClient) {
-        console.error('Failed to initialize Supabase client');
+        console.error("Failed to initialize Supabase client");
         return;
     }
     
@@ -64,30 +41,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof supabase === 'undefined') {
         supabase = window.supabaseClient;
     }
-    
+
     // Get user session from localStorage
     checkInventoryUserSession();
-    
+
     // Load initial data
     loadInventoryData();
-    
+
     // Setup event listeners
     setupInventoryEventListeners();
-    
+
     // Setup realtime listeners only if supabase.channel is available
-    if (typeof supabase.channel === 'function') {
+    if (typeof supabase.channel === "function") {
         setupInventoryRealtimeListeners();
     } else {
-        console.warn('Realtime listeners not available - supabase.channel not found');
+        console.warn("Realtime listeners not available - supabase.channel not found");
     }
-    
-    // Show inward tab by default
-    showInwardTab();
 });
 
-// Check user session for inventory
+// Check user session for inventory management
 function checkInventoryUserSession() {
-    const savedSession = localStorage.getItem('cautio_user_session');
+    const savedSession = localStorage.getItem("cautio_user_session");
     if (savedSession) {
         try {
             const sessionData = JSON.parse(savedSession);
@@ -95,83 +69,89 @@ function checkInventoryUserSession() {
                 userSession = sessionData.user;
             }
         } catch (error) {
-            console.error('Error parsing session:', error);
+            console.error("Error parsing session:", error);
         }
     }
-    
+
     if (!userSession) {
         // Redirect to main dashboard login
-        window.location.href = './';
+        window.location.href = "./";
     }
 }
 
-// Go back to main dashboard
+// Navigation functions
 function goBackToDashboard() {
     // Navigate back to main dashboard
-    window.location.href = './';
+    window.location.href = "./";
 }
 
-// Setup event listeners for inventory
+// Setup event listeners for inventory management
 function setupInventoryEventListeners() {
+    // CSV file inputs
+    const inwardCSVFileInput = document.getElementById("inwardCSVFileInput");
+    const outwardCSVFileInput = document.getElementById("outwardCSVFileInput");
+    
+    if (inwardCSVFileInput) {
+        inwardCSVFileInput.addEventListener("change", (e) => handleCSVFileSelect(e, 'inward'));
+    }
+    if (outwardCSVFileInput) {
+        outwardCSVFileInput.addEventListener("change", (e) => handleCSVFileSelect(e, 'outward'));
+    }
+
+    // Drag and drop for CSV import
+    const inwardCSVImportArea = document.getElementById("inwardCSVImportArea");
+    const outwardCSVImportArea = document.getElementById("outwardCSVImportArea");
+    
+    if (inwardCSVImportArea) {
+        inwardCSVImportArea.addEventListener("dragover", handleDragOver);
+        inwardCSVImportArea.addEventListener("dragleave", handleDragLeave);
+        inwardCSVImportArea.addEventListener("drop", (e) => handleFileDrop(e, 'inward'));
+    }
+    
+    if (outwardCSVImportArea) {
+        outwardCSVImportArea.addEventListener("dragover", handleDragOver);
+        outwardCSVImportArea.addEventListener("dragleave", handleDragLeave);
+        outwardCSVImportArea.addEventListener("drop", (e) => handleFileDrop(e, 'outward'));
+    }
+
     // Search functionality
-    document.getElementById('inventorySearchInput').addEventListener('input', handleInventorySearch);
-    
+    const searchInput = document.getElementById("inventorySearchInput");
+    if (searchInput) {
+        searchInput.addEventListener("input", handleInventorySearch);
+    }
+
     // Form submissions
-    document.getElementById('addInwardForm').addEventListener('submit', handleAddInward);
-    document.getElementById('addOutwardForm').addEventListener('submit', handleAddOutward);
+    const addInwardForm = document.getElementById("addInwardForm");
+    const addOutwardForm = document.getElementById("addOutwardForm");
+    const simReplacementForm = document.getElementById("simReplacementForm");
     
-    // CSV file inputs for inward
-    const inwardCSVInput = document.getElementById('inwardCSVFileInput');
-    inwardCSVInput.addEventListener('change', handleInwardCSVFileSelect);
-    
-    // CSV file inputs for outward
-    const outwardCSVInput = document.getElementById('outwardCSVFileInput');
-    outwardCSVInput.addEventListener('change', handleOutwardCSVFileSelect);
-    
-    // Drag and drop for inward CSV
-    const inwardCSVArea = document.getElementById('inwardCSVImportArea');
-    inwardCSVArea.addEventListener('dragover', (e) => handleDragOver(e, 'inward'));
-    inwardCSVArea.addEventListener('dragleave', (e) => handleDragLeave(e, 'inward'));
-    inwardCSVArea.addEventListener('drop', (e) => handleFileDrop(e, 'inward'));
-    
-    // Drag and drop for outward CSV
-    const outwardCSVArea = document.getElementById('outwardCSVImportArea');
-    outwardCSVArea.addEventListener('dragover', (e) => handleDragOver(e, 'outward'));
-    outwardCSVArea.addEventListener('dragleave', (e) => handleDragLeave(e, 'outward'));
-    outwardCSVArea.addEventListener('drop', (e) => handleFileDrop(e, 'outward'));
-    
-    // Set default date for outward form
-    const today = new Date().toISOString().split('T')[0];
-    document.querySelector('input[name="outwardDate"]').value = today;
+    if (addInwardForm) {
+        addInwardForm.addEventListener("submit", handleAddInwardDevice);
+    }
+    if (addOutwardForm) {
+        addOutwardForm.addEventListener("submit", handleAddOutwardDevice);
+    }
+    if (simReplacementForm) {
+        simReplacementForm.addEventListener("submit", handleSimReplacement);
+    }
+
+    // Auto-fill device IMEI when registration number is entered for SIM replacement
+    const simDeviceRegNumber = document.getElementById("simDeviceRegNumber");
+    if (simDeviceRegNumber) {
+        simDeviceRegNumber.addEventListener("blur", autoFillDeviceIMEI);
+    }
 }
 
 // Setup realtime listeners for inventory
 function setupInventoryRealtimeListeners() {
-    // Listen for stock changes - AUTO ADD TO INWARD
-    supabase
-        .channel('stock_changes')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'stock' }, 
-            async (payload) => {
-                console.log('New stock item inserted!', payload);
-                // Auto add to inward with "new" condition
-                await autoAddStockToInward(payload.new);
-                loadInventoryData();
-            }
-        )
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'stock' }, 
-            (payload) => {
-                console.log('Stock item updated!', payload);
-                loadInventoryData();
-            }
-        )
-        .subscribe();
-
     // Listen for inward device changes
     supabase
-        .channel('inward_changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'inward_devices' }, 
+        .channel("inward_devices_changes")
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "inward_devices" },
             (payload) => {
-                console.log('Inward device change received!', payload);
+                console.log("Inward device change received!", payload);
                 loadInventoryData();
             }
         )
@@ -179,89 +159,127 @@ function setupInventoryRealtimeListeners() {
 
     // Listen for outward device changes
     supabase
-        .channel('outward_changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'outward_devices' }, 
+        .channel("outward_devices_changes")
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "outward_devices" },
             (payload) => {
-                console.log('Outward device change received!', payload);
+                console.log("Outward device change received!", payload);
+                loadInventoryData();
+            }
+        )
+        .subscribe();
+
+    // Listen for stock changes
+    supabase
+        .channel("stock_changes")
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "stock" },
+            (payload) => {
+                console.log("Stock change received!", payload);
+                loadInventoryData();
+            }
+        )
+        .subscribe();
+
+    // Listen for SIM management changes
+    supabase
+        .channel("sim_management_changes")
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "device_sim_management" },
+            (payload) => {
+                console.log("SIM management change received!", payload);
+                loadInventoryData();
+            }
+        )
+        .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "sim_replacement_history" },
+            (payload) => {
+                console.log("SIM replacement history change received!", payload);
                 loadInventoryData();
             }
         )
         .subscribe();
 }
 
-// NEW: Auto add stock to inward when new stock is inserted
-async function autoAddStockToInward(stockItem) {
-    try {
-        // Check if device already exists in inward
-        const { data: existingInward, error: existingError } = await supabase
-            .from('inward_devices')
-            .select('*')
-            .eq('device_registration_number', stockItem.device_registration_number);
-        
-        if (existingError) {
-            console.error('Error checking existing inward devices:', existingError);
-            return;
-        }
-        
-        if (existingInward && existingInward.length > 0) {
-            console.log('Device already exists in inward, skipping auto-add');
-            return;
-        }
-        
-        // Add to inward devices with "new" condition
-        const inwardData = {
-            device_registration_number: stockItem.device_registration_number,
-            device_imei: stockItem.device_imei,
-            device_condition: 'good', // Auto-set as "good" condition as per user requirement
-            notes: 'Auto-added from stock import',
-            processed_by: 'system',
-            stock_id: stockItem.id,
-            inward_date: new Date().toISOString().split('T')[0]
-        };
-        
-        const { error: inwardError } = await supabase
-            .from('inward_devices')
-            .insert([inwardData]);
-        
-        if (inwardError) {
-            console.error('Error auto-adding to inward:', inwardError);
-        } else {
-            console.log(`Auto-added device ${stockItem.device_registration_number} to inward`);
-            showInventoryToast(`New device ${stockItem.device_registration_number} auto-added to inward`, 'success');
-        }
-        
-    } catch (error) {
-        console.error('Error in autoAddStockToInward:', error);
-    }
-}
-
 // Load all inventory data
 async function loadInventoryData() {
     try {
         showInventoryLoadingOverlay();
-        
-        // Load stock data
-        await loadStockData();
-        
-        // Load inward devices
-        await loadInwardDevicesData();
-        
-        // Load outward devices
-        await loadOutwardDevicesData();
-        
-        // Load approved customers for dropdown
-        await loadApprovedCustomers();
-        
+
+        // Load all data in parallel
+        await Promise.all([
+            loadInwardDevices(),
+            loadOutwardDevices(),
+            loadStockData(),
+            loadCustomers(),
+            loadSimManagement(),
+            loadSimHistory()
+        ]);
+
         // Update UI
-        updateStockSummary();
-        updateInventoryTabs();
-        populateCustomerDropdown();
-        
+        updateInventoryPageSummary();
+        updateInventoryDisplay();
+
         hideInventoryLoadingOverlay();
     } catch (error) {
-        console.error('Error loading inventory data:', error);
-        showInventoryToast('Error loading inventory data', 'error');
+        console.error("Error loading inventory data:", error);
+        showInventoryToast("Error loading inventory data", "error");
         hideInventoryLoadingOverlay();
+    }
+}
+
+// Load inward devices from database
+async function loadInwardDevices() {
+    try {
+        const { data, error } = await supabase
+            .from("inward_devices")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Error loading inward devices:", error);
+            throw error;
+        }
+
+        inventoryData.inwardDevices = data || [];
+        filteredInventoryData.inwardDevices = [...inventoryData.inwardDevices];
+        console.log(`Loaded ${inventoryData.inwardDevices.length} inward devices`);
+    } catch (error) {
+        console.error("Error loading inward devices:", error);
+        throw error;
+    }
+}
+
+// Load outward devices from database
+async function loadOutwardDevices() {
+    try {
+        const { data, error } = await supabase
+            .from("outward_devices")
+            .select(`
+                *,
+                customers (
+                    customer_name,
+                    customer_email,
+                    customer_mobile
+                )
+            `)
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Error loading outward devices:", error);
+            throw error;
+        }
+
+        inventoryData.outwardDevices = data || [];
+        filteredInventoryData.outwardDevices = [...inventoryData.outwardDevices];
+        console.log(`Loaded ${inventoryData.outwardDevices.length} outward devices`);
+    } catch (error) {
+        console.error("Error loading outward devices:", error);
+        throw error;
     }
 }
 
@@ -269,309 +287,384 @@ async function loadInventoryData() {
 async function loadStockData() {
     try {
         const { data, error } = await supabase
-            .from('stock')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .from("stock")
+            .select("*")
+            .order("created_at", { ascending: false });
 
         if (error) {
-            console.error('Error loading stock data:', error);
+            console.error("Error loading stock data:", error);
             throw error;
         }
 
-        stockData = data || [];
-        console.log(`Loaded ${stockData.length} stock items`);
+        inventoryData.stockData = data || [];
+        console.log(`Loaded ${inventoryData.stockData.length} stock items`);
     } catch (error) {
-        console.error('Error loading stock data:', error);
+        console.error("Error loading stock data:", error);
         throw error;
     }
 }
 
-// Load inward devices data
-async function loadInwardDevicesData() {
+// Load customers from database
+async function loadCustomers() {
     try {
         const { data, error } = await supabase
-            .from('inward_devices')
-            .select(`
-                *,
-                stock (
-                    device_model_no,
-                    current_status,
-                    device_condition,
-                    sl_no,
-                    po_no,
-                    batch_no
-                )
-            `)
-            .order('created_at', { ascending: false });
+            .from("customers")
+            .select("id, customer_name, customer_email, status")
+            .eq("status", "active")
+            .order("customer_name", { ascending: true });
 
         if (error) {
-            console.error('Error loading inward devices:', error);
+            console.error("Error loading customers:", error);
             throw error;
         }
 
-        inwardDevices = data || [];
-        filteredInwardDevices = [...inwardDevices];
-        console.log(`Loaded ${inwardDevices.length} inward devices`);
+        inventoryData.customers = data || [];
+        console.log(`Loaded ${inventoryData.customers.length} customers`);
+        
+        // Populate customer dropdown
+        populateCustomerDropdown();
     } catch (error) {
-        console.error('Error loading inward devices:', error);
+        console.error("Error loading customers:", error);
         throw error;
     }
 }
 
-// Load outward devices data
-async function loadOutwardDevicesData() {
+// Load SIM management data
+async function loadSimManagement() {
     try {
         const { data, error } = await supabase
-            .from('outward_devices')
-            .select(`
-                *,
-                stock (
-                    device_model_no,
-                    current_status,
-                    device_condition,
-                    sl_no,
-                    po_no,
-                    batch_no
-                )
-            `)
-            .order('created_at', { ascending: false });
+            .from("device_sim_management")
+            .select("*")
+            .eq("status", "active")
+            .order("assigned_date", { ascending: false });
 
         if (error) {
-            console.error('Error loading outward devices:', error);
+            console.error("Error loading SIM management data:", error);
             throw error;
         }
 
-        outwardDevices = data || [];
-        filteredOutwardDevices = [...outwardDevices];
-        console.log(`Loaded ${outwardDevices.length} outward devices`);
+        inventoryData.simManagement = data || [];
+        filteredInventoryData.simManagement = [...inventoryData.simManagement];
+        console.log(`Loaded ${inventoryData.simManagement.length} SIM assignments`);
     } catch (error) {
-        console.error('Error loading outward devices:', error);
+        console.error("Error loading SIM management data:", error);
         throw error;
     }
 }
 
-// Load approved customers for dropdown
-async function loadApprovedCustomers() {
+// Load SIM replacement history
+async function loadSimHistory() {
     try {
         const { data, error } = await supabase
-            .from('customers')
-            .select('id, customer_name, customer_email')
-            .eq('approval_status', 'approved')
-            .order('customer_name', { ascending: true });
+            .from("sim_replacement_history")
+            .select("*")
+            .order("replacement_date", { ascending: false });
 
         if (error) {
-            console.error('Error loading approved customers:', error);
+            console.error("Error loading SIM history:", error);
             throw error;
         }
 
-        approvedCustomers = data || [];
-        console.log(`Loaded ${approvedCustomers.length} approved customers`);
+        inventoryData.simHistory = data || [];
+        console.log(`Loaded ${inventoryData.simHistory.length} SIM history records`);
     } catch (error) {
-        console.error('Error loading approved customers:', error);
+        console.error("Error loading SIM history:", error);
         throw error;
     }
 }
 
-// Update stock summary display
-function updateStockSummary() {
-    
-    // Ensure stockData is available before proceeding
-    if (!stockData || stockData.length === 0) {
-        // Use localStockData from stock.js as fallback if available
-        if (typeof localStockData !== 'undefined' && localStockData.length > 0) {
-            stockData = localStockData;
-        } else {
-            return;
-        }
-    }
-    
-    const totalStock = stockData.length;
-    const availableStock = stockData.filter(item => item.current_status === 'available').length;
-    const allocatedStock = stockData.filter(item => item.current_status === 'allocated').length;
-    
-    // For inventory tab: Available stock should only include items with condition = 'good'
-    const availableGoodStock = stockData.filter(item => 
-        item.current_status === 'available' && item.device_condition === 'good'
+// Update inventory summary display
+function updateInventoryPageSummary() {
+    const totalStock = inventoryData.stockData.length;
+    const availableStock = inventoryData.stockData.filter(
+        (item) => item.current_status === "available" && item.device_condition === "good"
     ).length;
-    
-    
-    // Update main dashboard cards (normal logic - all available items)
-    const totalStockEl = document.getElementById('totalStockCount');
-    const availableStockEl = document.getElementById('availableStockCount');
-    const allocatedStockEl = document.getElementById('allocatedStockCount');
-    
-    
+    const allocatedStock = inventoryData.stockData.filter(
+        (item) => item.current_status === "allocated"
+    ).length;
+
+    const totalStockEl = document.getElementById("inventoryHTMLTotalStockCount");
+    const availableStockEl = document.getElementById("inventoryHTMLAvailableStockCount");
+    const allocatedStockEl = document.getElementById("inventoryHTMLAllocatedStockCount");
+
     if (totalStockEl) totalStockEl.textContent = totalStock;
     if (availableStockEl) availableStockEl.textContent = availableStock;
     if (allocatedStockEl) allocatedStockEl.textContent = allocatedStock;
-    
-    // Update inventory page cards (special logic - only good condition available items)
-    const inventoryPageTotalStockEl = document.getElementById('inventoryPageTotalStockCount');
-    const inventoryPageAvailableStockEl = document.getElementById('inventoryPageAvailableStockCount');
-    const inventoryPageAllocatedStockEl = document.getElementById('inventoryPageAllocatedStockCount');
-    
-    // Also update inventory.html cards if they exist (should use same filtered logic)
-    const inventoryHTMLTotalStockEl = document.getElementById('inventoryHTMLTotalStockCount');
-    const inventoryHTMLAvailableStockEl = document.getElementById('inventoryHTMLAvailableStockCount');
-    const inventoryHTMLAllocatedStockEl = document.getElementById('inventoryHTMLAllocatedStockCount');
-    
-    if (inventoryPageTotalStockEl) inventoryPageTotalStockEl.textContent = totalStock;
-    if (inventoryPageAvailableStockEl) inventoryPageAvailableStockEl.textContent = availableGoodStock; // Only good condition
-    if (inventoryPageAllocatedStockEl) inventoryPageAllocatedStockEl.textContent = allocatedStock;
-    
-    if (inventoryHTMLTotalStockEl) inventoryHTMLTotalStockEl.textContent = totalStock;
-    if (inventoryHTMLAvailableStockEl) inventoryHTMLAvailableStockEl.textContent = availableGoodStock; // Only good condition
-    if (inventoryHTMLAllocatedStockEl) inventoryHTMLAllocatedStockEl.textContent = allocatedStock;
+
+    // Update tab counts
+    const deviceManagementCount = inventoryData.inwardDevices.length + inventoryData.outwardDevices.length;
+    const inwardCount = inventoryData.inwardDevices.length;
+    const outwardCount = inventoryData.outwardDevices.length;
+    const simManagementCount = inventoryData.simManagement.length;
+
+    const deviceManagementCountEl = document.getElementById("deviceManagementCount");
+    const inwardCountEl = document.getElementById("inwardCount");
+    const outwardCountEl = document.getElementById("outwardCount");
+    const simManagementCountEl = document.getElementById("simManagementCount");
+
+    if (deviceManagementCountEl) deviceManagementCountEl.textContent = deviceManagementCount;
+    if (inwardCountEl) inwardCountEl.textContent = inwardCount;
+    if (outwardCountEl) outwardCountEl.textContent = outwardCount;
+    if (simManagementCountEl) simManagementCountEl.textContent = simManagementCount;
 }
 
-// Update inventory tab content
-function updateInventoryTabs() {
-    updateInwardTab();
-    updateOutwardTab();
-    updateTabCounts();
-}
-
-// Update tab counts
-function updateTabCounts() {
-    // Update inward and outward device counts
-    const inwardCountEls = document.querySelectorAll('#inwardCount');
-    const outwardCountEls = document.querySelectorAll('#outwardCount');
-    
-    inwardCountEls.forEach(el => el.textContent = filteredInwardDevices.length);
-    outwardCountEls.forEach(el => el.textContent = filteredOutwardDevices.length);
-    
-    // Update inward devices counter in main stats
-    const inwardDevicesCountEl = document.getElementById('inwardDevicesCount');
-    const outwardDevicesCountEl = document.getElementById('outwardDevicesCount');
-    
-    if (inwardDevicesCountEl) inwardDevicesCountEl.textContent = filteredInwardDevices.length;
-    if (outwardDevicesCountEl) outwardDevicesCountEl.textContent = filteredOutwardDevices.length;
-}
-
-// Update inward tab content
-function updateInwardTab() {
-    const inwardList = document.getElementById('inwardDevicesList');
-    const inwardEmpty = document.getElementById('inwardEmptyState');
-
-    if (filteredInwardDevices.length === 0) {
-        inwardList.innerHTML = '';
-        inwardEmpty.style.display = 'block';
-    } else {
-        inwardEmpty.style.display = 'none';
-        inwardList.innerHTML = filteredInwardDevices.map(device => createInwardDeviceCard(device)).join('');
+// Update inventory display based on current tab
+function updateInventoryDisplay() {
+    if (currentInventoryTab === "device-management") {
+        if (currentDeviceTab === "inward") {
+            updateInwardDevicesList();
+        } else if (currentDeviceTab === "outward") {
+            updateOutwardDevicesList();
+        }
+    } else if (currentInventoryTab === "sim-management") {
+        updateSimManagementTable();
     }
 }
 
-// Update outward tab content
-function updateOutwardTab() {
-    const outwardList = document.getElementById('outwardDevicesList');
-    const outwardEmpty = document.getElementById('outwardEmptyState');
+// Update inward devices list
+function updateInwardDevicesList() {
+    const listContainer = document.getElementById("inwardDevicesList");
+    const emptyState = document.getElementById("inwardEmptyState");
 
-    if (filteredOutwardDevices.length === 0) {
-        outwardList.innerHTML = '';
-        outwardEmpty.style.display = 'block';
+    if (!listContainer || !emptyState) return;
+
+    if (filteredInventoryData.inwardDevices.length === 0) {
+        listContainer.innerHTML = "";
+        emptyState.classList.remove("hidden");
     } else {
-        outwardEmpty.style.display = 'none';
-        outwardList.innerHTML = filteredOutwardDevices.map(device => createOutwardDeviceCard(device)).join('');
+        emptyState.classList.add("hidden");
+        listContainer.innerHTML = filteredInventoryData.inwardDevices
+            .map((device) => createInwardDeviceCard(device))
+            .join("");
     }
 }
 
-// Create inward device table row HTML - UPDATED with new conditions
+// Update outward devices list
+function updateOutwardDevicesList() {
+    const listContainer = document.getElementById("outwardDevicesList");
+    const emptyState = document.getElementById("outwardEmptyState");
+
+    if (!listContainer || !emptyState) return;
+
+    if (filteredInventoryData.outwardDevices.length === 0) {
+        listContainer.innerHTML = "";
+        emptyState.classList.remove("hidden");
+    } else {
+        emptyState.classList.add("hidden");
+        listContainer.innerHTML = filteredInventoryData.outwardDevices
+            .map((device) => createOutwardDeviceCard(device))
+            .join("");
+    }
+}
+
+// Update SIM management table
+function updateSimManagementTable() {
+    const tableBody = document.getElementById("simManagementTableBody");
+    const emptyState = document.getElementById("simManagementEmptyState");
+
+    if (!tableBody || !emptyState) return;
+
+    if (filteredInventoryData.simManagement.length === 0) {
+        tableBody.innerHTML = "";
+        emptyState.classList.remove("hidden");
+    } else {
+        emptyState.classList.add("hidden");
+        tableBody.innerHTML = filteredInventoryData.simManagement
+            .map((sim) => createSimManagementRow(sim))
+            .join("");
+    }
+}
+
+// Create inward device card HTML
 function createInwardDeviceCard(device) {
     const formatDate = (dateString) => {
-        if (!dateString) return 'Not set';
+        if (!dateString) return "N/A";
         return new Date(dateString).toLocaleDateString();
     };
 
     const getConditionBadge = (condition) => {
-        const conditionText = DEVICE_CONDITIONS[condition] || condition;
-        // Map damaged to device_tampered for consistent styling
-        const mappedCondition = condition === 'damaged' ? 'device_tampered' : condition;
-        const badgeClass = `compact-badge condition-${mappedCondition}`;
+        let badgeClass, conditionText;
+
+        switch (condition) {
+            case "good":
+                badgeClass = "condition-badge good";
+                conditionText = "Good";
+                break;
+            case "lense_issue":
+                badgeClass = "condition-badge lense_issue";
+                conditionText = "Lense Issue";
+                break;
+            case "sim_module_fail":
+                badgeClass = "condition-badge sim_module_fail";
+                conditionText = "SIM Module Fail";
+                break;
+            case "auto_restart":
+                badgeClass = "condition-badge auto_restart";
+                conditionText = "Auto Restart";
+                break;
+            case "device_tampered":
+                badgeClass = "condition-badge device_tampered";
+                conditionText = "Device Tampered";
+                break;
+            case "used":
+                badgeClass = "condition-badge used";
+                conditionText = "Used";
+                break;
+            case "refurbished":
+                badgeClass = "condition-badge refurbished";
+                conditionText = "Refurbished";
+                break;
+            case "damaged":
+                badgeClass = "condition-badge damaged";
+                conditionText = "Damaged";
+                break;
+            default:
+                badgeClass = "condition-badge good";
+                conditionText = condition;
+        }
+
         return `<span class="${badgeClass}">${conditionText}</span>`;
     };
 
-    const getStatusBadge = (status) => {
-        const statusText = status || 'Available';
-        const badgeClass = status === 'available' ? 
-            'compact-badge status-available' :
-            'compact-badge status-allocated';
-        return `<span class="${badgeClass}">● ${statusText}</span>`;
-    };
-
-    const stockInfo = device.stock || {};
-
     return `
-        <tr>
-            <td>
-                <div class="compact-text-primary">${device.device_registration_number}</div>
-            </td>
-            <td class="compact-text-secondary">
-                ${device.device_imei}
-            </td>
-            <td class="compact-text-primary">
-                ${stockInfo.device_model_no || 'N/A'}
-            </td>
-            <td class="compact-text-secondary">
-                ${stockInfo.batch_no || 'N/A'}
-            </td>
-            <td class="compact-text-secondary">
-                ${formatDate(device.inward_date)}
-            </td>
-            <td>
-                ${getStatusBadge(stockInfo.current_status)}
-            </td>
-            <td>
-                ${getConditionBadge(device.device_condition)}
-            </td>
-            <td>
-                <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="compact-btn compact-btn-primary">
-                    VIEW
-                </button>
-            </td>
-        </tr>
+        <div class="device-card p-4 rounded-lg">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="device-info-grid">
+                        <div class="device-info-item">
+                            <div class="device-info-label">Registration Number</div>
+                            <div class="device-info-value font-mono">${device.device_registration_number}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Device IMEI</div>
+                            <div class="device-info-value font-mono">${device.device_imei}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Condition</div>
+                            <div class="device-info-value">${getConditionBadge(device.device_condition)}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Inward Date</div>
+                            <div class="device-info-value">${formatDate(device.inward_date)}</div>
+                        </div>
+                        ${device.notes ? `
+                        <div class="device-info-item">
+                            <div class="device-info-label">Notes</div>
+                            <div class="device-info-value">${device.notes}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="viewDeviceHistory('${device.device_registration_number}')" class="device-action-btn view">
+                        VIEW
+                    </button>
+                </div>
+            </div>
+        </div>
     `;
 }
 
-// Create outward device table row HTML
+// Create outward device card HTML
 function createOutwardDeviceCard(device) {
     const formatDate = (dateString) => {
-        if (!dateString) return 'Not set';
+        if (!dateString) return "N/A";
         return new Date(dateString).toLocaleDateString();
     };
 
-    const stockInfo = device.stock || {};
+    const customerName = device.customers ? device.customers.customer_name : device.customer_name;
+
+    return `
+        <div class="device-card outward-card p-4 rounded-lg">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="device-info-grid">
+                        <div class="device-info-item">
+                            <div class="device-info-label">Registration Number</div>
+                            <div class="device-info-value font-mono">${device.device_registration_number}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Device IMEI</div>
+                            <div class="device-info-value font-mono">${device.device_imei}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Customer</div>
+                            <div class="device-info-value">${customerName}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Location</div>
+                            <div class="device-info-value">${device.location}</div>
+                        </div>
+                        <div class="device-info-item">
+                            <div class="device-info-label">Outward Date</div>
+                            <div class="device-info-value">${formatDate(device.outward_date)}</div>
+                        </div>
+                        ${device.sim_no ? `
+                        <div class="device-info-item">
+                            <div class="device-info-label">SIM No</div>
+                            <div class="device-info-value">${device.sim_no}</div>
+                        </div>
+                        ` : ''}
+                        ${device.notes ? `
+                        <div class="device-info-item">
+                            <div class="device-info-label">Notes</div>
+                            <div class="device-info-value">${device.notes}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="viewDeviceHistory('${device.device_registration_number}')" class="device-action-btn view">
+                        VIEW
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Create SIM management table row HTML
+function createSimManagementRow(sim) {
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleDateString();
+    };
+
+    const getStatusBadge = (status) => {
+        let badgeClass, statusText;
+
+        switch (status) {
+            case "active":
+                badgeClass = "device-status-badge available";
+                statusText = "Active";
+                break;
+            case "inactive":
+                badgeClass = "device-status-badge returned";
+                statusText = "Inactive";
+                break;
+            case "replaced":
+                badgeClass = "device-status-badge allocated";
+                statusText = "Replaced";
+                break;
+            default:
+                badgeClass = "device-status-badge returned";
+                statusText = status;
+        }
+
+        return `<span class="${badgeClass}">${statusText}</span>`;
+    };
 
     return `
         <tr>
-            <td>
-                <div class="compact-text-primary">${device.device_registration_number}</div>
-            </td>
-            <td class="compact-text-secondary">
-                ${device.device_imei}
-            </td>
-            <td class="compact-text-primary">
-                ${device.customer_name}
-            </td>
-            <td class="compact-text-secondary">
-                ${device.location}
-            </td>
-            <td class="compact-text-secondary">
-                ${formatDate(device.outward_date)}
-            </td>
-            <td class="compact-text-secondary">
-                ${device.sim_no || 'N/A'}
-            </td>
-            <td class="compact-text-secondary">
-                ${stockInfo.device_model_no || 'N/A'}
-            </td>
+            <td class="compact-text-primary font-mono">${sim.device_registration_number}</td>
+            <td class="compact-text-secondary font-mono">${sim.device_imei}</td>
+            <td class="compact-text-primary">${sim.current_sim_no || 'N/A'}</td>
+            <td class="compact-text-secondary">${formatDate(sim.assigned_date)}</td>
+            <td>${getStatusBadge(sim.status)}</td>
             <td>
                 <div class="flex gap-1">
-                    <button onclick="viewDeviceDetails('${device.device_registration_number}')" class="compact-btn compact-btn-primary">
+                    <button onclick="viewSimHistory('${sim.device_registration_number}')" class="compact-btn compact-btn-primary">
                         VIEW
-                    </button>
-                    <button onclick="returnDevice('${device.id}')" class="compact-btn compact-btn-danger">
-                        RET
                     </button>
                 </div>
             </td>
@@ -579,1024 +672,1174 @@ function createOutwardDeviceCard(device) {
     `;
 }
 
-// Tab switching functions
+// Tab navigation functions
+function showDeviceManagementTab() {
+    currentInventoryTab = "device-management";
+    
+    // Update tab buttons
+    document.getElementById("deviceManagementTab").classList.add("active");
+    document.getElementById("simManagementTab").classList.remove("active");
+    
+    // Update content
+    document.getElementById("deviceManagementTabContent").classList.remove("hidden");
+    document.getElementById("simManagementTabContent").classList.add("hidden");
+    
+    updateInventoryDisplay();
+}
+
+function showSimManagementTab() {
+    currentInventoryTab = "sim-management";
+    
+    // Update tab buttons
+    document.getElementById("deviceManagementTab").classList.remove("active");
+    document.getElementById("simManagementTab").classList.add("active");
+    
+    // Update content
+    document.getElementById("deviceManagementTabContent").classList.add("hidden");
+    document.getElementById("simManagementTabContent").classList.remove("hidden");
+    
+    updateInventoryDisplay();
+}
+
 function showInwardTab() {
-    hideAllInventoryTabContent();
-    document.getElementById('inwardTabContent').classList.remove('hidden');
-    updateInventoryTabHighlight('inwardTab');
+    currentDeviceTab = "inward";
+    
+    // Update tab buttons
+    document.getElementById("inwardTab").classList.add("active");
+    document.getElementById("outwardTab").classList.remove("active");
+    
+    // Update content
+    document.getElementById("inwardTabContent").classList.remove("hidden");
+    document.getElementById("outwardTabContent").classList.add("hidden");
+    
+    updateInventoryDisplay();
 }
 
 function showOutwardTab() {
-    hideAllInventoryTabContent();
-    document.getElementById('outwardTabContent').classList.remove('hidden');
-    updateInventoryTabHighlight('outwardTab');
-}
-
-function hideAllInventoryTabContent() {
-    document.getElementById('inwardTabContent').classList.add('hidden');
-    document.getElementById('outwardTabContent').classList.add('hidden');
-}
-
-function updateInventoryTabHighlight(activeTabId) {
-    document.querySelectorAll('.inventory-tab-button').forEach(tab => {
-        tab.classList.remove('active');
-    });
+    currentDeviceTab = "outward";
     
-    if (activeTabId) {
-        const activeTab = document.getElementById(activeTabId);
-        if (activeTab) {
-            activeTab.classList.add('active');
-        }
+    // Update tab buttons
+    document.getElementById("inwardTab").classList.remove("active");
+    document.getElementById("outwardTab").classList.add("active");
+    
+    // Update content
+    document.getElementById("inwardTabContent").classList.add("hidden");
+    document.getElementById("outwardTabContent").classList.remove("hidden");
+    
+    updateInventoryDisplay();
+}
+
+// Floating add menu functions
+function toggleInventoryAddMenu() {
+    const menu = document.getElementById("inventoryAddMenu");
+    if (menu) {
+        menu.classList.toggle("hidden");
     }
-}
-
-// Search functionality
-function handleInventorySearch(e) {
-    const searchTerm = e.target.value.toLowerCase().trim();
-    currentInventoryFilter = searchTerm;
-    
-    if (!searchTerm) {
-        // If search is empty, show all data
-        filteredInwardDevices = [...inwardDevices];
-        filteredOutwardDevices = [...outwardDevices];
-    } else {
-        // Filter inward devices
-        filteredInwardDevices = inwardDevices.filter(device => {
-            return (
-                device.device_registration_number.toLowerCase().includes(searchTerm) ||
-                device.device_imei.toLowerCase().includes(searchTerm) ||
-                device.device_condition.toLowerCase().includes(searchTerm) ||
-                (device.stock && device.stock.device_model_no && device.stock.device_model_no.toLowerCase().includes(searchTerm)) ||
-                (device.notes && device.notes.toLowerCase().includes(searchTerm))
-            );
-        });
-
-        // Filter outward devices
-        filteredOutwardDevices = outwardDevices.filter(device => {
-            return (
-                device.device_registration_number.toLowerCase().includes(searchTerm) ||
-                device.device_imei.toLowerCase().includes(searchTerm) ||
-                device.customer_name.toLowerCase().includes(searchTerm) ||
-                device.location.toLowerCase().includes(searchTerm) ||
-                (device.sim_no && device.sim_no.toLowerCase().includes(searchTerm)) ||
-                (device.stock && device.stock.device_model_no && device.stock.device_model_no.toLowerCase().includes(searchTerm)) ||
-                (device.notes && device.notes.toLowerCase().includes(searchTerm))
-            );
-        });
-    }
-    
-    // Update tabs content
-    updateInventoryTabs();
-    
-    // Show search results message
-    if (searchTerm && (filteredInwardDevices.length === 0 && filteredOutwardDevices.length === 0)) {
-        showInventoryToast(`No results found for "${searchTerm}"`, 'warning');
-    } else if (searchTerm) {
-        const totalResults = filteredInwardDevices.length + filteredOutwardDevices.length;
-        showInventoryToast(`Found ${totalResults} result(s) for "${searchTerm}"`, 'success');
-    }
-}
-
-function clearInventorySearch() {
-    document.getElementById('inventorySearchInput').value = '';
-    currentInventoryFilter = '';
-    filteredInwardDevices = [...inwardDevices];
-    filteredOutwardDevices = [...outwardDevices];
-    updateInventoryTabs();
-    showInventoryToast('Search cleared - showing all devices', 'success');
 }
 
 // Modal functions
 function showAddInwardForm() {
-    document.getElementById('addInwardModal').classList.remove('hidden');
+    const modal = document.getElementById("addInwardModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+    toggleInventoryAddMenu(); // Close the add menu
 }
 
 function closeAddInwardForm() {
-    document.getElementById('addInwardModal').classList.add('hidden');
-    document.getElementById('addInwardForm').reset();
+    const modal = document.getElementById("addInwardModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+    // Reset form
+    const form = document.getElementById("addInwardForm");
+    if (form) {
+        form.reset();
+    }
 }
 
 function showAddOutwardForm() {
-    document.getElementById('addOutwardModal').classList.remove('hidden');
-    populateCustomerDropdown();
+    const modal = document.getElementById("addOutwardModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+    toggleInventoryAddMenu(); // Close the add menu
 }
 
 function closeAddOutwardForm() {
-    document.getElementById('addOutwardModal').classList.add('hidden');
-    document.getElementById('addOutwardForm').reset();
+    const modal = document.getElementById("addOutwardModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+    // Reset form
+    const form = document.getElementById("addOutwardForm");
+    if (form) {
+        form.reset();
+    }
 }
 
 // Populate customer dropdown
 function populateCustomerDropdown() {
-    const customerSelect = document.getElementById('customerSelect');
+    const customerSelect = document.getElementById("customerSelect");
+    if (!customerSelect) return;
+
     customerSelect.innerHTML = '<option value="">Select customer</option>';
     
-    approvedCustomers.forEach(customer => {
-        const option = document.createElement('option');
+    inventoryData.customers.forEach(customer => {
+        const option = document.createElement("option");
         option.value = customer.id;
-        option.textContent = `${customer.customer_name} (${customer.customer_email})`;
+        option.textContent = customer.customer_name;
         customerSelect.appendChild(option);
     });
 }
 
-// UPDATED: Handle add inward device - Now removes from outward if exists
-async function handleAddInward(e) {
+// Handle add inward device form submission
+async function handleAddInwardDevice(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const deviceRegistrationNumber = formData.get('deviceRegistrationNumber');
-    const deviceImei = formData.get('deviceImei');
-    const deviceCondition = formData.get('deviceCondition');
-    const notes = formData.get('notes');
-    
     try {
-        showInventoryLoadingOverlay();
-        
-        // Check if device exists in stock
+        const formData = new FormData(e.target);
+        const deviceData = {
+            device_registration_number: formData.get("deviceRegistrationNumber"),
+            device_imei: formData.get("deviceImei"),
+            device_condition: formData.get("deviceCondition"),
+            notes: formData.get("notes") || null,
+            processed_by: userSession?.email || "unknown"
+        };
+
+        // Validate device exists in stock
         const { data: stockDevice, error: stockError } = await supabase
-            .from('stock')
-            .select('*')
-            .eq('device_registration_number', deviceRegistrationNumber)
-            .eq('device_imei', deviceImei)
+            .from("stock")
+            .select("id")
+            .eq("device_registration_number", deviceData.device_registration_number)
+            .eq("device_imei", deviceData.device_imei)
             .single();
-        
+
         if (stockError || !stockDevice) {
-            throw new Error('Device not found in stock or IMEI mismatch. Please check the registration number and IMEI.');
+            showInventoryToast("Device not found in stock. Please add to stock first.", "error");
+            return;
         }
-        
+
         // Check if device already exists in inward
         const { data: existingInward, error: existingError } = await supabase
-            .from('inward_devices')
-            .select('*')
-            .eq('device_registration_number', deviceRegistrationNumber);
-        
-        if (existingError) {
-            throw new Error('Error checking existing inward devices');
+            .from("inward_devices")
+            .select("id")
+            .eq("device_registration_number", deviceData.device_registration_number)
+            .single();
+
+        if (existingInward) {
+            showInventoryToast("Device already exists in inward inventory", "error");
+            return;
         }
-        
-        if (existingInward && existingInward.length > 0) {
-            throw new Error('Device already exists in inward inventory');
+
+        // Add stock_id to device data
+        deviceData.stock_id = stockDevice.id;
+
+        // Insert inward device
+        const { error } = await supabase
+            .from("inward_devices")
+            .insert([deviceData]);
+
+        if (error) {
+            console.error("Error adding inward device:", error);
+            showInventoryToast("Error adding inward device", "error");
+            return;
         }
-        
-        // NEW: Remove from outward if exists (device coming back)
-        const { data: existingOutward, error: outwardCheckError } = await supabase
-            .from('outward_devices')
-            .select('*')
-            .eq('device_registration_number', deviceRegistrationNumber);
-        
-        if (outwardCheckError) {
-            console.error('Error checking outward devices:', outwardCheckError);
-        }
-        
-        if (existingOutward && existingOutward.length > 0) {
-            // Remove from outward
-            const { error: deleteOutwardError } = await supabase
-                .from('outward_devices')
-                .delete()
-                .eq('device_registration_number', deviceRegistrationNumber);
-            
-            if (deleteOutwardError) {
-                console.error('Error removing from outward:', deleteOutwardError);
-            } else {
-                console.log(`Device ${deviceRegistrationNumber} removed from outward (returning)`);
-            }
-        }
-        
-        // Add to inward devices
-        const inwardData = {
-            device_registration_number: deviceRegistrationNumber,
-            device_imei: deviceImei,
-            device_condition: 'good', // Always set as good for inward devices per user requirement
-            notes: notes || null,
-            processed_by: userSession?.email || 'unknown',
-            stock_id: stockDevice.id,
-            inward_date: new Date().toISOString().split('T')[0]
-        };
-        
-        const { error: inwardError } = await supabase
-            .from('inward_devices')
-            .insert([inwardData]);
-        
-        if (inwardError) {
-            throw new Error('Error adding device to inward: ' + inwardError.message);
-        }
-        
-        // Update stock status if needed
-        await supabase
-            .from('stock')
-            .update({ 
-                device_condition: 'good', // Always set as good for inward devices per user requirement
-                current_status: 'available' 
-            })
-            .eq('id', stockDevice.id);
-        
-        hideInventoryLoadingOverlay();
+
+        showInventoryToast("Inward device added successfully", "success");
         closeAddInwardForm();
-        showInventoryToast('Device added to inward successfully!', 'success');
-        
-        // Reload data
-        await loadInventoryData();
-        
+        loadInventoryData();
+
     } catch (error) {
-        hideInventoryLoadingOverlay();
-        console.error('Error adding inward device:', error);
-        showInventoryToast(error.message || 'Error adding device to inward', 'error');
+        console.error("Error adding inward device:", error);
+        showInventoryToast("Error adding inward device", "error");
     }
 }
 
-// UPDATED: Handle add outward device - Now removes from inward if exists
-async function handleAddOutward(e) {
+// Handle add outward device form submission
+async function handleAddOutwardDevice(e) {
     e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const deviceRegistrationNumber = formData.get('deviceRegistrationNumber');
-    const deviceImei = formData.get('deviceImei');
-    const customerId = formData.get('customerId');
-    const location = formData.get('location');
-    const outwardDate = formData.get('outwardDate');
-    const simNo = formData.get('simNo');
-    const notes = formData.get('notes');
     
     try {
-        showInventoryLoadingOverlay();
+        const formData = new FormData(e.target);
+        const customerId = formData.get("customerId");
+        const customer = inventoryData.customers.find(c => c.id == customerId);
         
-        // Check if device exists in stock and is available
-        const { data: stockDevice, error: stockError } = await supabase
-            .from('stock')
-            .select('*')
-            .eq('device_registration_number', deviceRegistrationNumber)
-            .eq('device_imei', deviceImei)
-            .eq('current_status', 'available')
-            .single();
-        
-        if (stockError || !stockDevice) {
-            throw new Error('Device not found in stock, IMEI mismatch, or device is not available.');
-        }
-        
-        // Get customer details
-        const customer = approvedCustomers.find(c => c.id == customerId);
         if (!customer) {
-            throw new Error('Customer not found');
+            showInventoryToast("Please select a valid customer", "error");
+            return;
         }
-        
-        // NEW: Remove from inward if exists (device going outward)
-        const { data: existingInward, error: inwardCheckError } = await supabase
-            .from('inward_devices')
-            .select('*')
-            .eq('device_registration_number', deviceRegistrationNumber);
-        
-        if (inwardCheckError) {
-            console.error('Error checking inward devices:', inwardCheckError);
-        }
-        
-        if (existingInward && existingInward.length > 0) {
-            // Remove from inward
-            const { error: deleteInwardError } = await supabase
-                .from('inward_devices')
-                .delete()
-                .eq('device_registration_number', deviceRegistrationNumber);
-            
-            if (deleteInwardError) {
-                console.error('Error removing from inward:', deleteInwardError);
-            } else {
-                console.log(`Device ${deviceRegistrationNumber} removed from inward (going outward)`);
-            }
-        }
-        
-        // Add to outward devices
-        const outwardData = {
-            device_registration_number: deviceRegistrationNumber,
-            device_imei: deviceImei,
+
+        const deviceData = {
+            device_registration_number: formData.get("deviceRegistrationNumber"),
+            device_imei: formData.get("deviceImei"),
             customer_id: parseInt(customerId),
             customer_name: customer.customer_name,
-            location: location,
-            outward_date: outwardDate,
-            sim_no: simNo || null,
-            notes: notes || null,
-            processed_by: userSession?.email || 'unknown',
-            stock_id: stockDevice.id
+            location: formData.get("location"),
+            outward_date: formData.get("outwardDate"),
+            sim_no: formData.get("simNo") || null,
+            notes: formData.get("notes") || null,
+            processed_by: userSession?.email || "unknown"
         };
-        
-        const { error: outwardError } = await supabase
-            .from('outward_devices')
-            .insert([outwardData]);
-        
-        if (outwardError) {
-            throw new Error('Error adding device to outward: ' + outwardError.message);
+
+        // Validate device exists in stock and is available
+        const { data: stockDevice, error: stockError } = await supabase
+            .from("stock")
+            .select("id, current_status")
+            .eq("device_registration_number", deviceData.device_registration_number)
+            .eq("device_imei", deviceData.device_imei)
+            .single();
+
+        if (stockError || !stockDevice) {
+            showInventoryToast("Device not found in stock", "error");
+            return;
         }
-        
-        // Update stock status to allocated
-        await supabase
-            .from('stock')
-            .update({ 
-                current_status: 'allocated',
-                allocated_to_customer_id: parseInt(customerId),
-                allocated_date: new Date().toISOString(),
-                location: location,
-                sim_no: simNo || null
-            })
-            .eq('id', stockDevice.id);
-        
-        hideInventoryLoadingOverlay();
+
+        if (stockDevice.current_status !== "available") {
+            showInventoryToast("Device is not available for allocation", "error");
+            return;
+        }
+
+        // Check if device already exists in outward
+        const { data: existingOutward, error: existingError } = await supabase
+            .from("outward_devices")
+            .select("id")
+            .eq("device_registration_number", deviceData.device_registration_number)
+            .single();
+
+        if (existingOutward) {
+            showInventoryToast("Device already exists in outward inventory", "error");
+            return;
+        }
+
+        // Add stock_id to device data
+        deviceData.stock_id = stockDevice.id;
+
+        // Insert outward device
+        const { error } = await supabase
+            .from("outward_devices")
+            .insert([deviceData]);
+
+        if (error) {
+            console.error("Error adding outward device:", error);
+            showInventoryToast("Error adding outward device", "error");
+            return;
+        }
+
+        showInventoryToast("Outward device added successfully", "success");
         closeAddOutwardForm();
-        showInventoryToast('Device allocated successfully!', 'success');
-        
-        // Reload data
-        await loadInventoryData();
-        
+        loadInventoryData();
+
     } catch (error) {
-        hideInventoryLoadingOverlay();
-        console.error('Error adding outward device:', error);
-        showInventoryToast(error.message || 'Error allocating device', 'error');
+        console.error("Error adding outward device:", error);
+        showInventoryToast("Error adding outward device", "error");
     }
 }
 
-// NEW: CSV Upload Functions
-
-// Handle drag over event
-function handleDragOver(e, type) {
+// Handle SIM replacement form submission
+async function handleSimReplacement(e) {
     e.preventDefault();
-    const area = document.getElementById(`${type}CSVImportArea`);
-    area.classList.add('drag-over');
+    
+    try {
+        const formData = new FormData(e.target);
+        const replacementData = {
+            device_registration_number: formData.get("deviceRegistrationNumber"),
+            device_imei: formData.get("deviceImei"),
+            old_sim_no: formData.get("oldSimNo"),
+            new_sim_no: formData.get("newSimNo"),
+            replacement_reason: formData.get("replacementReason") || null,
+            replaced_by: userSession?.email || "unknown"
+        };
+
+        // Validate device exists in stock
+        const { data: stockDevice, error: stockError } = await supabase
+            .from("stock")
+            .select("id")
+            .eq("device_registration_number", replacementData.device_registration_number)
+            .eq("device_imei", replacementData.device_imei)
+            .single();
+
+        if (stockError || !stockDevice) {
+            showInventoryToast("Device not found in stock", "error");
+            return;
+        }
+
+        // Validate old SIM number matches current SIM
+        const { data: currentSim, error: simError } = await supabase
+            .from("device_sim_management")
+            .select("current_sim_no")
+            .eq("device_registration_number", replacementData.device_registration_number)
+            .eq("status", "active")
+            .single();
+
+        if (currentSim && currentSim.current_sim_no !== replacementData.old_sim_no) {
+            showInventoryToast("Old SIM number does not match current SIM", "error");
+            return;
+        }
+
+        // Insert SIM replacement record (this will trigger the database function to update current SIM)
+        const { error } = await supabase
+            .from("sim_replacement_history")
+            .insert([replacementData]);
+
+        if (error) {
+            console.error("Error replacing SIM:", error);
+            showInventoryToast("Error replacing SIM", "error");
+            return;
+        }
+
+        showInventoryToast("SIM replaced successfully", "success");
+        
+        // Reset form
+        const form = document.getElementById("simReplacementForm");
+        if (form) {
+            form.reset();
+        }
+        
+        loadInventoryData();
+
+    } catch (error) {
+        console.error("Error replacing SIM:", error);
+        showInventoryToast("Error replacing SIM", "error");
+    }
 }
 
-// Handle drag leave event
-function handleDragLeave(e, type) {
-    e.preventDefault();
-    const area = document.getElementById(`${type}CSVImportArea`);
-    area.classList.remove('drag-over');
+// Auto-fill device IMEI when registration number is entered
+async function autoFillDeviceIMEI(e) {
+    const regNumber = e.target.value.trim();
+    if (!regNumber) return;
+
+    try {
+        const { data: stockDevice, error } = await supabase
+            .from("stock")
+            .select("device_imei, sim_no")
+            .eq("device_registration_number", regNumber)
+            .single();
+
+        if (stockDevice) {
+            const imeiInput = document.getElementById("simDeviceImei");
+            const oldSimInput = document.getElementById("oldSimNo");
+            
+            if (imeiInput) {
+                imeiInput.value = stockDevice.device_imei;
+            }
+            if (oldSimInput && stockDevice.sim_no) {
+                oldSimInput.value = stockDevice.sim_no;
+            }
+        }
+    } catch (error) {
+        console.error("Error auto-filling device IMEI:", error);
+    }
 }
 
-// Handle file drop event
+// View device history
+async function viewDeviceHistory(deviceRegistrationNumber) {
+    try {
+        showInventoryLoadingOverlay();
+
+        // Get device movement history from audit log
+        const { data: auditLog, error: auditError } = await supabase
+            .from("inventory_audit_log")
+            .select("*")
+            .eq("device_registration_number", deviceRegistrationNumber)
+            .order("created_at", { ascending: false });
+
+        // Get inward history
+        const { data: inwardHistory, error: inwardError } = await supabase
+            .from("inward_devices")
+            .select("*")
+            .eq("device_registration_number", deviceRegistrationNumber);
+
+        // Get outward history
+        const { data: outwardHistory, error: outwardError } = await supabase
+            .from("outward_devices")
+            .select(`
+                *,
+                customers (
+                    customer_name,
+                    customer_email
+                )
+            `)
+            .eq("device_registration_number", deviceRegistrationNumber);
+
+        hideInventoryLoadingOverlay();
+
+        if (auditError || inwardError || outwardError) {
+            console.error("Error loading device history:", { auditError, inwardError, outwardError });
+            showInventoryToast("Error loading device history", "error");
+            return;
+        }
+
+        // Display history in modal
+        displayDeviceHistory(deviceRegistrationNumber, {
+            auditLog: auditLog || [],
+            inwardHistory: inwardHistory || [],
+            outwardHistory: outwardHistory || []
+        });
+
+    } catch (error) {
+        console.error("Error viewing device history:", error);
+        showInventoryToast("Error viewing device history", "error");
+        hideInventoryLoadingOverlay();
+    }
+}
+
+// Display device history in modal
+function displayDeviceHistory(deviceRegistrationNumber, history) {
+    const modal = document.getElementById("deviceHistoryModal");
+    const content = document.getElementById("deviceHistoryContent");
+    
+    if (!modal || !content) return;
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleString();
+    };
+
+    let historyHTML = `
+        <div class="mb-6">
+            <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">Device: ${deviceRegistrationNumber}</h3>
+        </div>
+    `;
+
+    // Create timeline of all events
+    const allEvents = [];
+
+    // Add inward events
+    history.inwardHistory.forEach(inward => {
+        allEvents.push({
+            type: 'inward',
+            date: inward.inward_time || inward.created_at,
+            title: 'Device Added to Inward',
+            details: `Condition: ${inward.device_condition}${inward.notes ? `, Notes: ${inward.notes}` : ''}`,
+            icon: '📥'
+        });
+    });
+
+    // Add outward events
+    history.outwardHistory.forEach(outward => {
+        const customerName = outward.customers ? outward.customers.customer_name : outward.customer_name;
+        allEvents.push({
+            type: 'outward',
+            date: outward.outward_time || outward.created_at,
+            title: 'Device Allocated to Customer',
+            details: `Customer: ${customerName}, Location: ${outward.location}${outward.sim_no ? `, SIM: ${outward.sim_no}` : ''}${outward.notes ? `, Notes: ${outward.notes}` : ''}`,
+            icon: '📤'
+        });
+    });
+
+    // Add audit log events
+    history.auditLog.forEach(log => {
+        let title = '';
+        let details = '';
+        let icon = '📋';
+
+        switch (log.action_type) {
+            case 'stock_added':
+                title = 'Added to Stock';
+                icon = '📦';
+                break;
+            case 'inward_added':
+                title = 'Added to Inward Inventory';
+                icon = '📥';
+                break;
+            case 'outward_added':
+                title = 'Added to Outward Inventory';
+                icon = '📤';
+                break;
+            case 'inward_removed':
+                title = 'Removed from Inward Inventory';
+                icon = '📥';
+                break;
+            case 'outward_removed':
+                title = 'Removed from Outward Inventory';
+                icon = '📤';
+                break;
+            case 'status_changed':
+                title = 'Status Changed';
+                details = `From: ${log.old_status || 'N/A'} → To: ${log.new_status || 'N/A'}`;
+                icon = '🔄';
+                break;
+            case 'condition_changed':
+                title = 'Condition Changed';
+                details = `From: ${log.old_condition || 'N/A'} → To: ${log.new_condition || 'N/A'}`;
+                icon = '🔧';
+                break;
+            default:
+                title = log.action_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        if (log.notes) {
+            details += (details ? ', ' : '') + `Notes: ${log.notes}`;
+        }
+
+        allEvents.push({
+            type: 'audit',
+            date: log.created_at,
+            title: title,
+            details: details,
+            performer: log.performed_by,
+            icon: icon
+        });
+    });
+
+    // Sort events by date (newest first)
+    allEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (allEvents.length === 0) {
+        historyHTML += `
+            <div class="text-center py-8">
+                <p class="text-body-l-regular dark:text-dark-base-500">No movement history found for this device</p>
+            </div>
+        `;
+    } else {
+        historyHTML += `
+            <div class="device-timeline">
+                ${allEvents.map(event => `
+                    <div class="timeline-item">
+                        <div class="flex items-start gap-3">
+                            <div class="text-2xl">${event.icon}</div>
+                            <div class="flex-1">
+                                <h4 class="text-body-l-semibold dark:text-dark-base-600">${event.title}</h4>
+                                <p class="text-body-s-regular dark:text-dark-base-500 mt-1">${formatDate(event.date)}</p>
+                                ${event.details ? `<p class="text-body-m-regular dark:text-dark-base-600 mt-2">${event.details}</p>` : ''}
+                                ${event.performer ? `<p class="text-body-s-regular dark:text-dark-base-500 mt-1">By: ${event.performer}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    content.innerHTML = historyHTML;
+    modal.classList.remove("hidden");
+}
+
+// Close device history modal
+function closeDeviceHistoryModal() {
+    const modal = document.getElementById("deviceHistoryModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+}
+
+// View SIM history
+async function viewSimHistory(deviceRegistrationNumber) {
+    try {
+        showInventoryLoadingOverlay();
+
+        // Get SIM replacement history
+        const { data: simHistory, error } = await supabase
+            .from("sim_replacement_history")
+            .select("*")
+            .eq("device_registration_number", deviceRegistrationNumber)
+            .order("replacement_date", { ascending: false });
+
+        // Get current SIM assignment
+        const { data: currentSim, error: currentSimError } = await supabase
+            .from("device_sim_management")
+            .select("*")
+            .eq("device_registration_number", deviceRegistrationNumber)
+            .single();
+
+        hideInventoryLoadingOverlay();
+
+        if (error || currentSimError) {
+            console.error("Error loading SIM history:", { error, currentSimError });
+            showInventoryToast("Error loading SIM history", "error");
+            return;
+        }
+
+        // Display SIM history in modal
+        displaySimHistory(deviceRegistrationNumber, {
+            history: simHistory || [],
+            current: currentSim
+        });
+
+    } catch (error) {
+        console.error("Error viewing SIM history:", error);
+        showInventoryToast("Error viewing SIM history", "error");
+        hideInventoryLoadingOverlay();
+    }
+}
+
+// Display SIM history in modal
+function displaySimHistory(deviceRegistrationNumber, data) {
+    const modal = document.getElementById("simHistoryModal");
+    const content = document.getElementById("simHistoryContent");
+    
+    if (!modal || !content) return;
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleString();
+    };
+
+    let historyHTML = `
+        <div class="mb-6">
+            <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">SIM History for Device: ${deviceRegistrationNumber}</h3>
+        </div>
+    `;
+
+    // Show current SIM
+    if (data.current) {
+        historyHTML += `
+            <div class="mb-6 p-4 rounded-lg dark:bg-dark-success-600/20 dark:border dark:border-dark-success-600/30">
+                <h4 class="text-body-l-semibold dark:text-dark-success-600 mb-2">Current SIM Assignment</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="device-info-label">SIM Number</div>
+                        <div class="device-info-value">${data.current.current_sim_no || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <div class="device-info-label">Assigned Date</div>
+                        <div class="device-info-value">${formatDate(data.current.assigned_date)}</div>
+                    </div>
+                    <div>
+                        <div class="device-info-label">Status</div>
+                        <div class="device-info-value">${data.current.status}</div>
+                    </div>
+                    <div>
+                        <div class="device-info-label">Assigned By</div>
+                        <div class="device-info-value">${data.current.assigned_by || 'N/A'}</div>
+                    </div>
+                </div>
+                ${data.current.notes ? `
+                <div class="mt-2">
+                    <div class="device-info-label">Notes</div>
+                    <div class="device-info-value">${data.current.notes}</div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    // Show replacement history
+    if (data.history.length === 0) {
+        historyHTML += `
+            <div class="text-center py-8">
+                <p class="text-body-l-regular dark:text-dark-base-500">No SIM replacement history found for this device</p>
+            </div>
+        `;
+    } else {
+        historyHTML += `
+            <div class="mb-4">
+                <h4 class="text-body-l-semibold dark:text-dark-base-600">Replacement History</h4>
+            </div>
+            <div class="space-y-4">
+                ${data.history.map(replacement => `
+                    <div class="p-4 rounded-lg dark:bg-dark-fill-base-400 dark:border dark:border-dark-stroke-contrast-400">
+                        <div class="flex items-start justify-between mb-3">
+                            <h5 class="text-body-m-semibold dark:text-dark-base-600">SIM Replacement</h5>
+                            <span class="text-body-s-regular dark:text-dark-base-500">${formatDate(replacement.replacement_date)}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="device-info-label">Old SIM</div>
+                                <div class="device-info-value">${replacement.old_sim_no || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div class="device-info-label">New SIM</div>
+                                <div class="device-info-value">${replacement.new_sim_no}</div>
+                            </div>
+                            <div>
+                                <div class="device-info-label">Replaced By</div>
+                                <div class="device-info-value">${replacement.replaced_by}</div>
+                            </div>
+                            <div>
+                                <div class="device-info-label">Validated</div>
+                                <div class="device-info-value">${replacement.validated ? 'Yes' : 'No'}</div>
+                            </div>
+                        </div>
+                        ${replacement.replacement_reason ? `
+                        <div class="mt-2">
+                            <div class="device-info-label">Reason</div>
+                            <div class="device-info-value">${replacement.replacement_reason}</div>
+                        </div>
+                        ` : ''}
+                        ${replacement.validation_notes ? `
+                        <div class="mt-2">
+                            <div class="device-info-label">Validation Notes</div>
+                            <div class="device-info-value">${replacement.validation_notes}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    content.innerHTML = historyHTML;
+    modal.classList.remove("hidden");
+}
+
+// Close SIM history modal
+function closeSimHistoryModal() {
+    const modal = document.getElementById("simHistoryModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+}
+
+// CSV Import Functions
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add("drag-over");
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove("drag-over");
+}
+
 function handleFileDrop(e, type) {
     e.preventDefault();
-    const area = document.getElementById(`${type}CSVImportArea`);
-    area.classList.remove('drag-over');
-    
+    e.currentTarget.classList.remove("drag-over");
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         const file = files[0];
-        if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-            if (type === 'inward') {
-                processInwardCSVFile(file);
-            } else {
-                processOutwardCSVFile(file);
-            }
+        if (file.type === "text/csv" || file.name.endsWith(".csv")) {
+            processCSVFile(file, type);
         } else {
-            showInventoryToast('Please select a valid CSV file', 'error');
+            showInventoryToast("Please select a valid CSV file", "error");
         }
     }
 }
 
-// Handle CSV file selection for inward
-function handleInwardCSVFileSelect(e) {
+function handleCSVFileSelect(e, type) {
     const file = e.target.files[0];
     if (file) {
-        if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-            processInwardCSVFile(file);
+        if (file.type === "text/csv" || file.name.endsWith(".csv")) {
+            processCSVFile(file, type);
         } else {
-            showInventoryToast('Please select a valid CSV file', 'error');
+            showInventoryToast("Please select a valid CSV file", "error");
         }
     }
 }
 
-// Handle CSV file selection for outward
-function handleOutwardCSVFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) {
-        if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-            processOutwardCSVFile(file);
-        } else {
-            showInventoryToast('Please select a valid CSV file', 'error');
-        }
-    }
-}
-
-// Process inward CSV file
-function processInwardCSVFile(file) {
+function processCSVFile(file, type) {
     const reader = new FileReader();
-    
-    reader.onload = function(e) {
+
+    reader.onload = function (e) {
         const csv = e.target.result;
-        
+
+        // Parse CSV using PapaParse
         Papa.parse(csv, {
             header: true,
             skipEmptyLines: true,
             dynamicTyping: true,
-            transformHeader: function(header) {
-                return header.trim();
+            transformHeader: function (header) {
+                return header.trim(); // Remove whitespace from headers
             },
-            complete: function(results) {
-                validateAndImportInwardCSV(results, file.name);
+            complete: function (results) {
+                validateAndImportCSV(results, file.name, type);
             },
-            error: function(error) {
-                console.error('CSV parsing error:', error);
-                showInventoryToast('Error parsing CSV file', 'error');
-            }
+            error: function (error) {
+                console.error("CSV parsing error:", error);
+                showInventoryToast("Error parsing CSV file", "error");
+            },
         });
     };
-    
-    reader.onerror = function() {
-        showInventoryToast('Error reading file', 'error');
+
+    reader.onerror = function () {
+        showInventoryToast("Error reading file", "error");
     };
-    
+
     reader.readAsText(file);
 }
 
-// Process outward CSV file
-function processOutwardCSVFile(file) {
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        const csv = e.target.result;
-        
-        Papa.parse(csv, {
-            header: true,
-            skipEmptyLines: true,
-            dynamicTyping: true,
-            transformHeader: function(header) {
-                return header.trim();
-            },
-            complete: function(results) {
-                validateAndImportOutwardCSV(results, file.name);
-            },
-            error: function(error) {
-                console.error('CSV parsing error:', error);
-                showInventoryToast('Error parsing CSV file', 'error');
-            }
-        });
-    };
-    
-    reader.onerror = function() {
-        showInventoryToast('Error reading file', 'error');
-    };
-    
-    reader.readAsText(file);
-}
-
-// Validate and import inward CSV data
-async function validateAndImportInwardCSV(results, filename) {
+async function validateAndImportCSV(results, filename, type) {
     try {
         const data = results.data;
         const headers = Object.keys(data[0] || {});
-        
-        // Check required columns (flexible - Notes is optional)
-        const requiredColumns = ['Device Registration Number', 'Device IMEI', 'Device Condition'];
+
+        let requiredColumns = [];
+        if (type === 'inward') {
+            requiredColumns = ["Device Registration Number", "Device IMEI", "Device Condition"];
+        } else if (type === 'outward') {
+            requiredColumns = ["Device Registration Number", "Device IMEI", "Customer Name", "Location", "Outward Date"];
+        }
+
+        // Validate headers
         const missingColumns = requiredColumns.filter(col => !headers.includes(col));
         if (missingColumns.length > 0) {
-            showInventoryToast(`Missing required columns: ${missingColumns.join(', ')}`, 'error');
+            showInventoryToast(`Missing required columns: ${missingColumns.join(", ")}`, "error");
             return;
         }
-        
+
         // Show progress
-        showInwardImportProgress();
-        
+        showImportProgress(type);
+
+        // Validate and process data
         const validData = [];
         const errors = [];
         let processed = 0;
-        
+
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
             processed++;
-            
-            updateInwardImportProgress((processed / data.length) * 50);
-            
-            const deviceRegNumber = row['Device Registration Number'];
-            const deviceImei = row['Device IMEI'];
-            const deviceCondition = row['Device Condition'];
-            
-            // Validate required fields
-            if (!deviceRegNumber || !deviceImei || !deviceCondition) {
+
+            // Update progress
+            updateImportProgress(type, (processed / data.length) * 50); // First 50% for validation
+
+            const deviceRegNumber = row["Device Registration Number"];
+            const deviceImei = row["Device IMEI"];
+
+            if (!deviceRegNumber || !deviceImei) {
                 errors.push(`Row ${i + 2}: Missing required data`);
                 continue;
             }
-            
-            // Validate condition
-            const validConditions = Object.keys(DEVICE_CONDITIONS);
-            if (!validConditions.includes(deviceCondition.toLowerCase().replace(' ', '_'))) {
-                errors.push(`Row ${i + 2}: Invalid device condition "${deviceCondition}"`);
-                continue;
+
+            if (type === 'inward') {
+                const deviceCondition = row["Device Condition"];
+                if (!deviceCondition) {
+                    errors.push(`Row ${i + 2}: Missing device condition`);
+                    continue;
+                }
+
+                const inwardItem = {
+                    device_registration_number: deviceRegNumber,
+                    device_imei: deviceImei,
+                    device_condition: deviceCondition,
+                    notes: row["Notes"] || null,
+                    processed_by: userSession?.email || "unknown"
+                };
+
+                validData.push(inwardItem);
+            } else if (type === 'outward') {
+                const customerName = row["Customer Name"];
+                const location = row["Location"];
+                const outwardDate = row["Outward Date"];
+
+                if (!customerName || !location || !outwardDate) {
+                    errors.push(`Row ${i + 2}: Missing required outward data`);
+                    continue;
+                }
+
+                // Find customer by name
+                const customer = inventoryData.customers.find(c => 
+                    c.customer_name.toLowerCase() === customerName.toLowerCase()
+                );
+
+                if (!customer) {
+                    errors.push(`Row ${i + 2}: Customer "${customerName}" not found`);
+                    continue;
+                }
+
+                const outwardItem = {
+                    device_registration_number: deviceRegNumber,
+                    device_imei: deviceImei,
+                    customer_id: customer.id,
+                    customer_name: customer.customer_name,
+                    location: location,
+                    outward_date: outwardDate,
+                    sim_no: row["SIM No"] || null,
+                    notes: row["Notes"] || null,
+                    processed_by: userSession?.email || "unknown"
+                };
+
+                validData.push(outwardItem);
             }
-            
-            // Check if device exists in stock
-            const stockDevice = stockData.find(stock => 
-                stock.device_registration_number === deviceRegNumber && 
-                stock.device_imei === deviceImei
-            );
-            
-            if (!stockDevice) {
-                errors.push(`Row ${i + 2}: Device not found in stock database`);
-                continue;
-            }
-            
-            // Check if already in inward
-            const existingInward = inwardDevices.find(inward => 
-                inward.device_registration_number === deviceRegNumber
-            );
-            
-            if (existingInward) {
-                errors.push(`Row ${i + 2}: Device already exists in inward inventory`);
-                continue;
-            }
-            
-            validData.push({
-                device_registration_number: deviceRegNumber,
-                device_imei: deviceImei,
-                device_condition: 'good', // Always set as good for inward devices per user requirement
-                notes: row['Notes'] || 'Bulk imported',
-                processed_by: userSession?.email || 'unknown',
-                stock_id: stockDevice.id,
-                inward_date: new Date().toISOString().split('T')[0]
-            });
         }
-        
+
         // Import valid data
         let successfulImports = 0;
-        const existingOutwardToRemove = [];
-        
-        for (let i = 0; i < validData.length; i++) {
-            updateInwardImportProgress(50 + (i / validData.length) * 50);
-            
-            const item = validData[i];
-            
-            // Check if device is in outward (returning)
-            const outwardDevice = outwardDevices.find(outward => 
-                outward.device_registration_number === item.device_registration_number
-            );
-            
-            if (outwardDevice) {
-                existingOutwardToRemove.push(outwardDevice.id);
-            }
-            
-            const { error } = await supabase
-                .from('inward_devices')
-                .insert([item]);
-            
-            if (error) {
-                errors.push(`Failed to import ${item.device_registration_number}: ${error.message}`);
-            } else {
-                successfulImports++;
-            }
-        }
-        
-        // Remove devices from outward that are now inward
-        for (const outwardId of existingOutwardToRemove) {
-            await supabase
-                .from('outward_devices')
-                .delete()
-                .eq('id', outwardId);
-        }
-        
-        hideInwardImportProgress();
-        showInwardImportResults(successfulImports, data.length - successfulImports, errors);
-        
-        await loadInventoryData();
-        
-        // Clear file input
-        document.getElementById('inwardCSVFileInput').value = '';
-        
-    } catch (error) {
-        console.error('Error importing inward CSV:', error);
-        hideInwardImportProgress();
-        showInventoryToast('Error importing CSV data', 'error');
-    }
-}
+        if (validData.length > 0) {
+            for (let i = 0; i < validData.length; i++) {
+                updateImportProgress(type, 50 + (i / validData.length) * 50); // 50-100% for import
 
-// Validate and import outward CSV data
-async function validateAndImportOutwardCSV(results, filename) {
-    try {
-        const data = results.data;
-        const headers = Object.keys(data[0] || {});
-        
-        // Check required columns (flexible - SIM No and Notes are optional)
-        const requiredColumns = ['Device Registration Number', 'Device IMEI', 'Customer Name', 'Location', 'Outward Date'];
-        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-        if (missingColumns.length > 0) {
-            showInventoryToast(`Missing required columns: ${missingColumns.join(', ')}`, 'error');
-            return;
-        }
-        
-        showOutwardImportProgress();
-        
-        const validData = [];
-        const errors = [];
-        let processed = 0;
-        
-        for (let i = 0; i < data.length; i++) {
-            const row = data[i];
-            processed++;
-            
-            updateOutwardImportProgress((processed / data.length) * 50);
-            
-            const deviceRegNumber = row['Device Registration Number'];
-            const deviceImei = row['Device IMEI'];
-            const customerName = row['Customer Name'];
-            const location = row['Location'];
-            const outwardDate = row['Outward Date'];
-            
-            if (!deviceRegNumber || !deviceImei || !customerName || !location || !outwardDate) {
-                errors.push(`Row ${i + 2}: Missing required data`);
-                continue;
-            }
-            
-            // Check if device exists in stock
-            const stockDevice = stockData.find(stock => 
-                stock.device_registration_number === deviceRegNumber && 
-                stock.device_imei === deviceImei &&
-                stock.current_status === 'available'
-            );
-            
-            if (!stockDevice) {
-                errors.push(`Row ${i + 2}: Device not found in stock or not available`);
-                continue;
-            }
-            
-            // Find customer by name
-            const customer = approvedCustomers.find(c => 
-                c.customer_name.toLowerCase() === customerName.toLowerCase()
-            );
-            
-            if (!customer) {
-                errors.push(`Row ${i + 2}: Customer "${customerName}" not found in approved customers`);
-                continue;
-            }
-            
-            // Parse date
-            let formattedDate = outwardDate;
-            if (typeof outwardDate === 'string') {
-                const parsed = new Date(outwardDate);
-                if (!isNaN(parsed.getTime())) {
-                    formattedDate = parsed.toISOString().split('T')[0];
+                const tableName = type === 'inward' ? 'inward_devices' : 'outward_devices';
+                const { error } = await supabase
+                    .from(tableName)
+                    .insert([validData[i]]);
+
+                if (error) {
+                    console.error(`Error inserting ${type} device:`, error);
+                    errors.push(`Failed to import device ${validData[i].device_registration_number}: ${error.message}`);
+                } else {
+                    successfulImports++;
                 }
             }
-            
-            validData.push({
-                device_registration_number: deviceRegNumber,
-                device_imei: deviceImei,
-                customer_id: customer.id,
-                customer_name: customerName,
-                location: location,
-                outward_date: formattedDate,
-                sim_no: row['SIM No'] || null,
-                notes: row['Notes'] || 'Bulk imported',
-                processed_by: userSession?.email || 'unknown',
-                stock_id: stockDevice.id
-            });
         }
-        
-        // Import valid data
-        let successfulImports = 0;
-        const existingInwardToRemove = [];
-        
-        for (let i = 0; i < validData.length; i++) {
-            updateOutwardImportProgress(50 + (i / validData.length) * 50);
-            
-            const item = validData[i];
-            
-            // Check if device is in inward (going outward)
-            const inwardDevice = inwardDevices.find(inward => 
-                inward.device_registration_number === item.device_registration_number
-            );
-            
-            if (inwardDevice) {
-                existingInwardToRemove.push(inwardDevice.id);
-            }
-            
-            const { error } = await supabase
-                .from('outward_devices')
-                .insert([item]);
-            
-            if (error) {
-                errors.push(`Failed to import ${item.device_registration_number}: ${error.message}`);
-            } else {
-                // Update stock status
-                await supabase
-                    .from('stock')
-                    .update({ 
-                        current_status: 'allocated',
-                        allocated_to_customer_id: item.customer_id,
-                        allocated_date: new Date().toISOString(),
-                        location: item.location,
-                        sim_no: item.sim_no
-                    })
-                    .eq('id', item.stock_id);
-                
-                successfulImports++;
-            }
-        }
-        
-        // Remove devices from inward that are now outward
-        for (const inwardId of existingInwardToRemove) {
-            await supabase
-                .from('inward_devices')
-                .delete()
-                .eq('id', inwardId);
-        }
-        
-        hideOutwardImportProgress();
-        showOutwardImportResults(successfulImports, data.length - successfulImports, errors);
-        
-        await loadInventoryData();
-        
-        // Clear file input
-        document.getElementById('outwardCSVFileInput').value = '';
-        
-    } catch (error) {
-        console.error('Error importing outward CSV:', error);
-        hideOutwardImportProgress();
-        showInventoryToast('Error importing CSV data', 'error');
-    }
-}
 
-// Progress and result functions for inward
-function showInwardImportProgress() {
-    document.getElementById('inwardImportProgressSection').classList.remove('hidden');
-    updateInwardImportProgress(0);
-}
+        // Log import results
+        const importLog = {
+            filename: filename,
+            import_type: type,
+            total_rows: data.length,
+            successful_imports: successfulImports,
+            failed_imports: data.length - successfulImports,
+            error_details: errors.length > 0 ? { errors: errors } : null,
+            imported_by: userSession?.email || "unknown",
+        };
 
-function updateInwardImportProgress(percentage) {
-    const progressBar = document.getElementById('inwardImportProgressBar');
-    const progressText = document.getElementById('inwardImportProgressText');
-    
-    progressBar.style.width = `${percentage}%`;
-    progressText.textContent = `${Math.round(percentage)}%`;
-}
+        await supabase.from("csv_import_logs").insert([importLog]);
 
-function hideInwardImportProgress() {
-    document.getElementById('inwardImportProgressSection').classList.add('hidden');
-}
+        // Hide progress and show results
+        hideImportProgress(type);
+        showImportResults(type, successfulImports, data.length - successfulImports, errors);
 
-function showInwardImportResults(successful, failed, errors) {
-    const resultsDiv = document.getElementById('inwardImportResults');
-    const isSuccess = failed === 0;
-    
-    resultsDiv.className = `import-results ${isSuccess ? '' : 'error'}`;
-    
-    let resultHTML = `
-        <div class="flex items-center gap-3 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${isSuccess ? 'text-green-600' : 'text-red-600'}">
-                ${isSuccess ? 
-                    '<path d="M5 13l4 4L19 7"/>' : 
-                    '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="m12 17 .01 0"/>'
-                }
-            </svg>
-            <div>
-                <h4 class="text-body-l-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'}">
-                    Inward Import ${isSuccess ? 'Completed' : 'Completed with Errors'}
-                </h4>
-                <p class="text-body-m-regular dark:text-dark-base-500">
-                    ${successful} successful, ${failed} failed
-                </p>
-            </div>
-        </div>
-    `;
-    
-    if (errors.length > 0) {
-        resultHTML += `
-            <div class="mt-4">
-                <h5 class="text-body-m-semibold dark:text-dark-base-600 mb-2">Errors:</h5>
-                <div class="max-h-32 overflow-y-auto">
-                    <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
-                        ${errors.slice(0, 10).map(error => `<li>• ${error}</li>`).join('')}
-                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ''}
-                    </ul>
-                </div>
-            </div>
-        `;
-    }
-    
-    resultsDiv.innerHTML = resultHTML;
-    resultsDiv.classList.remove('hidden');
-    
-    setTimeout(() => {
-        resultsDiv.classList.add('hidden');
-    }, 15000);
-    
-    showInventoryToast(`Inward import: ${successful} successful, ${failed} failed`, isSuccess ? 'success' : 'warning');
-}
-
-// Progress and result functions for outward
-function showOutwardImportProgress() {
-    document.getElementById('outwardImportProgressSection').classList.remove('hidden');
-    updateOutwardImportProgress(0);
-}
-
-function updateOutwardImportProgress(percentage) {
-    const progressBar = document.getElementById('outwardImportProgressBar');
-    const progressText = document.getElementById('outwardImportProgressText');
-    
-    progressBar.style.width = `${percentage}%`;
-    progressText.textContent = `${Math.round(percentage)}%`;
-}
-
-function hideOutwardImportProgress() {
-    document.getElementById('outwardImportProgressSection').classList.add('hidden');
-}
-
-function showOutwardImportResults(successful, failed, errors) {
-    const resultsDiv = document.getElementById('outwardImportResults');
-    const isSuccess = failed === 0;
-    
-    resultsDiv.className = `import-results ${isSuccess ? '' : 'error'}`;
-    
-    let resultHTML = `
-        <div class="flex items-center gap-3 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${isSuccess ? 'text-green-600' : 'text-red-600'}">
-                ${isSuccess ? 
-                    '<path d="M5 13l4 4L19 7"/>' : 
-                    '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="m12 17 .01 0"/>'
-                }
-            </svg>
-            <div>
-                <h4 class="text-body-l-semibold ${isSuccess ? 'text-green-600' : 'text-red-600'}">
-                    Outward Import ${isSuccess ? 'Completed' : 'Completed with Errors'}
-                </h4>
-                <p class="text-body-m-regular dark:text-dark-base-500">
-                    ${successful} successful, ${failed} failed
-                </p>
-            </div>
-        </div>
-    `;
-    
-    if (errors.length > 0) {
-        resultHTML += `
-            <div class="mt-4">
-                <h5 class="text-body-m-semibold dark:text-dark-base-600 mb-2">Errors:</h5>
-                <div class="max-h-32 overflow-y-auto">
-                    <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
-                        ${errors.slice(0, 10).map(error => `<li>• ${error}</li>`).join('')}
-                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ''}
-                    </ul>
-                </div>
-            </div>
-        `;
-    }
-    
-    resultsDiv.innerHTML = resultHTML;
-    resultsDiv.classList.remove('hidden');
-    
-    setTimeout(() => {
-        resultsDiv.classList.add('hidden');
-    }, 15000);
-    
-    showInventoryToast(`Outward import: ${successful} successful, ${failed} failed`, isSuccess ? 'success' : 'warning');
-}
-
-// View device details
-function viewDeviceDetails(deviceRegistrationNumber) {
-    // Find device in stock
-    const stockDevice = stockData.find(device => device.device_registration_number === deviceRegistrationNumber);
-    
-    if (!stockDevice) {
-        showInventoryToast('Device details not found', 'error');
-        return;
-    }
-    
-    // Create a detailed view (you can enhance this with a modal)
-    const details = `
-        Device Registration Number: ${stockDevice.device_registration_number}
-        Device IMEI: ${stockDevice.device_imei}
-        Model: ${stockDevice.device_model_no}
-        Status: ${stockDevice.current_status}
-        Condition: ${stockDevice.device_condition}
-        Batch No: ${stockDevice.batch_no || 'N/A'}
-        PO No: ${stockDevice.po_no || 'N/A'}
-        Inward Date: ${stockDevice.inward_date ? new Date(stockDevice.inward_date).toLocaleDateString() : 'N/A'}
-        Location: ${stockDevice.location || 'N/A'}
-        SIM No: ${stockDevice.sim_no || 'N/A'}
-    `;
-    
-    alert(details); // You can replace this with a proper modal
-}
-
-// Return device (move from outward back to available)
-async function returnDevice(outwardDeviceId) {
-    if (!confirm('Are you sure you want to return this device to available stock?')) {
-        return;
-    }
-    
-    try {
-        showInventoryLoadingOverlay();
-        
-        // Get outward device details
-        const { data: outwardDevice, error: outwardError } = await supabase
-            .from('outward_devices')
-            .select('*')
-            .eq('id', outwardDeviceId)
-            .single();
-        
-        if (outwardError || !outwardDevice) {
-            throw new Error('Outward device not found');
-        }
-        
-        // Update stock status back to available
-        await supabase
-            .from('stock')
-            .update({ 
-                current_status: 'available',
-                allocated_to_customer_id: null,
-                allocated_date: null
-            })
-            .eq('device_registration_number', outwardDevice.device_registration_number);
-        
-        // Remove from outward devices
-        await supabase
-            .from('outward_devices')
-            .delete()
-            .eq('id', outwardDeviceId);
-        
-        hideInventoryLoadingOverlay();
-        showInventoryToast('Device returned to available stock successfully!', 'success');
-        
         // Reload data
         await loadInventoryData();
-        
+
+        // Clear file input
+        const fileInput = document.getElementById(`${type}CSVFileInput`);
+        if (fileInput) {
+            fileInput.value = "";
+        }
+
     } catch (error) {
-        hideInventoryLoadingOverlay();
-        console.error('Error returning device:', error);
-        showInventoryToast(error.message || 'Error returning device', 'error');
+        console.error("Error importing CSV:", error);
+        hideImportProgress(type);
+        showInventoryToast("Error importing CSV data", "error");
     }
+}
+
+function showImportProgress(type) {
+    const progressSection = document.getElementById(`${type}ImportProgressSection`);
+    if (progressSection) {
+        progressSection.classList.remove("hidden");
+        updateImportProgress(type, 0);
+    }
+}
+
+function updateImportProgress(type, percentage) {
+    const progressBar = document.getElementById(`${type}ImportProgressBar`);
+    const progressText = document.getElementById(`${type}ImportProgressText`);
+
+    if (progressBar) {
+        progressBar.style.width = `${percentage}%`;
+    }
+    if (progressText) {
+        progressText.textContent = `${Math.round(percentage)}%`;
+    }
+}
+
+function hideImportProgress(type) {
+    const progressSection = document.getElementById(`${type}ImportProgressSection`);
+    if (progressSection) {
+        progressSection.classList.add("hidden");
+    }
+}
+
+function showImportResults(type, successful, failed, errors) {
+    const resultsDiv = document.getElementById(`${type}ImportResults`);
+    if (!resultsDiv) return;
+
+    const isSuccess = failed === 0;
+    resultsDiv.className = `import-results ${isSuccess ? "" : "error"}`;
+
+    let resultHTML = `
+        <div class="flex items-center gap-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${isSuccess ? "text-green-600" : "text-red-600"}">
+                ${isSuccess
+                    ? '<path d="M5 13l4 4L19 7"/>'
+                    : '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="m12 17 .01 0"/>'
+                }
+            </svg>
+            <div>
+                <h4 class="text-body-l-semibold ${isSuccess ? "text-green-600" : "text-red-600"}">
+                    ${type.charAt(0).toUpperCase() + type.slice(1)} Import ${isSuccess ? "Completed" : "Completed with Errors"}
+                </h4>
+                <p class="text-body-m-regular dark:text-dark-base-500">
+                    ${successful} successful, ${failed} failed
+                </p>
+            </div>
+        </div>
+    `;
+
+    if (errors.length > 0) {
+        resultHTML += `
+            <div class="mt-4">
+                <h5 class="text-body-m-semibold dark:text-dark-base-600 mb-2">Errors:</h5>
+                <div class="max-h-32 overflow-y-auto">
+                    <ul class="text-body-s-regular dark:text-dark-base-500 space-y-1">
+                        ${errors
+                            .slice(0, 10)
+                            .map((error) => `<li>• ${error}</li>`)
+                            .join("")}
+                        ${errors.length > 10 ? `<li>• ... and ${errors.length - 10} more errors</li>` : ""}
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+
+    resultsDiv.innerHTML = resultHTML;
+    resultsDiv.classList.remove("hidden");
+
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+        resultsDiv.classList.add("hidden");
+    }, 10000);
+
+    // Show toast
+    if (isSuccess) {
+        showInventoryToast(`✅ Successfully imported ${successful} ${type} devices`, "success");
+    } else {
+        showInventoryToast(`Import completed: ${successful} successful, ${failed} failed`, "warning");
+    }
+}
+
+// Search functionality
+function handleInventorySearch() {
+    const searchTerm = document.getElementById("inventorySearchInput").value.toLowerCase().trim();
+
+    if (currentInventoryTab === "device-management") {
+        if (currentDeviceTab === "inward") {
+            filteredInventoryData.inwardDevices = inventoryData.inwardDevices.filter((device) => {
+                return !searchTerm ||
+                    device.device_registration_number.toLowerCase().includes(searchTerm) ||
+                    device.device_imei.toLowerCase().includes(searchTerm) ||
+                    device.device_condition.toLowerCase().includes(searchTerm) ||
+                    (device.notes && device.notes.toLowerCase().includes(searchTerm));
+            });
+            updateInwardDevicesList();
+        } else if (currentDeviceTab === "outward") {
+            filteredInventoryData.outwardDevices = inventoryData.outwardDevices.filter((device) => {
+                const customerName = device.customers ? device.customers.customer_name : device.customer_name;
+                return !searchTerm ||
+                    device.device_registration_number.toLowerCase().includes(searchTerm) ||
+                    device.device_imei.toLowerCase().includes(searchTerm) ||
+                    customerName.toLowerCase().includes(searchTerm) ||
+                    device.location.toLowerCase().includes(searchTerm) ||
+                    (device.sim_no && device.sim_no.toLowerCase().includes(searchTerm)) ||
+                    (device.notes && device.notes.toLowerCase().includes(searchTerm));
+            });
+            updateOutwardDevicesList();
+        }
+    } else if (currentInventoryTab === "sim-management") {
+        filteredInventoryData.simManagement = inventoryData.simManagement.filter((sim) => {
+            return !searchTerm ||
+                sim.device_registration_number.toLowerCase().includes(searchTerm) ||
+                sim.device_imei.toLowerCase().includes(searchTerm) ||
+                (sim.current_sim_no && sim.current_sim_no.toLowerCase().includes(searchTerm));
+        });
+        updateSimManagementTable();
+    }
+
+    if (searchTerm) {
+        const totalFiltered = currentInventoryTab === "device-management" 
+            ? (currentDeviceTab === "inward" ? filteredInventoryData.inwardDevices.length : filteredInventoryData.outwardDevices.length)
+            : filteredInventoryData.simManagement.length;
+        showInventoryToast(`Found ${totalFiltered} items`, "success");
+    }
+}
+
+function clearInventorySearch() {
+    const searchInput = document.getElementById("inventorySearchInput");
+    if (searchInput) {
+        searchInput.value = "";
+    }
+    
+    // Reset filtered data
+    filteredInventoryData.inwardDevices = [...inventoryData.inwardDevices];
+    filteredInventoryData.outwardDevices = [...inventoryData.outwardDevices];
+    filteredInventoryData.simManagement = [...inventoryData.simManagement];
+    
+    updateInventoryDisplay();
+    showInventoryToast("Search cleared", "success");
 }
 
 // Loading overlay functions
 function showInventoryLoadingOverlay() {
-    document.getElementById('inventoryLoadingOverlay').classList.remove('hidden');
+    const overlay = document.getElementById("inventoryLoadingOverlay");
+    if (overlay) {
+        overlay.classList.remove("hidden");
+    }
 }
 
 function hideInventoryLoadingOverlay() {
-    document.getElementById('inventoryLoadingOverlay').classList.add('hidden');
+    const overlay = document.getElementById("inventoryLoadingOverlay");
+    if (overlay) {
+        overlay.classList.add("hidden");
+    }
 }
 
 // Toast notification function
-function showInventoryToast(message, type = 'success') {
-    const toast = document.getElementById('inventoryToast');
-    const messageEl = document.getElementById('inventoryToastMessage');
-    const iconEl = document.getElementById('inventoryToastIcon');
-    
+function showInventoryToast(message, type = "success") {
+    const toast = document.getElementById("inventoryToast");
+    const messageEl = document.getElementById("inventoryToastMessage");
+    const iconEl = document.getElementById("inventoryToastIcon");
+
+    if (!toast || !messageEl || !iconEl) return;
+
     // Set message
     messageEl.textContent = message;
-    
+
     // Set icon based on type
-    let iconSVG = '';
+    let iconSVG = "";
     switch (type) {
-        case 'success':
+        case "success":
             iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>`;
-            toast.className = 'fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg success';
+            toast.className = "fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg success";
             break;
-        case 'error':
+        case "error":
             iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>`;
-            toast.className = 'fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg error';
+            toast.className = "fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg error";
             break;
-        case 'warning':
+        case "warning":
             iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>`;
-            toast.className = 'fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg warning';
+            toast.className = "fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg warning";
             break;
     }
-    
+
     iconEl.innerHTML = iconSVG;
-    
+
     // Show toast
-    toast.classList.remove('hidden');
-    toast.classList.add('show');
-    
+    toast.classList.remove("hidden");
+    toast.classList.add("show");
+
     // Hide after 3 seconds
     setTimeout(() => {
-        toast.classList.remove('show');
+        toast.classList.remove("show");
         setTimeout(() => {
-            toast.classList.add('hidden');
+            toast.classList.add("hidden");
         }, 300);
     }, 3000);
 }
 
 // Make functions globally available for HTML onclick handlers
+window.goBackToDashboard = goBackToDashboard;
+window.showDeviceManagementTab = showDeviceManagementTab;
+window.showSimManagementTab = showSimManagementTab;
 window.showInwardTab = showInwardTab;
 window.showOutwardTab = showOutwardTab;
+window.toggleInventoryAddMenu = toggleInventoryAddMenu;
 window.showAddInwardForm = showAddInwardForm;
 window.closeAddInwardForm = closeAddInwardForm;
 window.showAddOutwardForm = showAddOutwardForm;
 window.closeAddOutwardForm = closeAddOutwardForm;
 window.clearInventorySearch = clearInventorySearch;
-window.viewDeviceDetails = viewDeviceDetails;
-window.returnDevice = returnDevice;
-window.goBackToDashboard = goBackToDashboard;
-window.loadInventoryData = loadInventoryData;
+window.viewDeviceHistory = viewDeviceHistory;
+window.closeDeviceHistoryModal = closeDeviceHistoryModal;
+window.viewSimHistory = viewSimHistory;
+window.closeSimHistoryModal = closeSimHistoryModal;
 
-// Export functions for global access (if needed)
+// Export functions for global access
 window.inventoryFunctions = {
+    goBackToDashboard,
+    showDeviceManagementTab,
+    showSimManagementTab,
     showInwardTab,
     showOutwardTab,
+    toggleInventoryAddMenu,
     showAddInwardForm,
     closeAddInwardForm,
     showAddOutwardForm,
     closeAddOutwardForm,
     clearInventorySearch,
-    viewDeviceDetails,
-    returnDevice,
-    goBackToDashboard
+    viewDeviceHistory,
+    closeDeviceHistoryModal,
+    viewSimHistory,
+    closeSimHistoryModal,
+    loadInventoryData
 };

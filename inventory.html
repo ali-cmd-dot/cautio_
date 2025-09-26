@@ -58,17 +58,17 @@
             </div>
         </div>
 
-        <!-- Tab Navigation -->
+        <!-- Main Tab Navigation -->
         <div class="p-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex space-x-1">
-                    <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
-                        <span class="tab-label">Inward</span>
-                        <span class="tab-count" id="inwardCount">0</span>
+                    <button onclick="showDeviceManagementTab()" class="inventory-tab-button active" id="deviceManagementTab">
+                        <span class="tab-label">Device Management</span>
+                        <span class="tab-count" id="deviceManagementCount">0</span>
                     </button>
-                    <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
-                        <span class="tab-label">Outward</span>
-                        <span class="tab-count" id="outwardCount">0</span>
+                    <button onclick="showSimManagementTab()" class="inventory-tab-button" id="simManagementTab">
+                        <span class="tab-label">SIM Management</span>
+                        <span class="tab-count" id="simManagementCount">0</span>
                     </button>
                 </div>
                 
@@ -89,119 +89,241 @@
 
             <!-- Tab Content -->
             <div id="inventoryTabContent">
-                <!-- Inward Tab Content -->
-                <div id="inwardTabContent">
-                    <!-- CSV Upload Section for Inward -->
-                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Inward Import</h4>
-                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Device Condition, Notes</p>
+                <!-- Device Management Tab Content -->
+                <div id="deviceManagementTabContent">
+                    <!-- Sub Tab Navigation for Device Management -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex space-x-1">
+                            <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
+                                <span class="tab-label">Inward</span>
+                                <span class="tab-count" id="inwardCount">0</span>
+                            </button>
+                            <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
+                                <span class="tab-label">Outward</span>
+                                <span class="tab-count" id="outwardCount">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Inward Tab Content -->
+                    <div id="inwardTabContent">
+                        <!-- CSV Upload Section for Inward -->
+                        <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Inward Import</h4>
+                            <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Device Condition, Notes</p>
+                            
+                            <div class="csv-import-area" id="inwardCSVImportArea">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-brand-blue-600">
+                                    <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                    <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                    <path d="M12 3v6"/>
+                                </svg>
+                                <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                                <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
+                                <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
+                                    Choose CSV File
+                                </button>
+                            </div>
+
+                            <!-- Import Progress -->
+                            <div id="inwardImportProgressSection" class="hidden mt-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                    <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                </div>
+                                <div class="import-progress">
+                                    <div id="inwardImportProgressBar" class="import-progress-bar"></div>
+                                </div>
+                            </div>
+
+                            <!-- Import Results -->
+                            <div id="inwardImportResults" class="hidden mt-4">
+                                <!-- Results will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
+                        </div>
                         
-                        <div class="csv-import-area" id="inwardCSVImportArea">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-brand-blue-600">
+                        <div id="inwardDevicesList" class="space-y-4">
+                            <!-- Inward devices will be populated here -->
+                        </div>
+                        
+                        <div id="inwardEmptyState" class="text-center py-12">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
                                 <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
                                 <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
                                 <path d="M12 3v6"/>
                             </svg>
-                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
-                            <input type="file" id="inwardCSVFileInput" accept=".csv" class="hidden">
-                            <button onclick="document.getElementById('inwardCSVFileInput').click()" class="file-upload-btn">
-                                Choose CSV File
-                            </button>
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
+                            <p class="text-body-l-regular dark:text-dark-base-500">No devices have been received yet</p>
                         </div>
+                    </div>
 
-                        <!-- Import Progress -->
-                        <div id="inwardImportProgressSection" class="hidden mt-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
-                                <span id="inwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                    <!-- Outward Tab Content -->
+                    <div id="outwardTabContent" class="hidden">
+                        <!-- CSV Upload Section for Outward -->
+                        <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                            <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Outward Import</h4>
+                            <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Customer Name, Location, Outward Date, SIM No, Notes</p>
+                            
+                            <div class="csv-import-area outward-import" id="outwardCSVImportArea">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-dark-semantic-danger-300">
+                                    <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                                </svg>
+                                <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
+                                <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
+                                <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn outward-btn">
+                                    Choose CSV File
+                                </button>
                             </div>
-                            <div class="import-progress">
-                                <div id="inwardImportProgressBar" class="import-progress-bar"></div>
+
+                            <!-- Import Progress -->
+                            <div id="outwardImportProgressSection" class="hidden mt-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
+                                    <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
+                                </div>
+                                <div class="import-progress">
+                                    <div id="outwardImportProgressBar" class="import-progress-bar outward-progress"></div>
+                                </div>
+                            </div>
+
+                            <!-- Import Results -->
+                            <div id="outwardImportResults" class="hidden mt-4">
+                                <!-- Results will be populated here -->
                             </div>
                         </div>
 
-                        <!-- Import Results -->
-                        <div id="inwardImportResults" class="hidden mt-4">
-                            <!-- Results will be populated here -->
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
                         </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-heading-6 dark:text-dark-base-600">Inward Devices</h3>
-                        <button onclick="showAddInwardForm()" class="px-4 py-2 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
-                            Add Inward Device
-                        </button>
-                    </div>
-                    
-                    <div id="inwardDevicesList" class="space-y-4">
-                        <!-- Inward devices will be populated here -->
-                    </div>
-                    
-                    <div id="inwardEmptyState" class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
-                            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
-                            <path d="M12 3v6"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Inward Devices</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">No devices have been received yet</p>
-                    </div>
-                </div>
-
-                <!-- Outward Tab Content -->
-                <div id="outwardTabContent" class="hidden">
-                    <!-- CSV Upload Section for Outward -->
-                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
-                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">Bulk Outward Import</h4>
-                        <p class="text-body-s-regular dark:text-dark-base-500 mb-4">Upload CSV with columns: Device Registration Number, Device IMEI, Customer Name, Location, Outward Date, SIM No, Notes</p>
                         
-                        <div class="csv-import-area outward-import" id="outwardCSVImportArea">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 dark:text-dark-semantic-danger-300">
+                        <div id="outwardDevicesList" class="space-y-4">
+                            <!-- Outward devices will be populated here -->
+                        </div>
+                        
+                        <div id="outwardEmptyState" class="text-center py-12">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
                                 <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
                             </svg>
-                            <p class="text-body-m-regular dark:text-dark-base-600 mb-2">Drag CSV file here</p>
-                            <input type="file" id="outwardCSVFileInput" accept=".csv" class="hidden">
-                            <button onclick="document.getElementById('outwardCSVFileInput').click()" class="file-upload-btn outward-btn">
-                                Choose CSV File
-                            </button>
+                            <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
+                            <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
                         </div>
-
-                        <!-- Import Progress -->
-                        <div id="outwardImportProgressSection" class="hidden mt-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-body-m-semibold dark:text-dark-base-600">Processing...</span>
-                                <span id="outwardImportProgressText" class="text-body-m-regular dark:text-dark-base-500">0%</span>
-                            </div>
-                            <div class="import-progress">
-                                <div id="outwardImportProgressBar" class="import-progress-bar outward-progress"></div>
-                            </div>
-                        </div>
-
-                        <!-- Import Results -->
-                        <div id="outwardImportResults" class="hidden mt-4">
-                            <!-- Results will be populated here -->
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-heading-6 dark:text-dark-base-600">Outward Devices</h3>
-                        <button onclick="showAddOutwardForm()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">
-                            Add Outward Device
-                        </button>
-                    </div>
-                    
-                    <div id="outwardDevicesList" class="space-y-4">
-                        <!-- Outward devices will be populated here -->
-                    </div>
-                    
-                    <div id="outwardEmptyState" class="text-center py-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
-                            <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
-                        </svg>
-                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
-                        <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
                     </div>
                 </div>
+
+                <!-- SIM Management Tab Content -->
+                <div id="simManagementTabContent" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-heading-6 dark:text-dark-base-600">SIM Management</h3>
+                    </div>
+
+                    <!-- SIM Management Table -->
+                    <div class="overflow-x-auto mb-8">
+                        <table class="w-full rounded-lg dark:bg-dark-fill-base-300 compact-table">
+                            <thead class="dark:bg-dark-fill-base-400">
+                                <tr>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Registration Number</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Device IMEI</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Current SIM No</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Assigned Date</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Status</th>
+                                    <th class="text-left p-4 text-body-m-semibold dark:text-dark-base-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="simManagementTableBody">
+                                <!-- SIM management data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- SIM Replacement Section -->
+                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h4 class="text-heading-7 dark:text-dark-base-600 mb-3">SIM Replacement</h4>
+                        <form id="simReplacementForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number *</label>
+                                <input type="text" name="deviceRegistrationNumber" id="simDeviceRegNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device registration number" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI *</label>
+                                <input type="text" name="deviceImei" id="simDeviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Old SIM No *</label>
+                                <input type="text" name="oldSimNo" id="oldSimNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter current SIM number" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">New SIM No *</label>
+                                <input type="text" name="newSimNo" id="newSimNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter new SIM number" required>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Replacement Reason</label>
+                                <textarea name="replacementReason" rows="3" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter reason for SIM replacement..."></textarea>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <button type="submit" class="px-6 py-3 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                                    Replace SIM
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Empty State for SIM Management -->
+                    <div id="simManagementEmptyState" class="text-center py-12 hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 dark:text-dark-base-500">
+                            <rect width="7" height="11" x="7" y="3" rx="1"/>
+                            <path d="m11 21-3-3 3-3"/>
+                            <path d="m16 21-3-3 3-3"/>
+                        </svg>
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No SIM Data</h3>
+                        <p class="text-body-l-regular dark:text-dark-base-500">No SIM assignments found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Add Button -->
+    <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-40">
+        <button onclick="toggleInventoryAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 shadow-2xl flex items-center justify-center transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+            </svg>
+        </button>
+        
+        <!-- Add Menu -->
+        <div id="inventoryAddMenu" class="absolute bottom-16 right-0 hidden">
+            <div class="flex flex-col gap-2 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 shadow-xl min-w-48">
+                <button onclick="showAddInwardForm()" class="flex items-center gap-3 p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-left dark:text-dark-base-600 no-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                        <path d="M12 3v6"/>
+                    </svg>
+                    <span>Add Inward Device</span>
+                </button>
+                <button onclick="showAddOutwardForm()" class="flex items-center gap-3 p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-left dark:text-dark-base-600 no-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 16l-4-4m0 0l-4-4m4 4l4-4m-4 4l-4 4"/>
+                    </svg>
+                    <span>Add Outward Device</span>
+                </button>
+                <button onclick="document.getElementById('inwardCSVFileInput').click()" class="flex items-center gap-3 p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-left dark:text-dark-base-600 no-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                    </svg>
+                    <span>Choose File</span>
+                </button>
             </div>
         </div>
     </div>
@@ -239,6 +361,9 @@
                         <option value="sim_module_fail">SIM module fail</option>
                         <option value="auto_restart">Auto restart</option>
                         <option value="device_tampered">Device tampered</option>
+                        <option value="used">Used</option>
+                        <option value="refurbished">Refurbished</option>
+                        <option value="damaged">Damaged</option>
                     </select>
                 </div>
                 
@@ -320,6 +445,44 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Device History Modal -->
+    <div id="deviceHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Device Movement History</h2>
+                <button onclick="closeDeviceHistoryModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="deviceHistoryContent">
+                <!-- Device history will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SIM History Modal -->
+    <div id="simHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">SIM History</h2>
+                <button onclick="closeSimHistoryModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="simHistoryContent">
+                <!-- SIM history will be populated here -->
+            </div>
         </div>
     </div>
 

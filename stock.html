@@ -205,7 +205,7 @@
 
     <!-- Floating Add Button -->
     <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-40">
-        <button onclick="toggleAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 shadow-2xl flex items-center justify-center transition-all duration-300">
+        <button onclick="toggleStockAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 shadow-2xl flex items-center justify-center transition-all duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 5v14"/>
                 <path d="M5 12h14"/>
@@ -213,9 +213,9 @@
         </button>
         
         <!-- Add Menu -->
-        <div id="addMenu" class="absolute bottom-16 right-0 hidden">
+        <div id="stockAddMenu" class="absolute bottom-16 right-0 hidden">
             <div class="flex flex-col gap-2 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400 shadow-xl min-w-48">
-                <button onclick="showChooseFileOption()" class="flex items-center gap-3 p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-left dark:text-dark-base-600 no-transform">
+                <button onclick="document.getElementById('csvFileInput').click()" class="flex items-center gap-3 p-3 rounded-lg hover:dark:bg-dark-fill-base-600 text-left dark:text-dark-base-600 no-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                         <polyline points="14,2 14,8 20,8"/>
@@ -235,7 +235,7 @@
 
     <!-- Device Details Modal -->
     <div id="deviceDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-heading-6 dark:text-dark-base-600">Device Movement History</h2>
                 <button onclick="closeDeviceDetailsModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">

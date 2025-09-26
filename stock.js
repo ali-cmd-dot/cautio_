@@ -304,10 +304,6 @@ function createStockTableRow(item) {
         let badgeClass, conditionText;
 
         switch (condition) {
-            case "new":
-                badgeClass = "compact-badge condition-new";
-                conditionText = "New Device";
-                break;
             case "good":
                 badgeClass = "compact-badge condition-good";
                 conditionText = "Good";
@@ -376,9 +372,6 @@ function createStockTableRow(item) {
                 <div class="flex gap-1">
                     <button onclick="viewStockDeviceDetails('${item.device_registration_number}')" class="compact-btn compact-btn-primary">
                         VIEW
-                    </button>
-                    <button onclick="editStockDevice('${item.id}')" class="compact-btn compact-btn-primary">
-                        EDIT
                     </button>
                     <button onclick="manageInventory('${item.device_registration_number}')" class="compact-btn compact-btn-primary">
                         📦
@@ -541,7 +534,7 @@ async function validateAndImportCSV(results, filename) {
                 }
             }
 
-            // Create stock item - NEW: Set default condition as "new" for inventory integration
+            // Create stock item - Set default condition as "good" for inventory integration
             const stockItem = {
                 sl_no: row["Sl. No."] || null,
                 po_no: row["PO No"] || null,
@@ -551,7 +544,7 @@ async function validateAndImportCSV(results, filename) {
                 device_registration_number: deviceRegNumber,
                 device_imei: deviceImei,
                 current_status: "available",
-                device_condition: "new", // NEW: Default condition for automatic inventory integration
+                device_condition: "good", // Default condition for automatic inventory integration
                 imported_by: userSession?.email || "unknown",
             };
 
@@ -703,7 +696,7 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
                 ${
                     newDevicesCount > 0
                         ? `
-                    <p class="text-body-s-regular text-blue-600 mt-1">
+                        New devices are automatically added to inventory inward with "Good" condition.
                         📦 ${newDevicesCount} new devices will be auto-added to inventory inward
                     </p>
                 `
@@ -1159,12 +1152,98 @@ window.goBackToDashboard = goBackToDashboard;
 window.goToInventoryManagement = goToInventoryManagement;
 window.clearStockSearch = clearStockSearch;
 window.viewStockDeviceDetails = viewStockDeviceDetails;
-window.editStockDevice = editStockDevice;
 window.showImportErrors = showImportErrors;
 window.viewImportDetails = viewImportDetails;
 window.closeDeviceDetailsModal = closeDeviceDetailsModal;
 window.manageInventory = manageInventory;
 window.loadStockData = loadStockData;
+window.toggleStockAddMenu = toggleStockAddMenu;
+window.showSingleEntryOption = showSingleEntryOption;
+window.closeSingleEntryModal = closeSingleEntryModal;
+
+// Add missing functions for stock management
+function toggleStockAddMenu() {
+    const menu = document.getElementById("stockAddMenu");
+    if (menu) {
+        menu.classList.toggle("hidden");
+    }
+}
+
+function showSingleEntryOption() {
+    const modal = document.getElementById("singleEntryModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+    toggleStockAddMenu(); // Close the add menu
+}
+
+function closeSingleEntryModal() {
+    const modal = document.getElementById("singleEntryModal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+    // Reset form
+    const form = document.getElementById("singleEntryForm");
+    if (form) {
+        form.reset();
+    }
+}
+
+// Handle single entry form submission
+document.addEventListener("DOMContentLoaded", function() {
+    const singleEntryForm = document.getElementById("singleEntryForm");
+    if (singleEntryForm) {
+        singleEntryForm.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(e.target);
+                const stockItem = {
+                    sl_no: formData.get("slNo") ? parseInt(formData.get("slNo")) : null,
+                    po_no: formData.get("poNo") || null,
+                    batch_no: formData.get("batchNo") || null,
+                    inward_date: formData.get("inwardDate") || null,
+                    device_model_no: formData.get("deviceModelNo"),
+                    device_registration_number: formData.get("deviceRegistrationNumber"),
+                    device_imei: formData.get("deviceImei"),
+                    current_status: "available",
+                    device_condition: "good",
+                    imported_by: userSession?.email || "unknown"
+                };
+
+                // Check for duplicates
+                const { data: existing, error: existingError } = await supabase
+                    .from("stock")
+                    .select("device_registration_number, device_imei")
+                    .or(`device_registration_number.eq.${stockItem.device_registration_number},device_imei.eq.${stockItem.device_imei}`);
+
+                if (existing && existing.length > 0) {
+                    showStockToast("Device already exists in stock", "error");
+                    return;
+                }
+
+                // Insert stock item
+                const { error } = await supabase
+                    .from("stock")
+                    .insert([stockItem]);
+
+                if (error) {
+                    console.error("Error adding stock item:", error);
+                    showStockToast("Error adding stock item", "error");
+                    return;
+                }
+
+                showStockToast("Stock item added successfully", "success");
+                closeSingleEntryModal();
+                loadStockData();
+
+            } catch (error) {
+                console.error("Error adding stock item:", error);
+                showStockToast("Error adding stock item", "error");
+            }
+        });
+    }
+});
 
 // Export functions for global access
 window.stockFunctions = {
@@ -1172,9 +1251,11 @@ window.stockFunctions = {
     goToInventoryManagement,
     clearStockSearch,
     viewStockDeviceDetails,
-    editStockDevice,
     showImportErrors,
     viewImportDetails,
     closeDeviceDetailsModal,
     manageInventory,
+    toggleStockAddMenu,
+    showSingleEntryOption,
+    closeSingleEntryModal
 };
