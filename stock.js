@@ -719,7 +719,7 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
                     <span class="text-body-s-semibold text-blue-600">Inventory Integration</span>
                 </div>
                 <p class="text-body-s-regular text-blue-600 mt-1">
-                    New devices are automatically added to inventory inward with "New Device" condition.
+                    New devices are automatically added to inventory inward with "good" condition.
                     <a href="inventory.html" class="underline hover:no-underline">Manage inventory →</a>
                 </p>
             </div>
@@ -745,6 +745,106 @@ function showImportResults(successful, failed, errors, newDevicesCount) {
             `Import completed: ${successful} successful, ${failed} failed`,
             "warning",
         );
+    }
+}
+
+// Floating plus menu + Single Entry modal handlers
+function toggleStockAddMenu() {
+    const menu = document.getElementById('stockAddMenu');
+    if (menu) menu.classList.toggle('hidden');
+}
+
+function openStockCSVChooser() {
+    const input = document.getElementById('csvFileInput');
+    if (input) input.click();
+}
+
+function showAddStockModal() {
+    const modal = document.getElementById('addStockModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeAddStockModal() {
+    const modal = document.getElementById('addStockModal');
+    if (modal) modal.classList.add('hidden');
+    const form = document.getElementById('addStockForm');
+    if (form) form.reset();
+}
+
+async function handleAddStockItem(e) {
+    e.preventDefault();
+    try {
+        showStockLoadingOverlay();
+        const form = e.target;
+        const device_model_no = form.deviceModelNo.value.trim();
+        const device_registration_number = form.deviceRegNo.value.trim();
+        const device_imei = form.deviceImei.value.trim();
+        const sl_no = form.slNo.value ? parseInt(form.slNo.value) : null;
+        const po_no = form.poNo.value.trim() || null;
+        const batch_no = form.batchNo.value.trim() || null;
+        const inward_date = form.inwardDate.value || null;
+
+        if (!device_model_no || !device_registration_number || !device_imei) {
+            showStockToast('Please fill required fields', 'error');
+            hideStockLoadingOverlay();
+            return;
+        }
+
+        // Ensure device does not already exist
+        const { data: existing, error: existErr } = await supabase
+            .from('stock')
+            .select('device_registration_number, device_imei')
+            .or(`device_registration_number.eq.${device_registration_number},device_imei.eq.${device_imei}`);
+        if (existErr) {
+            console.error(existErr);
+        }
+        if (existing && existing.length > 0) {
+            showStockToast('Device already exists in stock', 'error');
+            hideStockLoadingOverlay();
+            return;
+        }
+
+        const stockItem = {
+            sl_no,
+            po_no,
+            batch_no,
+            inward_date,
+            device_model_no,
+            device_registration_number,
+            device_imei,
+            current_status: 'available',
+            device_condition: 'good',
+            imported_by: userSession?.email || 'unknown',
+        };
+
+        const { data: inserted, error: insertErr } = await supabase
+            .from('stock')
+            .insert([stockItem])
+            .select()
+            .single();
+        if (insertErr) throw insertErr;
+
+        // Also add to inward immediately (so we don't depend on other page listeners)
+        const inwardData = {
+            device_registration_number,
+            device_imei,
+            device_condition: 'good',
+            notes: 'Added via Single Entry',
+            processed_by: userSession?.email || 'unknown',
+            stock_id: inserted.id,
+            inward_date: inward_date || new Date().toISOString().split('T')[0]
+        };
+        // Ignore error if unique exists
+        await supabase.from('inward_devices').insert([inwardData]);
+
+        closeAddStockModal();
+        showStockToast('Stock item added successfully', 'success');
+        await loadStockData();
+    } catch (err) {
+        console.error(err);
+        showStockToast(err.message || 'Error adding stock item', 'error');
+    } finally {
+        hideStockLoadingOverlay();
     }
 }
 
