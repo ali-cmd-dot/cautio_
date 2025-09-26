@@ -1124,7 +1124,6 @@ window.goBackToDashboard = goBackToDashboard;
 window.goToInventoryManagement = goToInventoryManagement;
 window.clearStockSearch = clearStockSearch;
 window.viewStockDeviceDetails = viewStockDeviceDetails;
-window.editStockDevice = editStockDevice;
 window.showImportErrors = showImportErrors;
 window.viewImportDetails = viewImportDetails;
 window.closeDeviceDetailsModal = closeDeviceDetailsModal;
@@ -1137,7 +1136,6 @@ window.stockFunctions = {
     goToInventoryManagement,
     clearStockSearch,
     viewStockDeviceDetails,
-    editStockDevice,
     showImportErrors,
     viewImportDetails,
     closeDeviceDetailsModal,
