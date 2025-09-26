@@ -270,7 +270,7 @@ function updateStockTable() {
     }
 }
 
-// UPDATED: Create stock table row HTML with better inventory integration indicators
+// UPDATED: Create stock table row HTML (aligned with headers; removed extra actions)
 function createStockTableRow(item) {
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
@@ -304,10 +304,6 @@ function createStockTableRow(item) {
         let badgeClass, conditionText;
 
         switch (condition) {
-            case "new":
-                badgeClass = "compact-badge condition-new";
-                conditionText = "New Device";
-                break;
             case "good":
                 badgeClass = "compact-badge condition-good";
                 conditionText = "Good";
@@ -348,19 +344,6 @@ function createStockTableRow(item) {
         return `<span class="${badgeClass}">${conditionText}</span>`;
     };
 
-    // NEW: Add inventory status indicator
-    const getInventoryStatusBadge = (item) => {
-        // This would be determined by checking if device exists in inward/outward
-        // For now, we'll show a simple indicator based on status
-        if (item.current_status === "available") {
-            return `<span class="compact-badge status-available">📥 Ready</span>`;
-        } else if (item.current_status === "allocated") {
-            return `<span class="compact-badge status-allocated">📤 Out</span>`;
-        } else {
-            return `<span class="compact-badge condition-used">⚪ Unknown</span>`;
-        }
-    };
-
     return `
         <tr>
             <td class="compact-text-secondary">${item.sl_no || "N/A"}</td>
@@ -369,19 +352,12 @@ function createStockTableRow(item) {
             <td class="compact-text-primary">${item.device_model_no}</td>
             <td>${getStatusBadge(item.current_status)}</td>
             <td>${getConditionBadge(item.device_condition)}</td>
-            <td>${getInventoryStatusBadge(item)}</td>
             <td class="compact-text-secondary">${item.batch_no || "N/A"}</td>
             <td class="compact-text-secondary">${formatDate(item.inward_date)}</td>
             <td>
                 <div class="flex gap-1">
                     <button onclick="viewStockDeviceDetails('${item.device_registration_number}')" class="compact-btn compact-btn-primary">
                         VIEW
-                    </button>
-                    <button onclick="editStockDevice('${item.id}')" class="compact-btn compact-btn-primary">
-                        EDIT
-                    </button>
-                    <button onclick="manageInventory('${item.device_registration_number}')" class="compact-btn compact-btn-primary">
-                        📦
                     </button>
                 </div>
             </td>
@@ -541,7 +517,7 @@ async function validateAndImportCSV(results, filename) {
                 }
             }
 
-            // Create stock item - NEW: Set default condition as "new" for inventory integration
+            // Create stock item - UPDATED: default condition is 'good'
             const stockItem = {
                 sl_no: row["Sl. No."] || null,
                 po_no: row["PO No"] || null,
@@ -551,7 +527,7 @@ async function validateAndImportCSV(results, filename) {
                 device_registration_number: deviceRegNumber,
                 device_imei: deviceImei,
                 current_status: "available",
-                device_condition: "new", // NEW: Default condition for automatic inventory integration
+                device_condition: "good",
                 imported_by: userSession?.email || "unknown",
             };
 
@@ -909,8 +885,8 @@ function clearStockSearch() {
     showStockToast("Search cleared", "success");
 }
 
-// UPDATED: View stock device details with inventory status
-function viewStockDeviceDetails(deviceRegistrationNumber) {
+// UPDATED: View stock device details with movement history
+async function viewStockDeviceDetails(deviceRegistrationNumber) {
     const device = localStockData.find(
         (item) => item.device_registration_number === deviceRegistrationNumber,
     );
@@ -927,7 +903,6 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
 
     const getConditionDisplayName = (condition) => {
         const conditionMap = {
-            new: "New Device",
             good: "Good",
             lense_issue: "Lense Issue",
             sim_module_fail: "SIM Module Fail",
@@ -939,6 +914,34 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
         };
         return conditionMap[condition] || condition;
     };
+
+    // Load movement history from inward/outward
+    const [{ data: inwardList }, { data: outwardList }] = await Promise.all([
+        supabase.from('inward_devices').select('*, created_at').eq('device_registration_number', deviceRegistrationNumber).order('created_at', { ascending: true }),
+        supabase.from('outward_devices').select('*, created_at').eq('device_registration_number', deviceRegistrationNumber).order('created_at', { ascending: true })
+    ]);
+
+    const events = [];
+    if (device.imported_at || device.inward_date) {
+        events.push({ ts: device.imported_at || device.inward_date, title: 'Added to Stock', desc: `Model ${device.device_model_no} | Batch ${device.batch_no || 'N/A'}` });
+    }
+    (inwardList || []).forEach(rec => {
+        events.push({ ts: rec.inward_time || rec.created_at || rec.inward_date, title: 'Moved to Inward', desc: `Condition ${getConditionDisplayName(rec.device_condition)}${rec.notes ? ' | ' + rec.notes : ''}` });
+    });
+    (outwardList || []).forEach(rec => {
+        events.push({ ts: rec.outward_time || rec.created_at || rec.outward_date, title: `Allocated to ${rec.customer_name}`, desc: `Location ${rec.location}${rec.sim_no ? ' | SIM ' + rec.sim_no : ''}${rec.notes ? ' | ' + rec.notes : ''}` });
+    });
+    events.sort((a,b) => new Date(a.ts) - new Date(b.ts));
+
+    const timeline = events.map(ev => `
+        <div class="timeline-item">
+            <div class="flex items-center justify-between">
+                <div class="text-body-m-semibold dark:text-dark-base-600">${ev.title}</div>
+                <div class="text-body-s-regular dark:text-dark-base-500">${formatDate(ev.ts)}</div>
+            </div>
+            <div class="text-body-s-regular dark:text-dark-base-500 mt-1">${ev.desc}</div>
+        </div>
+    `).join('');
 
     const content = `
         <div class="space-y-4">
@@ -954,10 +957,6 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
                 <div>
                     <label class="device-info-label">Model</label>
                     <div class="device-info-value">${device.device_model_no}</div>
-                </div>
-                <div>
-                    <label class="device-info-label">Serial Number</label>
-                    <div class="device-info-value">${device.sl_no || "N/A"}</div>
                 </div>
                 <div>
                     <label class="device-info-label">Current Status</label>
@@ -1002,43 +1001,12 @@ function viewStockDeviceDetails(deviceRegistrationNumber) {
             </div>
             
             <div class="border-t pt-4 dark:border-dark-stroke-contrast-400">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="device-info-label">Created At</label>
-                        <div class="device-info-value">${formatDate(device.created_at)}</div>
-                    </div>
-                    <div>
-                        <label class="device-info-label">Last Updated</label>
-                        <div class="device-info-value">${formatDate(device.updated_at)}</div>
-                    </div>
-                    ${
-                        device.allocated_date
-                            ? `
-                        <div>
-                            <label class="device-info-label">Allocated Date</label>
-                            <div class="device-info-value">${formatDate(device.allocated_date)}</div>
-                        </div>
-                    `
-                            : ""
-                    }
-                    ${
-                        device.allocated_to_customer_id
-                            ? `
-                        <div>
-                            <label class="device-info-label">Allocated To Customer ID</label>
-                            <div class="device-info-value">${device.allocated_to_customer_id}</div>
-                        </div>
-                    `
-                            : ""
-                    }
-                </div>
+                <div class="text-body-l-semibold dark:text-dark-base-600 mb-2">Movement History</div>
+                <div class="device-timeline">${timeline || '<div class="text-body-s-regular dark:text-dark-base-500">No movements recorded yet</div>'}</div>
             </div>
             
             <div class="border-t pt-4 dark:border-dark-stroke-contrast-400">
                 <div class="flex gap-2">
-                    <button onclick="manageInventory('${device.device_registration_number}')" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors text-sm">
-                        📦 Manage in Inventory
-                    </button>
                     <button onclick="closeDeviceDetailsModal()" class="px-4 py-2 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-sm">
                         Close
                     </button>
@@ -1056,10 +1024,7 @@ function closeDeviceDetailsModal() {
     document.getElementById("deviceDetailsModal").classList.add("hidden");
 }
 
-// Edit stock device (placeholder for future implementation)
-function editStockDevice(deviceId) {
-    showStockToast("Edit functionality coming soon", "warning");
-}
+// Removed edit function per requirement
 
 // Show import errors
 function showImportErrors(importId) {

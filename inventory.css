@@ -135,10 +135,7 @@
     color: #fff;
 }
 
-.condition-badge.new {
-    background-color: #0045ff;
-    color: #fff;
-}
+/* removed 'new' condition styling per requirement */
 
 .condition-badge.lense_issue {
     background-color: #f59e0b;

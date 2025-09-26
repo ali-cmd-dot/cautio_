@@ -27,7 +27,9 @@ const DEVICE_CONDITIONS = {
     'sim_module_fail': 'SIM module fail',
     'auto_restart': 'Auto restart',
     'device_tampered': 'Device tampered',
-    'new': 'New Device' // For stock integration
+    'used': 'Used',
+    'refurbished': 'Refurbished',
+    'damaged': 'Damaged'
 };
 
 // Required CSV columns for inward
@@ -81,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('Realtime listeners not available - supabase.channel not found');
     }
     
-    // Show inward tab by default
+    // Default to Device Management > Inward
+    showDeviceManagement();
     showInwardTab();
 });
 
@@ -153,7 +156,7 @@ function setupInventoryRealtimeListeners() {
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'stock' }, 
             async (payload) => {
                 console.log('New stock item inserted!', payload);
-                // Auto add to inward with "new" condition
+                // Auto add to inward
                 await autoAddStockToInward(payload.new);
                 loadInventoryData();
             }
@@ -187,6 +190,21 @@ function setupInventoryRealtimeListeners() {
             }
         )
         .subscribe();
+
+    // Listen for SIM management changes
+    supabase
+        .channel('sim_management_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'device_sim_management' },
+            () => {
+                console.log('SIM management change received');
+            }
+        )
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'sim_replacement_history' },
+            () => {
+                console.log('SIM replacement change received');
+            }
+        )
+        .subscribe();
 }
 
 // NEW: Auto add stock to inward when new stock is inserted
@@ -208,11 +226,11 @@ async function autoAddStockToInward(stockItem) {
             return;
         }
         
-        // Add to inward devices with "new" condition
+        // Add to inward devices with 'good' condition
         const inwardData = {
             device_registration_number: stockItem.device_registration_number,
             device_imei: stockItem.device_imei,
-            device_condition: 'good', // Auto-set as "good" condition as per user requirement
+            device_condition: 'good',
             notes: 'Auto-added from stock import',
             processed_by: 'system',
             stock_id: stockItem.id,
@@ -610,6 +628,23 @@ function updateInventoryTabHighlight(activeTabId) {
     }
 }
 
+// New: Top-level sub-tab switching
+function showDeviceManagement() {
+    const dm = document.getElementById('deviceManagementContent');
+    const sm = document.getElementById('simManagementContent');
+    if (dm) dm.classList.remove('hidden');
+    if (sm) sm.classList.add('hidden');
+    updateInventoryTabHighlight('deviceMgmtTab');
+}
+
+function showSIMManagement() {
+    const dm = document.getElementById('deviceManagementContent');
+    const sm = document.getElementById('simManagementContent');
+    if (dm) dm.classList.add('hidden');
+    if (sm) sm.classList.remove('hidden');
+    updateInventoryTabHighlight('simMgmtTab');
+}
+
 // Search functionality
 function handleInventorySearch(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
@@ -972,6 +1007,22 @@ function handleOutwardCSVFileSelect(e) {
     }
 }
 
+// Floating plus helpers
+function toggleInventoryAddMenu() {
+    const menu = document.getElementById('inventoryAddMenu');
+    if (menu) menu.classList.toggle('hidden');
+}
+
+function openInwardCSVChooser() {
+    const input = document.getElementById('inwardCSVFileInput');
+    if (input) input.click();
+}
+
+function openOutwardCSVChooser() {
+    const input = document.getElementById('outwardCSVFileInput');
+    if (input) input.click();
+}
+
 // Process inward CSV file
 function processInwardCSVFile(file) {
     const reader = new FileReader();
@@ -1072,8 +1123,9 @@ async function validateAndImportInwardCSV(results, filename) {
             }
             
             // Validate condition
+            const normalized = String(deviceCondition).toLowerCase().replace(/\s+/g, '_');
             const validConditions = Object.keys(DEVICE_CONDITIONS);
-            if (!validConditions.includes(deviceCondition.toLowerCase().replace(' ', '_'))) {
+            if (!validConditions.includes(normalized)) {
                 errors.push(`Row ${i + 2}: Invalid device condition "${deviceCondition}"`);
                 continue;
             }
@@ -1102,7 +1154,7 @@ async function validateAndImportInwardCSV(results, filename) {
             validData.push({
                 device_registration_number: deviceRegNumber,
                 device_imei: deviceImei,
-                device_condition: 'good', // Always set as good for inward devices per user requirement
+                device_condition: 'good',
                 notes: row['Notes'] || 'Bulk imported',
                 processed_by: userSession?.email || 'unknown',
                 stock_id: stockDevice.id,
@@ -1466,7 +1518,7 @@ function viewDeviceDetails(deviceRegistrationNumber) {
         SIM No: ${stockDevice.sim_no || 'N/A'}
     `;
     
-    alert(details); // You can replace this with a proper modal
+    alert(details); // TODO: can be enhanced with modal if needed
 }
 
 // Return device (move from outward back to available)
@@ -1577,6 +1629,8 @@ function showInventoryToast(message, type = 'success') {
 // Make functions globally available for HTML onclick handlers
 window.showInwardTab = showInwardTab;
 window.showOutwardTab = showOutwardTab;
+window.showDeviceManagement = showDeviceManagement;
+window.showSIMManagement = showSIMManagement;
 window.showAddInwardForm = showAddInwardForm;
 window.closeAddInwardForm = closeAddInwardForm;
 window.showAddOutwardForm = showAddOutwardForm;
@@ -1586,6 +1640,140 @@ window.viewDeviceDetails = viewDeviceDetails;
 window.returnDevice = returnDevice;
 window.goBackToDashboard = goBackToDashboard;
 window.loadInventoryData = loadInventoryData;
+window.toggleInventoryAddMenu = toggleInventoryAddMenu;
+window.openInwardCSVChooser = openInwardCSVChooser;
+window.openOutwardCSVChooser = openOutwardCSVChooser;
+
+// SIM Management handlers
+async function assignSIM() {
+    try {
+        showInventoryLoadingOverlay();
+        const device_registration_number = document.getElementById('simDeviceReg').value.trim();
+        const device_imei = document.getElementById('simDeviceImei').value.trim();
+        const sim_no = document.getElementById('simNumber').value.trim();
+
+        if (!device_registration_number || !device_imei || !sim_no) {
+            throw new Error('Please fill Device Reg No, IMEI and SIM No');
+        }
+
+        // Validate device exists in stock
+        const { data: stockDevice, error: stockErr } = await supabase
+            .from('stock')
+            .select('*')
+            .eq('device_registration_number', device_registration_number)
+            .eq('device_imei', device_imei)
+            .single();
+        if (stockErr || !stockDevice) throw new Error('Device not found in stock or IMEI mismatch');
+
+        // Upsert into device_sim_management
+        const upsert = {
+            device_registration_number,
+            device_imei,
+            current_sim_no: sim_no,
+            assigned_date: new Date().toISOString(),
+            assigned_by: userSession?.email || 'system',
+            status: 'active',
+            notes: 'Assigned via UI'
+        };
+        const { error: upErr } = await supabase.from('device_sim_management').upsert(upsert, { onConflict: 'device_registration_number' });
+        if (upErr) throw upErr;
+
+        // Update stock sim_no for consistency
+        await supabase.from('stock').update({ sim_no }).eq('device_registration_number', device_registration_number);
+
+        showInventoryToast('SIM assigned/updated successfully', 'success');
+    } catch (err) {
+        console.error(err);
+        showInventoryToast(err.message || 'Error assigning SIM', 'error');
+    } finally {
+        hideInventoryLoadingOverlay();
+    }
+}
+
+async function replaceSIM() {
+    try {
+        showInventoryLoadingOverlay();
+        const device_registration_number = document.getElementById('repDeviceReg').value.trim();
+        const device_imei = document.getElementById('repDeviceImei').value.trim();
+        const old_sim_no = document.getElementById('repOldSim').value.trim();
+        const new_sim_no = document.getElementById('repNewSim').value.trim();
+
+        if (!device_registration_number || !device_imei || !old_sim_no || !new_sim_no) {
+            throw new Error('Please fill all SIM replacement fields');
+        }
+
+        // Validate device exists
+        const { data: stockDevice, error: stockErr } = await supabase
+            .from('stock')
+            .select('device_registration_number, device_imei, sim_no')
+            .eq('device_registration_number', device_registration_number)
+            .eq('device_imei', device_imei)
+            .single();
+        if (stockErr || !stockDevice) throw new Error('Device not found in stock or IMEI mismatch');
+
+        // Validate current SIM matches old_sim_no
+        if ((stockDevice.sim_no || '') !== old_sim_no) {
+            throw new Error('Old SIM does not match current device SIM');
+        }
+
+        // Insert replacement history (trigger will update device_sim_management and stock)
+        const { error: repErr } = await supabase.from('sim_replacement_history').insert([{
+            device_registration_number,
+            device_imei,
+            old_sim_no,
+            new_sim_no,
+            replacement_date: new Date().toISOString(),
+            replaced_by: userSession?.email || 'system',
+            validated: true,
+            validation_notes: 'Validated via UI'
+        }]);
+        if (repErr) throw repErr;
+
+        showInventoryToast('SIM replaced successfully', 'success');
+    } catch (err) {
+        console.error(err);
+        showInventoryToast(err.message || 'Error replacing SIM', 'error');
+    } finally {
+        hideInventoryLoadingOverlay();
+    }
+}
+
+async function viewSIMHistory() {
+    try {
+        showInventoryLoadingOverlay();
+        const device_registration_number = document.getElementById('simDeviceReg').value.trim();
+        const device_imei = document.getElementById('simDeviceImei').value.trim();
+        if (!device_registration_number || !device_imei) {
+            throw new Error('Enter Device Reg No and IMEI to view SIM history');
+        }
+
+        const { data, error } = await supabase
+            .from('sim_replacement_history')
+            .select('*')
+            .eq('device_registration_number', device_registration_number)
+            .eq('device_imei', device_imei)
+            .order('replacement_date', { ascending: true });
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            showInventoryToast('No SIM history found for device', 'warning');
+            return;
+        }
+
+        const lines = data.map(r => `${new Date(r.replacement_date).toLocaleString()}: ${r.old_sim_no || 'N/A'} → ${r.new_sim_no} (${r.replaced_by})`);
+        alert(`SIM History for ${device_registration_number}:\n\n${lines.join('\n')}`);
+    } catch (err) {
+        console.error(err);
+        showInventoryToast(err.message || 'Error loading SIM history', 'error');
+    } finally {
+        hideInventoryLoadingOverlay();
+    }
+}
+
+// expose SIM functions
+window.assignSIM = assignSIM;
+window.replaceSIM = replaceSIM;
+window.viewSIMHistory = viewSIMHistory;
 
 // Export functions for global access (if needed)
 window.inventoryFunctions = {
@@ -1598,5 +1786,10 @@ window.inventoryFunctions = {
     clearInventorySearch,
     viewDeviceDetails,
     returnDevice,
-    goBackToDashboard
+    goBackToDashboard,
+    showDeviceManagement,
+    showSIMManagement,
+    toggleInventoryAddMenu,
+    openInwardCSVChooser,
+    openOutwardCSVChooser
 };

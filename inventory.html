@@ -58,37 +58,49 @@
             </div>
         </div>
 
-        <!-- Tab Navigation -->
+        <!-- Sub-tabs: Device vs SIM Management -->
         <div class="p-6">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex space-x-1">
-                    <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab">
-                        <span class="tab-label">Inward</span>
-                        <span class="tab-count" id="inwardCount">0</span>
+                    <button onclick="showDeviceManagement()" class="inventory-tab-button active" id="deviceMgmtTab">
+                        <span class="tab-label">Device Management</span>
                     </button>
-                    <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab">
-                        <span class="tab-label">Outward</span>
-                        <span class="tab-count" id="outwardCount">0</span>
+                    <button onclick="showSIMManagement()" class="inventory-tab-button" id="simMgmtTab">
+                        <span class="tab-label">SIM Management</span>
                     </button>
                 </div>
-                
-                <!-- Search and Actions -->
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <input type="text" id="inventorySearchInput" placeholder="Search devices..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                        <input type="text" id="inventorySearchInput" placeholder="Search..." class="w-64 rounded-lg border p-3 pl-10 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-300 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 transform -translate-y-1/2 dark:text-dark-base-500">
                             <circle cx="11" cy="11" r="8"/>
                             <path d="m21 21-4.35-4.35"/>
                         </svg>
                     </div>
-                    <button onclick="clearInventorySearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
-                        Clear
-                    </button>
+                    <button onclick="clearInventorySearch()" class="px-4 py-3 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">Clear</button>
+                </div>
+            </div>
+
+            <!-- Floating Add (+) Button -->
+            <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-40">
+                <button onclick="toggleInventoryAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white flex items-center justify-center text-display-3">+</button>
+                <div id="inventoryAddMenu" class="hidden absolute bottom-16 right-0 bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-2xl p-2 w-max">
+                    <button onclick="openInwardCSVChooser()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">Inward CSV</button>
+                    <button onclick="openOutwardCSVChooser()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">Outward CSV</button>
+                    <button onclick="showAddInwardForm()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">Single Inward Entry</button>
+                    <button onclick="showAddOutwardForm()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">Single Outward Entry</button>
                 </div>
             </div>
 
             <!-- Tab Content -->
             <div id="inventoryTabContent">
+                <div id="deviceManagementContent">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex space-x-1">
+                            <button onclick="showInwardTab()" class="inventory-tab-button active" id="inwardTab"><span class="tab-label">Inward</span><span class="tab-count" id="inwardCount">0</span></button>
+                            <button onclick="showOutwardTab()" class="inventory-tab-button" id="outwardTab"><span class="tab-label">Outward</span><span class="tab-count" id="outwardCount">0</span></button>
+                        </div>
+                    </div>
                 <!-- Inward Tab Content -->
                 <div id="inwardTabContent">
                     <!-- CSV Upload Section for Inward -->
@@ -200,6 +212,57 @@
                         </svg>
                         <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">No Outward Devices</h3>
                         <p class="text-body-l-regular dark:text-dark-base-500">No devices have been allocated yet</p>
+                    </div>
+                </div>
+                </div>
+
+                <!-- SIM Management Content -->
+                <div id="simManagementContent" class="hidden">
+                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h3 class="text-heading-6 dark:text-dark-base-600 mb-4">SIM Management</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
+                                <input type="text" id="simDeviceReg" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device reg no">
+                            </div>
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
+                                <input type="text" id="simDeviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter device IMEI">
+                            </div>
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">SIM No</label>
+                                <input type="text" id="simNumber" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" placeholder="Enter SIM no">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="assignSIM()" class="px-4 py-2 rounded-lg dark:bg-dark-success-600 dark:text-utility-white hover:dark:bg-dark-success-600/90 text-body-s-semibold">Assign/Update SIM</button>
+                            <button onclick="viewSIMHistory()" class="px-4 py-2 rounded-lg dark:bg-dark-info-600 dark:text-utility-white hover:dark:bg-dark-info-600/90 text-body-s-semibold">View SIM History</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 p-4 rounded-lg dark:bg-dark-fill-base-300 dark:border dark:border-dark-stroke-contrast-400">
+                        <h3 class="text-heading-7 dark:text-dark-base-600 mb-4">SIM Replacement</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
+                                <input type="text" id="repDeviceReg" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                            </div>
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
+                                <input type="text" id="repDeviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                            </div>
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Old SIM No</label>
+                                <input type="text" id="repOldSim" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                            </div>
+                            <div>
+                                <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">New SIM No</label>
+                                <input type="text" id="repNewSim" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="replaceSIM()" class="px-4 py-2 rounded-lg dark:bg-dark-semantic-danger-300 dark:text-utility-white hover:dark:bg-dark-semantic-danger-300/90 text-body-s-semibold">Replace SIM</button>
+                        </div>
                     </div>
                 </div>
             </div>

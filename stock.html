@@ -56,6 +56,20 @@
 
         <!-- Main Content -->
         <div class="p-6">
+            <!-- Floating Add (+) Button -->
+            <div id="floatingAddBtn" class="fixed bottom-8 right-8 z-40">
+                <button onclick="toggleStockAddMenu()" class="w-14 h-14 rounded-full dark:bg-brand-blue-600 dark:text-utility-white flex items-center justify-center text-display-3">
+                    +
+                </button>
+                <div id="stockAddMenu" class="hidden absolute bottom-16 right-0 bg-white dark:bg-dark-fill-base-300 rounded-lg shadow-2xl p-2 w-max">
+                    <button onclick="openStockCSVChooser()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">
+                        Import via CSV
+                    </button>
+                    <button onclick="showAddStockModal()" class="block w-full text-left px-4 py-2 rounded hover:dark:bg-dark-fill-base-600 text-body-m-regular dark:text-dark-base-600">
+                        Single Entry
+                    </button>
+                </div>
+            </div>
             <!-- Stock Summary Cards -->
             <div class="quick-stats mb-8">
                 <div class="stat-card">
@@ -227,6 +241,63 @@
         <div class="flex items-center">
             <span id="stockToastIcon" class="h-5 w-5 mr-2"></span>
             <span id="stockToastMessage">Action completed successfully!</span>
+        </div>
+    </div>
+
+    <!-- Add Single Stock Item Modal -->
+    <div id="addStockModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="dark:bg-dark-fill-base-300 rounded-lg p-6 w-full max-w-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-heading-6 dark:text-dark-base-600">Add Stock Item</h2>
+                <button onclick="closeAddStockModal()" class="p-2 rounded-lg hover:dark:bg-dark-fill-base-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:text-dark-base-600">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="addStockForm" onsubmit="handleAddStockItem(event)" class="space-y-4">
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Model No.</label>
+                    <input type="text" name="deviceModelNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device Registration Number</label>
+                    <input type="text" name="deviceRegNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                <div>
+                    <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Device IMEI</label>
+                    <input type="text" name="deviceImei" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Sl. No.</label>
+                        <input type="number" name="slNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">PO No</label>
+                        <input type="text" name="poNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Batch No.</label>
+                        <input type="text" name="batchNo" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-body-l-semibold dark:text-dark-base-600 mb-2">Inward Date</label>
+                        <input type="date" name="inwardDate" class="w-full rounded-lg border p-3 outline-none dark:border-dark-stroke-contrast-400 dark:bg-dark-fill-base-400 dark:text-dark-base-600 dark:focus:border-brand-blue-600">
+                    </div>
+                </div>
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-6 rounded-lg dark:bg-brand-blue-600 dark:text-utility-white hover:dark:bg-brand-blue-500 text-body-s-semibold">
+                        Add
+                    </button>
+                    <button type="button" onclick="closeAddStockModal()" class="flex-1 py-3 px-6 rounded-lg dark:bg-dark-stroke-base-400 dark:text-dark-base-600 hover:dark:bg-dark-stroke-base-600 text-body-s-semibold">
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

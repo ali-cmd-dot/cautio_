@@ -371,33 +371,11 @@ function hideAllPages() {
 }
 
 function showInventoryManagement() {
-    hideAllContent();
-    document.getElementById('inventoryManagementContent').classList.remove('hidden');
-    updateMenuHighlight('inventory');
-    
-    // Load inventory content and update summary
-    if (typeof loadInventoryData === 'function') {
-        loadInventoryData().then(() => {
-            // Ensure stock summary is updated after data loads
-            if (typeof updateStockSummary === 'function') {
-                updateStockSummary();
-            }
-        });
-    } else if (typeof updateStockSummary === 'function') {
-        // If data already loaded, just update the summary
-        updateStockSummary();
-    }
+    window.location.href = 'inventory.html';
 }
 
 function showStock() {
-    hideAllContent();
-    document.getElementById('stockContent').classList.remove('hidden');
-    updateMenuHighlight('stock');
-    
-    // Load stock content if not already loaded
-    if (typeof loadStockData === 'function') {
-        loadStockData();
-    }
+    window.location.href = 'stock.html';
 }
 
 // Floating Add Button Functions
